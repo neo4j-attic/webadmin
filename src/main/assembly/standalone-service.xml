@@ -1,0 +1,70 @@
+<assembly>
+    <id></id>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+    
+        <!-- INFO -->
+        <fileSet>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+            </includes>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+        
+        <!-- SCRIPT -->
+        <fileSet>
+            <directory>target/generated-resources/appassembler/jsw/neo4j-webadmin/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+            <excludes>
+                <exclude>*.bat</exclude>
+            </excludes>
+        </fileSet>
+        
+        <!-- ...AND BAT FILES -->
+        <fileSet>
+            <directory>target/generated-resources/appassembler/jsw/neo4j-webadmin/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>*.bat</include>
+            </includes>
+        </fileSet>
+        
+        <!-- LIB -->
+        <fileSet>
+            <directory>target/generated-resources/appassembler/jsw/neo4j-webadmin/lib</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <excludes>
+              <exclude>.svn</exclude>
+            </excludes>
+        </fileSet>
+        
+        <!-- CONF -->
+        <fileSet>
+            <directory>target/generated-resources/appassembler/jsw/neo4j-webadmin/conf</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>*.conf</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+        	<!-- The only way to create an empty directory?-->
+        	<directory>target/archive-tmp</directory>
+        	<outputDirectory>logs</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+      <dependencySet>
+        <outputDirectory>lib</outputDirectory>
+      </dependencySet>
+    </dependencySets>
+</assembly>
