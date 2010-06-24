@@ -1,0 +1,4 @@
+#!/bin/sh
+# Simple script for running a maven project from the terminal
+
+env MAVEN_OPTS=-Xmx512M mvn --settings neo4j-repo.xml compile exec:java $*
