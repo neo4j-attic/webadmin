@@ -46,6 +46,11 @@
 					<defaultJvmSettings>
 						<initialMemorySize>512M</initialMemorySize>
 						<maxMemorySize>512M</maxMemorySize>
+
+						<extraArguments>
+							<extraArgument>-DwebRoot=../public</extraArgument>
+						</extraArguments>
+
 					</defaultJvmSettings>
 
 					<daemons>

@@ -1,5 +1,7 @@
 package org.neo4j.webadmin;
 
+import java.io.File;
+
 import org.neo4j.rest.WebServer;
 
 import com.sun.grizzly.http.embed.GrizzlyWebServer;
@@ -27,8 +29,10 @@ public enum AdminServer {
     public void startServer( int port, String webRoot ) {
         this.port = port;
 
+        String absWebRoot = (new File(webRoot)).getAbsolutePath();
+        
         try {
-            server = new GrizzlyWebServer(port, webRoot);
+            server = new GrizzlyWebServer(port, absWebRoot);
             server.start();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
