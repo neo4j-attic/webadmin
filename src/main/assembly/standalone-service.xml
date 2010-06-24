@@ -61,6 +61,16 @@
         	<directory>target/archive-tmp</directory>
         	<outputDirectory>logs</outputDirectory>
         </fileSet>
+        
+        <!-- PUBLIC -->
+        <fileSet>
+            <directory>src/main/resources/public</directory>
+            <outputDirectory>public</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        
     </fileSets>
     <dependencySets>
       <dependencySet>
