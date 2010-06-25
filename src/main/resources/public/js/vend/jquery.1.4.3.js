@@ -758,9 +758,11 @@ function execRequire( url, script ) {
 		item = requireQueue[i];
 
 		if ( item.url === url ) {
+			
 			if ( script != null ) {
 				item.script = script;
 			} else {
+				requireQueue.splice( i--, 1 );
 				next();
 				continue;
 			}
@@ -768,6 +770,7 @@ function execRequire( url, script ) {
 		}
 
 		if ( exec && item.script ) {
+			requireQueue.splice( i--, 1 );
 			jQuery.globalEval( item.script );
 			next();
 		} else {
@@ -788,8 +791,6 @@ function execRequire( url, script ) {
 			if ( jQuery.isFunction( item.callback ) ) {
 				item.callback();
 			}
-
-			requireQueue.splice( i--, 1 );
 	}
 }
 

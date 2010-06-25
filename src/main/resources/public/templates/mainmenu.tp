@@ -1,0 +1,3 @@
+{#foreach $T.items as item}
+<li {#if $T.item.isCurrent}class="current"{#/if} ><a href="#p={$T.item.page}">{$T.item.name}</a></li>
+{#/for}
