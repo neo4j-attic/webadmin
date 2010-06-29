@@ -14,6 +14,8 @@ $.require("js/vend/jquery.bbq.js");
 $.require("js/morpheus.ui.js");
 $.require("js/morpheus.event.js");
 
+$.require("components.js");
+
 /**
  * Morpheus core
  */
@@ -25,29 +27,67 @@ var morpheus = (function($) {
 	// PRIVATE
 	//
 	
-	me.components = [];
+	me.COMPONENT_PATH      = "components/";
+	me.COMPONENT_INIT_FILE = "/js/init.js";
+	
 	me.initiated = false;
 	
+	me.components = {};
+	
 	me.init = function() {
+		if(me.initiated === false) {
+			me.initiated = true;
+			me.loadComponents();
+		}
+	};
+	
+	/**
+	 * Load components listed in components.js
+	 */
+	me.loadComponents = function(cb) {
+		me.pendingComponents = me.api.componentList.length;
 		
-		morpheus.ui.init();
-		
-		// Initiate components
-		for( var i = 0, l = me.components.length; i < l; i++) {
-			if(typeof(me.components[i].init) === "function") {
-				me.components[i].init();
+		for( var i = 0, l = me.api.componentList.length; i < l; i++) {
+			
+			// Import the module init.js file
+			
+			me.components[me.api.componentList[i]] = { name:me.api.componentList[i], loaded:false };
+			
+			$.require(me.COMPONENT_PATH + me.api.componentList[i] + me.COMPONENT_INIT_FILE, 
+					(function(componentName){ 
+						return function() {me.componentLoaded(componentName);}; 
+					})(me.api.componentList[i]));
+			
+		}
+	
+		setTimeout(me.checkComponentsLoaded, 13);
+	};
+	
+	/** 
+	 * Triggered for each component that is loaded.
+	 */
+	me.componentLoaded = function(componentName) {
+		me.components[componentName].loaded = true;
+	};
+	
+	/**
+	 * Check if components have been loaded at given intervals,
+	 * trigger full application start once all components
+	 * are loaded.
+	 */
+	me.checkComponentsLoaded = function() {
+		for(var key in me.components) {
+			if( me.components[key].loaded === false) {
+				setTimeout(me.checkComponentsLoaded, 13);
+				return;
 			}
 		}
 		
-		me.initiated = true;
-	};
-	
-	me.registerComponent = function(component) {
-		me.components.push(component);
+		// All components loaded, load UI
+		morpheus.ui.init();
 		
-		if(me.initiated && typeof(component.init) === "function") {
-			component.init();
-		}
+		// Trigger init event
+		morpheus.event.trigger("morpheus.init");
 	};
 	
 	//
@@ -55,8 +95,7 @@ var morpheus = (function($) {
 	//
 	
 	me.api = {
-			init : me.init,
-			registerComponent : me.registerComponent
+			init : me.init
 	};
 	
 	return me.api;
@@ -92,8 +131,6 @@ morpheus.provide = function(path) {
 //
 // BOOT
 //
-
-$.require("components.js");
 
 $(function() {
 	morpheus.init();

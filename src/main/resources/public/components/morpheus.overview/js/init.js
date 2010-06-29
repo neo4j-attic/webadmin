@@ -15,7 +15,11 @@ morpheus.components.overview = (function() {
 	 */
 	me.init = function() {
 		me.basePage.setTemplateURL("components/morpheus.overview/templates/overview.tp");
+		
+		// Temporary
+		v = (morpheus.components.Lifecycle()).getWidget();
 		me.basePage.processTemplate();
+		me.basePage.append(v);
 	};
 	
 	me.getPage = function() {
@@ -39,6 +43,9 @@ morpheus.components.overview = (function() {
 // REGISTER STUFF
 //
 
-morpheus.registerComponent(morpheus.components.overview);
 morpheus.ui.addPage("morpheus.overview",morpheus.components.overview);
 morpheus.ui.mainmenu.addItem("Overview","morpheus.overview");
+
+morpheus.event.bind( "morpheus.init", function(ev) {
+	morpheus.components.overview.init();
+});

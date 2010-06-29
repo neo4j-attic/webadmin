@@ -16,6 +16,9 @@ import org.neo4j.rest.domain.DatabaseLocator;
  */
 public class Main {
 
+	public static int restPort;
+	public static int adminPort;
+	
 	public static void main(String [] strArgs) throws Exception {
 		Args args = new Args( strArgs );
 		
@@ -25,8 +28,8 @@ public class Main {
 		
 		System.setProperty( "org.neo4j.graphdb.location", args.get( "dbPath", "neo4j-rest-db" ) );
 		
-		int restPort    = args.getNumber( "restPort",  WebServer.DEFAULT_PORT   ).intValue();
-		int adminPort   = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
+		restPort    = args.getNumber( "restPort",  WebServer.DEFAULT_PORT   ).intValue();
+		adminPort   = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
 		
 		String webRoot  = args.get( "webRoot",  AdminServer.DEFAULT_WEBROOT   );
 		

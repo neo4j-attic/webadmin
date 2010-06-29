@@ -736,6 +736,7 @@ function readyReady() {
 			var fn, i = 0;
 			while ( (fn = readyList[ i++ ]) ) {
 				fn.call( document, jQuery );
+				if( readyList === null ) break;
 			}
 
 			// Reset the list of functions
@@ -788,8 +789,8 @@ function execRequire( url, script ) {
 	readyReady();
 
 	function next() {
-			if ( jQuery.isFunction( item.callback ) ) {
-				item.callback();
+			if ( jQuery.isFunction( item.success ) ) {
+				item.success();
 			}
 	}
 }

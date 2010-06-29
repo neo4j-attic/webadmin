@@ -36,7 +36,7 @@ morpheus.event = (function () {
             return "uniq#" + (me.uniqueNamespaceCount++);
         },
         
-        addHandler : function( key, callback) {
+        bind : function( key, callback) {
             if ( typeof(me.handlers[key]) === "undefined" ) {
                 me.handlers[key] = [];
             }
@@ -53,7 +53,9 @@ morpheus.event = (function () {
                 var event = { key : key, data : data };
 
                 for(var i = 0, o = handlers.length; i < o; i++) {
-                    setTimeout(function(){handlers[i](event);},0);
+                    setTimeout((function(handler) {
+                    	return function(){handler(event);}
+                    })(handlers[i]),0);
                 }
             }
         }

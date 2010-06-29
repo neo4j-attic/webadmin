@@ -1,5 +1,7 @@
 morpheus.provide("morpheus.components.data");
 
+$.require("components/morpheus.lifecycle/js/init.js");
+
 morpheus.components.data = (function() {
 	
 	var me = {};
@@ -39,6 +41,5 @@ morpheus.components.data = (function() {
 // REGISTER UI HOOKS
 //
 
-morpheus.registerComponent(morpheus.components.data);
 morpheus.ui.addPage("morpheus.data",morpheus.components.data);
 morpheus.ui.mainmenu.addItem("Data","morpheus.data");

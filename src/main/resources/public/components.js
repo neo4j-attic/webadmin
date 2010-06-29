@@ -4,5 +4,5 @@
  * In production, this file will be re-generated as new components are added and removed.
  */
 
-$.require("components/morpheus.overview/js/init.js");
-$.require("components/morpheus.data/js/init.js");
+var morpheus = morpheus || {};
+morpheus.componentList = ['morpheus.lifecycle', 'morpheus.overview', 'morpheus.data'];
