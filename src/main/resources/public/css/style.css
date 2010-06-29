@@ -7,10 +7,13 @@ body, #morpheus { width:100%; height:100%; background:#ebebeb; padding:0;margin:
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
-#mor_header { width:100%; }
+#mor_header_icon { float:left; margin: 4px 30px 0 10px; }
+
+#mor_pages { padding: 5px 10px 10px; }
+
 #mor_footer { width:100%; height:31px; background:url(../img/footer_bg.png) repeat-x;  }
 
-#mor_mainmenu { margin:0; padding:0; list-style:none; padding: 24px 0 0 0; }
+#mor_mainmenu { margin:0; list-style:none; padding: 24px 0 0 0; }
 #mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 2px 4px; }
 #mor_mainmenu a { color:#ebebeb; text-decoration:none; }
 #mor_mainmenu li.current { background:#ebebeb; }

@@ -28,7 +28,6 @@ morpheus.components.data = (function() {
 	
 	me.api = {
 			init : me.init,
-			
 			getPage : me.getPage
 	};
 	

@@ -32,6 +32,7 @@ var morpheus = (function($) {
 		
 		morpheus.ui.init();
 		
+		// Initiate components
 		for( var i = 0, l = me.components.length; i < l; i++) {
 			if(typeof(me.components[i].init) === "function") {
 				me.components[i].init();
