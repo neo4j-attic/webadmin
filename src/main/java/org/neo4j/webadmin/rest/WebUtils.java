@@ -7,18 +7,20 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 /**
  * Static helpers for web services. Mostly copied from neo4-rest.
- *
+ * 
  */
-public class WebUtils {
+public class WebUtils
+{
 
-	public static final String UTF8 = "UTF-8";
-	
-	/**
-	 * Add necessary headers and ensure content is UTF-8 encoded.
-	 * @param builder
-	 * @return builder with content length and utf-8 headers.
-	 */
-	public static ResponseBuilder addHeaders( ResponseBuilder builder )
+    public static final String UTF8 = "UTF-8";
+
+    /**
+     * Add necessary headers and ensure content is UTF-8 encoded.
+     * 
+     * @param builder
+     * @return builder with content length and utf-8 headers.
+     */
+    public static ResponseBuilder addHeaders( ResponseBuilder builder )
     {
         String entity = (String) builder.clone().build().getEntity();
         byte[] entityAsBytes;
@@ -36,5 +38,5 @@ public class WebUtils {
         builder = builder.header( HttpHeaders.CONTENT_ENCODING, UTF8 );
         return builder;
     }
-	
+
 }

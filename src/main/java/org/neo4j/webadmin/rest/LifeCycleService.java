@@ -22,99 +22,132 @@ import org.neo4j.webadmin.domain.LifecycleRepresentation;
 /**
  * REST service to start, stop and restart the neo4j backend.
  * 
- * TODO: This currently starts and stops the rest Grizzly server rather directly,
- * it might be more preferrable to move this functionality into the actual 
- * REST interface.
+ * TODO: This currently starts and stops the rest Grizzly server rather
+ * directly, it might be more preferrable to move this functionality into the
+ * actual REST interface.
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
- *
+ * 
  */
-@Path("/server")
-public class LifeCycleService {
-	
-	/**
-	 * TODO: This is a bad way of keeping track of the status of the neo4j server, it would be better to add this
-	 * capability to DatabaseLocator, which actually has the capability to check if the server is running or not.
-	 */
-	protected static volatile LifecycleRepresentation.Status serverStatus = LifecycleRepresentation.Status.RUNNING;
-	
-	@GET
-	@Produces( MediaType.APPLICATION_JSON )
-    @Path("/status")
-	public synchronized Response status() {
-			
-		LifecycleRepresentation status = new LifecycleRepresentation( serverStatus, LifecycleRepresentation.Action.NONE );
-		String entity = JsonRenderers.DEFAULT.render( status );
-		
-		return addHeaders( Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
-		
-	}
-	
-	@POST
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path("/start")
-	public synchronized Response start() {
-		LifecycleRepresentation status;
+@Path( "/server" )
+public class LifeCycleService
+{
 
-		if( serverStatus != LifecycleRepresentation.Status.RUNNING ) {
-			System.out.println("Starting..");
-			WebServer.INSTANCE.startServer( Main.restPort );
-			status = new LifecycleRepresentation( LifecycleRepresentation.Status.RUNNING, LifecycleRepresentation.Action.STARTED );
-		} else {
-			status = new LifecycleRepresentation( LifecycleRepresentation.Status.RUNNING, LifecycleRepresentation.Action.NONE );
-		}
-		
-		serverStatus = LifecycleRepresentation.Status.RUNNING;
-		
-		String entity = JsonRenderers.DEFAULT.render( status );
-		
-		return addHeaders( Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
-	}
-	
-	@POST
+    /**
+     * TODO: This is a bad way of keeping track of the status of the neo4j
+     * server, it would be better to add this capability to DatabaseLocator,
+     * which actually has the capability to check if the server is running or
+     * not.
+     */
+    protected static volatile LifecycleRepresentation.Status serverStatus = LifecycleRepresentation.Status.RUNNING;
+
+    @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path("/stop")
-	public synchronized Response stop() {
-		try {
-			LifecycleRepresentation status;
-			
-			if( serverStatus != LifecycleRepresentation.Status.STOPPED ) {
-				WebServer.INSTANCE.stopServer();
-				DatabaseLocator.shutdownGraphDatabase(new URI(AdminServer.INSTANCE.getBaseUri()));
-				status = new LifecycleRepresentation( LifecycleRepresentation.Status.STOPPED, LifecycleRepresentation.Action.STOPPED );
-			} else {
-				status = new LifecycleRepresentation( LifecycleRepresentation.Status.STOPPED, LifecycleRepresentation.Action.NONE );
-			}
-			
-			serverStatus = LifecycleRepresentation.Status.STOPPED;
-			String entity = JsonRenderers.DEFAULT.render( status );
-			
-			return addHeaders( Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
-		} catch( URISyntaxException e )
+    @Path( "/status" )
+    public synchronized Response status()
+    {
+
+        LifecycleRepresentation status = new LifecycleRepresentation(
+                serverStatus, LifecycleRepresentation.PerformedAction.NONE );
+        String entity = JsonRenderers.DEFAULT.render( status );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+
+    }
+
+    @POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/start" )
+    public synchronized Response start()
+    {
+        LifecycleRepresentation status;
+
+        if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
+        {
+            WebServer.INSTANCE.startServer( Main.restPort );
+            status = new LifecycleRepresentation(
+                    LifecycleRepresentation.Status.RUNNING,
+                    LifecycleRepresentation.PerformedAction.STARTED );
+        }
+        else
+        {
+            status = new LifecycleRepresentation(
+                    LifecycleRepresentation.Status.RUNNING,
+                    LifecycleRepresentation.PerformedAction.NONE );
+        }
+
+        serverStatus = LifecycleRepresentation.Status.RUNNING;
+
+        String entity = JsonRenderers.DEFAULT.render( status );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
+
+    @POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/stop" )
+    public synchronized Response stop()
+    {
+        try
+        {
+            LifecycleRepresentation status;
+
+            if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
+            {
+                WebServer.INSTANCE.stopServer();
+                DatabaseLocator.shutdownGraphDatabase( new URI(
+                        AdminServer.INSTANCE.getBaseUri() ) );
+                status = new LifecycleRepresentation(
+                        LifecycleRepresentation.Status.STOPPED,
+                        LifecycleRepresentation.PerformedAction.STOPPED );
+            }
+            else
+            {
+                status = new LifecycleRepresentation(
+                        LifecycleRepresentation.Status.STOPPED,
+                        LifecycleRepresentation.PerformedAction.NONE );
+            }
+
+            serverStatus = LifecycleRepresentation.Status.STOPPED;
+            String entity = JsonRenderers.DEFAULT.render( status );
+
+            return addHeaders(
+                    Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+        }
+        catch ( URISyntaxException e )
         {
             throw new RuntimeException( e );
         }
-	}
-	
-	@POST
+    }
+
+    @POST
     @Produces( MediaType.APPLICATION_JSON )
-    @Path("/restart")
-	public synchronized Response restart() {
-		try {
-			
-			WebServer.INSTANCE.stopServer();
-			DatabaseLocator.shutdownGraphDatabase(new URI(AdminServer.INSTANCE.getBaseUri()));			
-			WebServer.INSTANCE.startServer( Main.restPort );
-			
-			LifecycleRepresentation status = new LifecycleRepresentation( LifecycleRepresentation.Status.RUNNING, LifecycleRepresentation.Action.RESTARTED );
-			String entity = JsonRenderers.DEFAULT.render( status );
-			
-			serverStatus = LifecycleRepresentation.Status.RUNNING;
-			
-			return addHeaders( Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
-		} catch( URISyntaxException e )
+    @Path( "/restart" )
+    public synchronized Response restart()
+    {
+        try
+        {
+
+            WebServer.INSTANCE.stopServer();
+            DatabaseLocator.shutdownGraphDatabase( new URI(
+                    AdminServer.INSTANCE.getBaseUri() ) );
+            WebServer.INSTANCE.startServer( Main.restPort );
+
+            LifecycleRepresentation status = new LifecycleRepresentation(
+                    LifecycleRepresentation.Status.RUNNING,
+                    LifecycleRepresentation.PerformedAction.RESTARTED );
+            String entity = JsonRenderers.DEFAULT.render( status );
+
+            serverStatus = LifecycleRepresentation.Status.RUNNING;
+
+            return addHeaders(
+                    Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+        }
+        catch ( URISyntaxException e )
         {
             throw new RuntimeException( e );
         }
-	}
+    }
 }
