@@ -3,7 +3,7 @@ morpheus.provide("morpheus.components.Lifecycle");
 /**
  * A widget for starting, stopping and restarting the neo4j backend.
  */
-morpheus.components.Lifecycle = function() {
+morpheus.components.Lifecycle = function(server) {
 	
 	var me = {};
 	
@@ -15,6 +15,7 @@ morpheus.components.Lifecycle = function() {
 	
 	me.status = "UNKOWN";
 	me.watingForResponse = false;
+	me.url = server ? server.urls.admin : false;
 	
 	me.getWidget = function() {
 		return me.element;
@@ -22,22 +23,33 @@ morpheus.components.Lifecycle = function() {
 	
 	me.start = function(ev) {
 		if(me.status !== "RUNNING") {
-			me.serverAction("/api/server/start", "Starting server..");
+			me.serverAction(me.url + "start", "Starting server..");
 		}
-		ev.preventDefault();
+		if(ev) ev.preventDefault();
 	};
 	
 	me.stop = function(ev) {
 		if(me.status !== "STOPPED") {
-			me.serverAction("/api/server/stop", "Stopping server..");
+			me.serverAction(me.url + "stop", "Stopping server..");
 		}
-		ev.preventDefault();
+		if(ev) ev.preventDefault();
 	};
 	
 	me.restart = function(ev) {
-		me.serverAction("/api/server/restart", "Restarting server..");
-		ev.preventDefault();
+		me.serverAction(me.url + "restart", "Restarting server..");
+		if(ev) ev.preventDefault();
 	};
+	
+	me.check = function(ev) {
+        me.serverAction(me.url + "status", "Checking server status..");
+        if(ev) ev.preventDefault();
+    };
+    
+    me.disable = function() {
+        me.buttons.start.hide();
+        me.buttons.stop.hide();
+        me.buttons.restart.hide();
+    };  
 	
 	me.serverAction = function(url, message) {
 		if( ! me.watingForResponse ) {
@@ -92,12 +104,13 @@ morpheus.components.Lifecycle = function() {
 	me.buttons.stop    .click(me.stop);
 	
 	// Check server status
-	me.statusElement.html("Checking server status..");
-	setTimeout(function() {
-		$.get("/api/server/status", function(data) {
-			me.setStatus(data.current_status);
-		}, "json");
-	},0);
+	if(me.url) {
+	    me.check();
+	} else {
+	    // No server connected
+	    me.disable();
+        me.statusElement.html("N/A");
+	}
 	
 	//
 	// PUBLIC INTERFACE

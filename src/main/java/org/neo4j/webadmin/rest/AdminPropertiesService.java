@@ -101,7 +101,8 @@ public class AdminPropertiesService
         if ( value == null )
         {
             return addHeaders(
-                    Response.ok( "", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+                    Response.ok( "undefined",
+                            JsonRenderers.DEFAULT.getMediaType() ) ).build();
         }
 
         return addHeaders(

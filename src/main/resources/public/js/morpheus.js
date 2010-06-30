@@ -13,13 +13,14 @@ $.require( "js/vend/jquery.bbq.js" );
 
 $.require( "js/morpheus.ui.js" );
 $.require( "js/morpheus.event.js" );
+$.require( "js/morpheus.neo4j.js" );
 
 $.require( "components.js" );
 
 /**
  * Morpheus core
  */
-var morpheus = ( function( $ )
+var morpheus = ( function( $, undefined )
 {
 
     var me = morpheus || {};
@@ -43,9 +44,6 @@ var morpheus = ( function( $ )
         if ( me.initiated === false )
         {
             me.initiated = true;
-
-            $( window ).bind( "hashchange", me.hashchange );
-
             me.loadComponents();
         }
     };
@@ -56,7 +54,7 @@ var morpheus = ( function( $ )
     me.loadComponents = function( cb )
     {
         me.pendingComponents = me.api.componentList.length;
-
+        
         for ( var i = 0, l = me.api.componentList.length; i < l; i++ )
         {
 
@@ -112,40 +110,19 @@ var morpheus = ( function( $ )
         morpheus.event.trigger( "morpheus.init" );
     };
 
-    /**
-     * Called whenever the url hash changes.
-     */
-    me.hashchange = function( event )
-    {
-
-        var serverUrl = $.bbq.getState( "as" );
-        if ( typeof ( serverUrl ) === "undefined" )
-        {
-            $.bbq.pushState(
-            {
-                p : me.DEFAULT_ADMIN_SERVER
-            } );
-        }
-        else
-        {
-
-        }
-
-    };
-
     me.property = function( key, value, cb )
     {
-        console.log( key, value, cb, typeof ( value ) );
         if ( typeof ( value ) === "function" )
         {
             if ( typeof ( me.propertyCache[key] ) === "undefined" )
             {
-                $.getJSON( me.PROPERTIES_URL + key, ( function( key, cb )
+                $.get( me.PROPERTIES_URL + key, ( function( key, cb )
                 {
                     return function( data )
                     {
-                        me.propertyCache[key] = data;
-                        cb( key, data );
+                        var value = data === "undefined" ? undefined : JSON.parse(data);
+                        me.propertyCache[key] = value;
+                        cb( key, value );
                     };
                 } )( key, value ) );
             }
@@ -159,16 +136,17 @@ var morpheus = ( function( $ )
             $.post( me.PROPERTIES_URL + key,
             {
                 value : JSON.stringify( value )
-            }, ( function( cb )
+            }, ( function( cb, key, value )
             {
                 return function()
                 {
                     if ( typeof ( cb ) === "function" )
                     {
+                        me.propertyCache[key] = value;
                         cb();
                     }
                 };
-            } )( cb ) );
+            } )( cb, key, value ) );
         }
     };
 
