@@ -31,7 +31,7 @@ morpheus.components.Lifecycle = function( server, template )
         {
             me.serverAction( me.url + "start", "Starting server.." );
         }
-        if ( ev ) ev.preventDefault();
+        if ( ev && ev.preventDefault ) ev.preventDefault();
     };
 
     me.stop = function( ev )
@@ -51,8 +51,19 @@ morpheus.components.Lifecycle = function( server, template )
 
     me.check = function( ev )
     {
-        me.serverAction( me.url + "status", "Checking server status..", "GET" );
-        if ( ev ) ev.preventDefault();
+        if ( me.url )
+        {
+            me.enable()
+            me.serverAction( me.url + "status", me.statusElement.html(), "GET" );
+        }
+        else
+        {
+            // No server connected
+            me.disable();
+            me.statusElement.html( "N/A" );
+        }
+        
+        if ( ev && ev.preventDefault ) ev.preventDefault();
     };
 
     me.disable = function()
@@ -62,6 +73,13 @@ morpheus.components.Lifecycle = function( server, template )
         me.buttons.restart.hide();
     };
 
+    me.enable = function() {
+        me.buttons.start.show();
+        me.buttons.stop.show();
+        me.buttons.restart.show();
+        
+    };
+    
     me.serverAction = function( url, message, type )
     {
         var type = type || "POST";
@@ -139,17 +157,8 @@ morpheus.components.Lifecycle = function( server, template )
     me.buttons.restart.click( me.restart );
     me.buttons.stop.click( me.stop );
 
-    // Check server status
-    if ( me.url )
-    {
-        me.check();
-    }
-    else
-    {
-        // No server connected
-        me.disable();
-        me.statusElement.html( "N/A" );
-    }
+    // Check server status at regular intervals
+    me.check();
 
     //
     // PUBLIC INTERFACE
@@ -157,7 +166,11 @@ morpheus.components.Lifecycle = function( server, template )
 
     me.api =
     {
-        init : me.init,
+        init      : me.init,
+        check     : me.check,
+        stop      : me.stop,
+        start     : me.start,
+        restart   : me.restart,
         getWidget : me.getWidget
     };
 

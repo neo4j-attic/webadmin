@@ -13,6 +13,8 @@ morpheus.components.overview = (function($, undefined) {
 	me.initiated = false;
 	me.servers   = false;
 	
+	me.serverInstances = [];
+	
 	me.init = function() {
 	    
 	    if( me.servers !== false ) {
@@ -29,15 +31,27 @@ morpheus.components.overview = (function($, undefined) {
 	
 	me.initServers = function(servers) {
 	    if( me.initiated === false ) {
-	        // Wait until system is initiated to make sure all components are on-board
+	        // Wait until system is initiated to make sure all components are
+            // on-board
 	        me.servers = servers;
 	        return;
 	    }
 	    
 	    for(var i = 0, l=servers.length; i < l; i++ ) {
-	        me.ui.serverList.append( morpheus.components.Lifecycle(servers[i], "components/morpheus.overview/templates/server.tp").getWidget() );
+	        var server = morpheus.components.Lifecycle(servers[i], "components/morpheus.overview/templates/server.tp");
+	        me.serverInstances.push(server);
+	        me.ui.serverList.append( server.getWidget() );
 	    }
 	};
+	
+	me.pageShown = function() {
+	   
+	    // Refresh server status
+	    for(var i = 0, l=me.serverInstances.length; i < l; i++ ) {
+	        me.serverInstances[i].check();
+	    }
+	    
+	}; 
 	
 	//
 	// CONSTRUCT
@@ -63,7 +77,8 @@ morpheus.components.overview = (function($, undefined) {
 	
 	me.api = {
 			init : me.init,
-			getPage : me.getPage
+			getPage : me.getPage,
+			pageShown : me.pageShown
 	};
 	
 	return me.api;
@@ -75,6 +90,15 @@ morpheus.components.overview = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.overview",morpheus.components.overview);
-morpheus.ui.mainmenu.addItem("Overview","morpheus.overview");
+morpheus.ui.mainmenu.add("Overview","morpheus.overview");
 
 morpheus.event.bind("morpheus.init", morpheus.components.overview.init );
+morpheus.event.bind("morpheus.ui.page.changed", function(ev) {
+    // Remove the current server from state if the overview page is shown (since
+    // it shows several servers at a time).
+    if(ev.data === "morpheus.overview") {
+        $.bbq.removeState("s");
+        morpheus.components.overview.pageShown();
+    }
+} );
+

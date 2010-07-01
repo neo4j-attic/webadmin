@@ -1,6 +1,8 @@
 <div class="mor_lifecycle">
-	<span class="mor_lifecycle_status">fetching status..</span> 
-	<a class="mor_lifecycle_start disabled" href="#">Start</a> - 
-	<a class="mor_lifecycle_restart disabled" href="#">Restart</a> - 
-	<a class="mor_lifecycle_stop disabled" href="#">Stop</a>
+	<div class="mor_lifecycle_status small">Fetching status..</div>
+	<div class="mor_lifecycle_actions small">
+		<a class="mor_lifecycle_start disabled" href="#">Start</a> - 
+		<a class="mor_lifecycle_restart disabled" href="#">Restart</a> - 
+		<a class="mor_lifecycle_stop disabled" href="#">Stop</a>
+	</div>
 </div>

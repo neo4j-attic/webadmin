@@ -38,7 +38,7 @@ morpheus.ui = ( function( $ )
 
         me.api.mainmenu.init();
 
-        $( window ).trigger( "hashchange" );
+        me.showPage($.bbq.getState( "p" ));
 
     };
 
@@ -84,6 +84,8 @@ morpheus.ui = ( function( $ )
             me.currentPage = key;
             me.pages[key].element.show();
             me.api.mainmenu.setCurrentPage( key );
+            
+            morpheus.event.trigger("morpheus.ui.page.changed", key);
         }
     };
 
@@ -116,7 +118,7 @@ morpheus.ui = ( function( $ )
 // MAIN MENU
 //
 
-morpheus.ui.mainmenu = ( function( $ )
+morpheus.ui.mainmenu = ( function( $, undefined )
 {
 
     var me = {};
@@ -130,14 +132,17 @@ morpheus.ui.mainmenu = ( function( $ )
 
     me.currentPage = null;
     me.menuItems = [];
+    
+    me.sets = { root : { hidden:false } };
 
     me.init = function()
     {
         me.container = $( "#mor_mainmenu" );
 
         me.container.setTemplateURL( "templates/mainmenu.tp" );
-
         me.render();
+        
+        $( window ).bind( "hashchange", me.hashchange );
 
         me.initiated = true;
     };
@@ -147,23 +152,40 @@ morpheus.ui.mainmenu = ( function( $ )
      */
     me.render = function()
     {
+        var item, items = [];
+        for( var key in me.menuItems ) {
+            item = me.menuItems[key];
+            if( me.sets[item.set].hidden === false ) {
+                items.push(item);
+            }
+        }
+        
         me.container.processTemplate(
         {
-            items : me.menuItems
-        } );
+            items : items,
+            urlAppend : me.getExtraUrlParams()
+        });
     };
 
     /**
      * Add a new menu item
      */
-    me.addItem = function( name, page, data )
+    me.addItem = function( name, page, data, set, urlExtra )
     {
         var data = data || {};
+        var set = set || "root";
+
+        if( me.sets[set] === undefined ) {
+            me.sets[set] = { hidden : true };
+        }
+        
         me.menuItems.push(
         {
             name : name,
             page : page,
-            data : data
+            data : data,
+            set  : set,
+            urlAppend : ""
         } );
 
         if ( me.initiated )
@@ -195,7 +217,64 @@ morpheus.ui.mainmenu = ( function( $ )
             me.render();
         }
     };
+    
+    me.update = function( name, update ) {
+      
+        for(var key in me.menuItems) {
+            if(me.menuItems[key].name === name) {
+                
+                for(var param in update) {
+                    me.menuItems[key][param] = update[param];
+                }
+                
+            }
+        }
+        
+        me.render();
+        
+    };
 
+    me.getSetClass = function(set) {
+        return "menuset-" + set;
+    };
+    
+    me.showSet = function(set) {
+        if( me.sets[set] === undefined ) {
+            me.sets[set] = { hidden : false };
+        }
+        
+        me.sets[set].hidden = false;
+        me.render();
+    };
+    
+    me.hideSet = function(set) {
+        if( me.sets[set] === undefined ) {
+            me.sets[set] = { hidden : false };
+        }
+        
+        me.sets[set].hidden = true;
+        me.render();
+    };
+    
+    me.hashchange = function(ev) {
+      
+        me.render();
+        
+    };
+    
+    /**
+     * Get a string of all url hash parameters, except the page one.
+     * This is appended to the end of all menu links each time the hash changes.
+     */
+    me.getExtraUrlParams= function() {
+      
+        var data = $.deparam.fragment();
+        delete(data.p);
+        
+        return "&" + $.param.fragment("", data).substring(1); 
+        
+    };
+    
     //
     // PUBLIC API
     //
@@ -203,8 +282,29 @@ morpheus.ui.mainmenu = ( function( $ )
     me.api =
     {
         init : me.init,
-        addItem : me.addItem,
-        setCurrentPage : me.setCurrentPage
+        
+        /**
+         * Add a new menu item.
+         * 
+         * @param [string] name
+         * @param [string] page is the page id string for the page to show when clicked
+         * @param data is optional data to send to the page when showing it
+         * @param [string] set is an optional set the button should belong to, sets can shown/hidden
+         */
+        add : me.addItem,
+        
+        /**
+         * Update a menu item
+         * 
+         * @param [string] name of the menu item to update
+         * @param [object] is a dictionary with keys corresponding to the parameters of the add method
+         */
+        update : me.update,
+        
+        setCurrentPage : me.setCurrentPage,
+        
+        hideSet : me.hideSet,
+        showSet : me.showSet
     };
 
     return me.api;
