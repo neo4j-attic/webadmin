@@ -2,8 +2,8 @@
  * Style for Morpheus Neo4j administration.
  */ 
 
-body, #morpheus { width:100%; height:100%; background:#ebebeb; padding:0;margin:0; font-family:"Lucida Sans","Trebuchet MS",sans-serif; }
- 
+body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:"Lucida Sans","Trebuchet MS",sans-serif; }
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
@@ -21,3 +21,18 @@ body, #morpheus { width:100%; height:100%; background:#ebebeb; padding:0;margin:
 
 /* GENERICS */
 .disabled { color: #666; }
+.break { clear:both; }
+.small { font-size:.8em; font-weight:light; color: #444; } 
+
+/* 
+   COMPONENTS   
+*/
+
+/* Overview */
+
+.mor_overview_server-list { list-style:none; margin:0; padding:0; }
+.mor_overview_server { width: 300px;  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5; }
+
+.mor_overview_server img { float:left; border:1px solid #d5d5d5; padding:3px; }
+
+.mor_overview_server_info { float:left; padding: 0 0 0 6px; } 

@@ -1,5 +1,4 @@
 <div class="mor_lifecycle">
-	<span class="mor_lifecycle_server-name">Server</span> - 
 	<span class="mor_lifecycle_status">fetching status..</span> 
 	<a class="mor_lifecycle_start disabled" href="#">Start</a> - 
 	<a class="mor_lifecycle_restart disabled" href="#">Restart</a> - 

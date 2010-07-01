@@ -42,4 +42,4 @@ morpheus.components.data = (function() {
 //
 
 morpheus.ui.addPage("morpheus.data",morpheus.components.data);
-morpheus.ui.mainmenu.addItem("Data","morpheus.data");
+//morpheus.ui.mainmenu.addItem("Data","morpheus.data");

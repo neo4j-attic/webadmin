@@ -4,7 +4,7 @@ morpheus.provide( "morpheus.neo4jHandler" );
 /**
  * Contains resources required to connect to a running neo4j instance.
  */
-morpheus.neo4j = function( adminUrl, restUrl, jmxUrl )
+morpheus.neo4j = function( data )
 {
 
     var me = {};
@@ -13,20 +13,13 @@ morpheus.neo4j = function( adminUrl, restUrl, jmxUrl )
     // PRIVATE
     //
  
-    // Allow instantiation from object
-    if( typeof(adminUrl) === "object" ) {
-        me.urls = {
-                admin : adminUrl['admin'] || "",
-                rest  : adminUrl['rest']  || "",
-                jmx   : adminUrl['jmx']   || ""
-          };
-    } else {
-        me.urls = {
-                admin : adminUrl || "",
-                rest  : restUrl  || "",
-                jmx   : jmxUrl   || ""
-          };
-    }
+    me.domain = data.domain || "unknown";
+    
+    me.urls = {
+        admin : data.urls.admin || "",
+        rest  : data.urls.rest  || "",
+        jmx   : data.urls.jmx   || ""
+    };
     
     //
     // CONSTRUCT
@@ -40,10 +33,11 @@ morpheus.neo4j = function( adminUrl, restUrl, jmxUrl )
 
     me.api = {
             toJSON : function() {
-                return me.urls;
+                return {urls:me.urls, domain:me.domain};
             },
             
-            urls : me.urls
+            urls : me.urls,
+            domain : me.domain
     };
 
     return me.api;
@@ -60,12 +54,12 @@ morpheus.neo4jHandler = (function(undefined) {
     
     me.DEFAULT_ADMIN_URL = "/admin/server/";
     
-    me.servers = [];
+    me.servers = false;
     
     me.init = function() {
         
         // Fetch available neo4j servers
-        morpheus.prop("neo4j-servers",me.serversLoaded);
+        morpheus.prop("neo4j-servers", me.serversLoaded );
         
     };
     
@@ -80,23 +74,29 @@ morpheus.neo4jHandler = (function(undefined) {
                 url : me.DEFAULT_ADMIN_URL + "status",
                 success : function() {
                     // There is a local server running, start chatting
-                    var serv = morpheus.neo4j( me.DEFAULT_ADMIN_URL )
+                    var serv = morpheus.neo4j( { urls: {admin : me.DEFAULT_ADMIN_URL }, domain:document.domain } )
                 
                     me.servers = [serv];
+                    morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
                     
-                    morpheus.prop("neo4j-servers",[serv]);
+                    // Save this 'til next time..
+                    morpheus.prop("neo4j-servers",me.servers);
                 },
                 failure : function() {
+                    // No local server running :(
                     morpheus.prop("neo4j-servers",[]);
+                    morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
                 }
             })
         } else {
          
             // Load available servers
-            
+            me.servers = [];
             for(var i = 0, l = servers.length; i < l ; i++) {
                 me.servers.push( morpheus.neo4j(servers[i]) );
             }
+            
+            morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
             
         }
         
@@ -107,7 +107,10 @@ morpheus.neo4jHandler = (function(undefined) {
     //
 
     me.api = {
-            init: me.init
+            init: me.init,
+            
+            loaded  : function() { return (me.servers === false); },
+            servers : function() { return me.servers; }
     };
 
     return me.api;

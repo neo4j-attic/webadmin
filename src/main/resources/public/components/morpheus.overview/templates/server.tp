@@ -1,0 +1,12 @@
+<li class="mor_overview_server">
+	<img class="mor_overview_server_icon" src="img/neo_icon_black.png" />
+	<div class="mor_overview_server_info">
+		<div class="mor_overview_server_name">{ $T.domain } <span class="mor_lifecycle_status small">Fetching status..</span></div>
+		<div class="mor_overview_server_lifecycle">
+			<a class="mor_lifecycle_start disabled" href="#">Start</a> - 
+			<a class="mor_lifecycle_restart disabled" href="#">Restart</a> - 
+			<a class="mor_lifecycle_stop disabled" href="#">Stop</a>
+		</div>
+	</div>
+	<div class="break"></div>
+</li>
