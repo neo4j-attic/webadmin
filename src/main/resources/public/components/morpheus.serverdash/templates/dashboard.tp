@@ -1,5 +1,5 @@
 <div class="mor_page_leftcol">
-	<h2 class="mor_serverdash_servername"></h2>
+	<h1 class="mor_serverdash_servername"></h1>
 	
 	<div class="mor_serverdash_serverlife_wrap coolbox">
 		<div>Lifecycle</div>

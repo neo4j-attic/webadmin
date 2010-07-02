@@ -10,25 +10,85 @@ morpheus.components.serverconfig = (function($, undefined) {
     
     me.basePage = $("<div></div>");
     me.ui = {};
-    me.initiated = false;
     
-    me.uiLoaded = false;
+    me.uiLoaded  = false;
+    me.server = null;
+    me.serverConfig = null;
     
-    me.init = function() {
-        
-        me.initiated = true;
-        
-    };
+    me.visible = false;
     
     me.getPage = function() {
         return me.basePage;
     };
     
-    me.pageShown = function() {
-        if( me.uiLoaded === false ) {
-            me.basePage.setTemplateURL("components/morpheus.serverconfig/templates/index.tp");
-            me.basePage.processTemplate();
+    me.pageChanged = function(ev) {
+        
+        if(ev.data === "morpheus.server.config") {
+            
+            me.visible = true;
+            
+            if( me.uiLoaded === false ) {
+                me.basePage.setTemplateURL("components/morpheus.serverconfig/templates/index.tp");
+            }
+            
+            // If configuration has not been loaded for the current server
+            if( me.server !== null && me.serverConfig === null ) {
+                
+                me.loadConfig();
+                
+            }
+            
+        } else {
+            me.visible = false;
         }
+    };
+    
+    me.serverChanged = function(ev) {
+        
+        me.serverConfig = null;
+        me.server = ev.data.server;
+        
+        // If the config page is currently visible, load config stuff
+        if( me.visible === true ) {
+            me.loadConfig();
+        }
+        
+    };
+    
+    me.loadConfig = function() {
+        
+        if(me.server !== null ) {
+            
+            me.server.admin.get("config", function(data) {
+                
+                me.serverConfig = data;
+                
+                var config = [], advanced_config = [];
+                
+                for( var index in data ) {
+                    if(data[index].type === "DB_CREATION_PROPERTY") {
+                        advanced_config.push(data[index]);
+                    } else {
+                        config.push(data[index]);
+                    }
+                }
+                
+                me.basePage.processTemplate({
+                    config : config,
+                    advanced_config : advanced_config,
+                    server : me.server
+                });
+                
+            }, function() {
+                // Server unreachable
+                me.basePage.processTemplate({
+                    config : [],
+                    server : false
+                });
+            });
+            
+        }
+        
     };
     
     //
@@ -40,9 +100,9 @@ morpheus.components.serverconfig = (function($, undefined) {
     //
     
     me.api = {
-            init : me.init,
             getPage : me.getPage,
-            pageShown : me.pageShown
+            pageChanged : me.pageChanged,
+            serverChanged : me.serverChanged
     };
     
     return me.api;
@@ -56,10 +116,5 @@ morpheus.components.serverconfig = (function($, undefined) {
 morpheus.ui.addPage("morpheus.server.config",morpheus.components.serverconfig);
 morpheus.ui.mainmenu.add("Configuration","morpheus.server.config", null, "server");
 
-morpheus.event.bind("morpheus.init", morpheus.components.serverconfig.init );
-
-morpheus.event.bind("morpheus.ui.page.changed", function(ev) {
-    if(ev.data === "morpheus.server.config") {
-        morpheus.components.serverconfig.pageShown();
-    }
-} );
+morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.serverconfig.pageChanged);
+morpheus.event.bind("morpheus.server.changed",  morpheus.components.serverconfig.serverChanged);

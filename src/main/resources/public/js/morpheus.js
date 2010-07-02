@@ -150,6 +150,45 @@ var morpheus = ( function( $, undefined )
         }
     };
 
+    // AJAX WRAPPERS
+    
+    me.get = function(url, data, success, failure) {
+        return me.ajax("GET", url, data, success, failure);
+    };
+    
+    me.post = function(url, data, success, failure) {
+        return me.ajax("POST", url, data, success, failure);
+    };
+    
+    me.put = function(url, data, success, failure) {
+        return me.ajax("PUT", url, data, success, failure);
+    };
+    
+    me.delete = function(url, data, success, failure) {
+        return me.ajax("DELETE", url, data, success, failure);
+    };
+    
+    me.ajax = function(method, url, data, success, failure) {
+        if(typeof(data) === "function") {
+            failure = success;
+            success = data;
+            data = {};
+        }
+        
+        setTimeout((function(method, url, data, success, failure){
+            return function() {$.ajax(
+                {
+                    url : url,
+                    type : method,
+                    data : data,
+                    success : success,
+                    failure : failure,
+                    dataType : "json"
+                }
+            );};
+        })(method, url, data, success, failure), 0);
+    };
+    
     //
     // PUBLIC INTERFACE
     //
@@ -178,7 +217,13 @@ var morpheus = ( function( $, undefined )
          *            value was passed (used to get a parameter value), or with
          *            only the key if a value was passed and successfully set.
          */
-        prop : me.property
+        prop : me.property,
+        
+        get : me.get,
+        put : me.put,
+        post : me.post,
+        delete : me.delete,
+        ajax : me.ajax
     };
 
     return me.api;

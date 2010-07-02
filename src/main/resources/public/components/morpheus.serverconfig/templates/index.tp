@@ -1,1 +1,27 @@
-<h1>Server configuration</h1>
+<div class="mor_page_leftcol">
+	<h1>Server configuration</h1>
+	<table>
+		<tbody>
+			{#foreach $T.config as item}
+			<tr>
+				<td>{$T.item.display_name}</td>
+				<td><input type="text" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
+			</tr>
+			{#/for} 
+		</tbody>
+	</table>
+</div>
+<div class="mor_page_rightcol">
+	<h2>Advanced settings</h2>
+	<p class="warning small">These settings are defined at the time a database is created. Changing these means the server has to create a new database, and then copy all nodes and relations from the old one, one by one. That may take a very long time, and error-proof results are NOT guaranteed.</p>
+	<table>
+		<tbody>
+			{#foreach $T.advanced_config as item}
+			<tr>
+				<td>{$T.item.display_name}</td>
+				<td><input type="text" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
+			</tr>
+			{#/for} 
+		</tbody>
+	</table>
+</div>

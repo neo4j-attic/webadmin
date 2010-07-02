@@ -21,6 +21,17 @@ morpheus.neo4j = function( data )
         jmx   : data.urls.jmx   || ""
     };
     
+    // Remote API
+    
+    me.rest = {};
+    me.admin = {
+            get    : function(resource, data, success, failure) { return morpheus.get(    me.urls.admin + resource, data, success, failure ); },
+            post   : function(resource, data, success, failure) { return morpheus.post(   me.urls.admin + resource, data, success, failure ); },
+            put    : function(resource, data, success, failure) { return morpheus.put(    me.urls.admin + resource, data, success, failure ); },
+            delete : function(resource, data, success, failure) { return morpheus.delete( me.urls.admin + resource, data, success, failure ); }
+    };
+    me.jmx = {};
+    
     //
     // CONSTRUCT
     //
@@ -37,7 +48,10 @@ morpheus.neo4j = function( data )
             },
             
             urls : me.urls,
-            domain : me.domain
+            domain : me.domain,
+            admin : me.admin,
+            rest : me.rest,
+            jmx : me.jmx
     };
 
     return me.api;
@@ -128,19 +142,22 @@ morpheus.neo4jHandler = (function(undefined) {
     
     me.setServer = function(serverName) {
       
-        me.currentServer = me.getServer(serverName);
-        if( me.currentServer === null ) {
-            
-            // Hide server-related menu items
-            morpheus.ui.mainmenu.hideSet("server");
-            morpheus.event.trigger("morpheus.server.changed", { server:null });
-            
-        } else {
-            
-            // Show server-related menu items
-            morpheus.ui.mainmenu.showSet("server");
-            morpheus.event.trigger("morpheus.server.changed", { server:me.currentServer });
-            
+        if( me.currentServer !== me.getServer(serverName)) {
+        
+            me.currentServer = me.getServer(serverName);
+            if( me.currentServer === null ) {
+                
+                // Hide server-related menu items
+                morpheus.ui.mainmenu.hideSet("server");
+                morpheus.event.trigger("morpheus.server.changed", { server:null });
+                
+            } else {
+                
+                // Show server-related menu items
+                morpheus.ui.mainmenu.showSet("server");
+                morpheus.event.trigger("morpheus.server.changed", { server:me.currentServer });
+                
+            }
         }
        
     };

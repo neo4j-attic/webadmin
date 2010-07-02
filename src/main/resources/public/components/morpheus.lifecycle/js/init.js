@@ -18,7 +18,7 @@ morpheus.components.Lifecycle = function( server, template )
 
     me.status = "UNKOWN";
     me.watingForResponse = false;
-    me.url = server ? server.urls.admin : false;
+    me.server = server ? server : false;
 
     me.getWidget = function()
     {
@@ -29,7 +29,7 @@ morpheus.components.Lifecycle = function( server, template )
     {
         if ( me.status !== "RUNNING" )
         {
-            me.serverAction( me.url + "start", "Starting server.." );
+            me.serverAction( "start", "Starting server.." );
         }
         if ( ev && ev.preventDefault ) ev.preventDefault();
     };
@@ -38,23 +38,23 @@ morpheus.components.Lifecycle = function( server, template )
     {
         if ( me.status !== "STOPPED" )
         {
-            me.serverAction( me.url + "stop", "Stopping server.." );
+            me.serverAction( "stop", "Stopping server.." );
         }
         if ( ev ) ev.preventDefault();
     };
 
     me.restart = function( ev )
     {
-        me.serverAction( me.url + "restart", "Restarting server.." );
+        me.serverAction( "restart", "Restarting server.." );
         if ( ev ) ev.preventDefault();
     };
 
     me.check = function( ev )
     {
-        if ( me.url )
+        if ( me.server )
         {
             me.enable()
-            me.serverAction( me.url + "status", me.statusElement.html(), "GET" );
+            me.serverAction( "status", me.statusElement.html(), "GET" );
         }
         else
         {
@@ -80,7 +80,7 @@ morpheus.components.Lifecycle = function( server, template )
         
     };
     
-    me.serverAction = function( url, message, type )
+    me.serverAction = function( resource, message, type )
     {
         var type = type || "POST";
         if ( !me.watingForResponse )
@@ -89,25 +89,16 @@ morpheus.components.Lifecycle = function( server, template )
             me.watingForResponse = true;
 
             // Allow UI update
-            setTimeout( function()
-            {
-                $.ajax(
-                {
-                    url : url,
-                    success : function( data )
-                    {
+            var method = (type === "POST") ? me.server.admin.post : me.server.admin.get;
+            method( resource,
+                    function( data ) {
                         me.watingForResponse = false;
                         me.setStatus( data.current_status );
-                    },
-                    failure : function()
-                    {
+                    }, 
+                    function() {
                         me.watingForResponse = false;
                         me.setStatus( "Connection error" );
-                    },
-                    dataType : "json",
-                    type : type
-                } );
-            }, 0 );
+                    });
         }
     };
 
