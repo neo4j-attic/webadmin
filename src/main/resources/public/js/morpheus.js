@@ -164,7 +164,7 @@ var morpheus = ( function( $, undefined )
         return me.ajax("PUT", url, data, success, failure);
     };
     
-    me.delete = function(url, data, success, failure) {
+    me.del = function(url, data, success, failure) {
         return me.ajax("DELETE", url, data, success, failure);
     };
     
@@ -176,13 +176,21 @@ var morpheus = ( function( $, undefined )
         }
         
         setTimeout((function(method, url, data, success, failure){
-            return function() {$.ajax(
+            return function() {
+                $.ajax(
                 {
                     url : url,
                     type : method,
                     data : data,
                     success : success,
-                    failure : failure,
+                    error : function(req) {
+                        if( req.status === 200 ) {
+                            // This happens when the server returns an empty response.
+                            success(null);
+                        } else {
+                            failure(req);
+                        }
+                    },
                     dataType : "json"
                 }
             );};

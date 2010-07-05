@@ -35,7 +35,7 @@ public class AdminPropertiesService
 {
 
     /**
-     * Get directory to store settings.
+     * Get settings file, creating one if it does not exist.
      * 
      * @return
      * @throws IOException
@@ -142,6 +142,7 @@ public class AdminPropertiesService
         {
             out = new FileOutputStream( getPropertiesFile() );
             properties.store( out, "--Changed via admin gui--" );
+            out.close();
         }
         catch ( FileNotFoundException e )
         {

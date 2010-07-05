@@ -25,10 +25,10 @@ morpheus.neo4j = function( data )
     
     me.rest = {};
     me.admin = {
-            get    : function(resource, data, success, failure) { return morpheus.get(    me.urls.admin + resource, data, success, failure ); },
-            post   : function(resource, data, success, failure) { return morpheus.post(   me.urls.admin + resource, data, success, failure ); },
-            put    : function(resource, data, success, failure) { return morpheus.put(    me.urls.admin + resource, data, success, failure ); },
-            delete : function(resource, data, success, failure) { return morpheus.delete( me.urls.admin + resource, data, success, failure ); }
+            get  : function(resource, data, success, failure) { return morpheus.get(  me.urls.admin + resource, data, success, failure ); },
+            post : function(resource, data, success, failure) { return morpheus.post( me.urls.admin + resource, data, success, failure ); },
+            put  : function(resource, data, success, failure) { return morpheus.put(  me.urls.admin + resource, data, success, failure ); },
+            del  : function(resource, data, success, failure) { return morpheus.del(  me.urls.admin + resource, data, success, failure ); }
     };
     me.jmx = {};
     

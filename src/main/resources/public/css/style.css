@@ -11,6 +11,18 @@ h4 { font-size:0.9em; }
 h5 { font-size:0.8em; }
 h6 { font-size:0.7em; }
 
+/* GENERICS */
+
+.disabled { color: #666; }
+.break { clear:both; }
+.small { font-size:.8em; font-weight:light; color: #444; } 
+.coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
+
+.warning { padding: 6px 10px; background:#EB7775; border:1px solid #d5d5d5; }
+.info { padding: 6px 10px; background:#FAF68C; border:1px solid #d5d5d5; }
+
+.uncommitted { background:#A1D46A; }
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
@@ -21,20 +33,10 @@ h6 { font-size:0.7em; }
 #mor_footer { width:100%; height:31px; background:url(../img/footer_bg.png) repeat-x;  }
 
 #mor_mainmenu { margin:0; list-style:none; padding: 24px 0 0 0; }
-#mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 2px 4px; }
+#mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 4px 8px 2px; }
 #mor_mainmenu a { color:#ebebeb; text-decoration:none; }
 #mor_mainmenu li.current { background:#ebebeb; }
 #mor_mainmenu li.current a { color:#474f52; font-weight:bold; }
-
-/* GENERICS */
-
-.disabled { color: #666; }
-.break { clear:both; }
-.small { font-size:.8em; font-weight:light; color: #444; } 
-.coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
-
-.warning { padding: 6px 10px; background:#EB7775; border:1px solid #d5d5d5; }
-.info { padding: 6px 10px; background:#FAF68C; border:1px solid #d5d5d5; }
 
 /* 
    PAGE STUFF

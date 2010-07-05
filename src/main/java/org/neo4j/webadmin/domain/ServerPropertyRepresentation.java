@@ -37,7 +37,8 @@ public class ServerPropertyRepresentation implements Representation
     // CONSTRUCTORS
     //
 
-    public ServerPropertyRepresentation( String key, String value, PropertyType type )
+    public ServerPropertyRepresentation( String key, String value,
+            PropertyType type )
     {
         this( key, key, value, type );
     }
@@ -65,4 +66,40 @@ public class ServerPropertyRepresentation implements Representation
         return map;
     }
 
+    /**
+     * Check if a given string is an okay value for this property.
+     * 
+     * TODO: Write actual implementation of this :)
+     * 
+     * @param value
+     * @return
+     */
+    public boolean isValidValue( String value )
+    {
+        return true;
+    }
+
+    public PropertyType getType()
+    {
+        return type;
+    }
+
+    public String getKey()
+    {
+        return key;
+    }
+
+    //
+    // SETTERS
+    //
+
+    public void setValue( String value )
+    {
+        this.value = value;
+    }
+
+    public void setDisplayName( String name )
+    {
+        this.displayName = name;
+    }
 }

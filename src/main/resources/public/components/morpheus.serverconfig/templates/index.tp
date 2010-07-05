@@ -13,14 +13,13 @@
 			{#foreach $T.config as item}
 			<tr>
 				<td>{$T.item.display_name}</td>
-				<td><input type="text" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
+				<td><input type="text" class="mor_config_value" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
 			</tr>
 			{#/for} 
 		</tbody>
 	</table>
-	<p class="info small">Changing settings is not currently supported, should be available tomorrow!</p>
-	<input type="button" disabled="true" id="mor_setting_save" value="Save changes" />
-	<h2>Advanced settings</h2>
+	<input type="button" id="mor_setting_save" disabled="disabled" value="Save changes" />
+	<!--h2>Advanced settings</h2>
 	<p class="warning small">These settings are defined at the time the database is created. Changing these means the server has to create a new database, and then copy all nodes and relations from the old one, one by one. That may take a very long time, and error-proof results are NOT guaranteed.</p>
 	<p class="info small">Fortunately, changing advanced settings is not currently supported. Phew.</p>
 	<table>
@@ -33,5 +32,5 @@
 			{#/for} 
 		</tbody>
 	</table>
-	<input type="button" id="mor_setting_advanced_save" disabled="true" value="Save changes" />
+	<input type="button" id="mor_setting_advanced_save" disabled="true" value="Save changes" /-->
 </div>
