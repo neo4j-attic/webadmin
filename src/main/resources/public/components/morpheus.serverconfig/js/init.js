@@ -90,11 +90,13 @@ morpheus.components.serverconfig = (function($, undefined) {
                 
                 me.config = {};
                 
-                var config = [], advanced_config = [];
+                var config = [], advanced_config = [], jvm_config = [];
                 
                 for( var index in data ) {
                     if(data[index].type === "DB_CREATION_PROPERTY") {
                         advanced_config.push(data[index]);
+                    } else if(data[index].type === "JVM_ARGUMENT") {
+                        jvm_config.push(data[index]);
                     } else {
                         config.push(data[index]);
                     }
@@ -104,6 +106,7 @@ morpheus.components.serverconfig = (function($, undefined) {
                 
                 me.basePage.processTemplate({
                     config : config,
+                    jvm_config: jvm_config,
                     advanced_config : advanced_config,
                     server : me.server
                 });

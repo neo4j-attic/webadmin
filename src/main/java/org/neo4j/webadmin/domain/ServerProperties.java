@@ -2,6 +2,7 @@ package org.neo4j.webadmin.domain;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,24 +52,29 @@ public class ServerProperties implements Representation
      */
     public static File getStartupConfigFile() throws IOException
     {
-        String userHome = System.getProperty( "user.home" );
-        if ( userHome == null )
+
+        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
+                "startup.properties" );
+
+        if ( !configFile.exists() && !configFile.createNewFile() )
         {
-            throw new IllegalStateException( "user.home==null" );
+            throw new IllegalStateException( configFile.toString() );
         }
 
-        // Make sure settings directory exists
-        File home = new File( userHome );
-        File settingsDirectory = new File( home, ".neo4jwebadmin" );
-        if ( !settingsDirectory.exists() )
-        {
-            if ( !settingsDirectory.mkdir() )
-            {
-                throw new IllegalStateException( settingsDirectory.toString() );
-            }
-        }
+        return configFile;
+    }
 
-        File configFile = new File( settingsDirectory, "startup.properties" );
+    /**
+     * Get file that stores JVM startup arguments.
+     * 
+     * @return
+     * @throws IOException
+     */
+    public static File getJVMArgsFile() throws IOException
+    {
+
+        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
+                "jvmargs" );
 
         if ( !configFile.exists() && !configFile.createNewFile() )
         {
@@ -89,12 +95,12 @@ public class ServerProperties implements Representation
 
         // JVM ARGS
 
-        // properties.add( new ServerPropertyRepresentation(
-        // "jvm.garbagecollector", "Garbage collector",
-        // "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT ) );
-        //
-        // properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
-        // "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
+        properties.add( new ServerPropertyRepresentation(
+                "jvm.garbagecollector", "Garbage collector",
+                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT ) );
+
+        properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
+                "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
 
         // CONFIG FILE ARGS
 
@@ -227,6 +233,9 @@ public class ServerProperties implements Representation
                             + "'." );
         }
 
+        // Update the value in property object
+        prop.setValue( value );
+
         switch ( prop.getType() )
         {
         case CONFIG_PROPERTY:
@@ -236,10 +245,8 @@ public class ServerProperties implements Representation
         default:
             startupConfig.put( key, value );
             saveProperties( startupConfig, getStartupConfigFile() );
+            generateJvmArgs();
         }
-
-        // Update the value in property object
-        prop.setValue( value );
     }
 
     /**
@@ -272,6 +279,33 @@ public class ServerProperties implements Representation
     {
         FileOutputStream out = new FileOutputStream( file );
         prop.store( out, "--Changed via admin gui--" );
+        out.close();
+    }
+
+    /**
+     * Update the file with extra args passed to the JVM to match the currently
+     * set startup args.
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    protected void generateJvmArgs() throws FileNotFoundException, IOException
+    {
+        // TODO: Check for presence of config/wrapper.conf. If present, update
+        // that file according to that format.
+        FileOutputStream out = new FileOutputStream( getJVMArgsFile() );
+        StringBuilder args = new StringBuilder();
+
+        for ( ServerPropertyRepresentation prop : properties )
+        {
+            if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
+            {
+                args.append( prop.getValue() );
+                args.append( " " );
+            }
+        }
+
+        out.write( args.toString().getBytes() );
         out.close();
     }
 }

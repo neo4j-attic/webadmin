@@ -1,4 +1,11 @@
 #!/bin/sh
 # Simple script for running a maven project from the terminal
 
-env MAVEN_OPTS=-Xmx512M mvn --settings neo4j-repo.xml compile exec:java $*
+if [ -f neo4j-rest-db/jvmargs ]
+then
+	EXTRA_JVM_ARGS=`cat neo4j-rest-db/jvmargs`
+else 
+	EXTRA_JVM_ARGS="-Xmx512M"
+fi
+
+env MAVEN_OPTS=$EXTRA_JVM_ARGS mvn --settings neo4j-repo.xml compile exec:java $*

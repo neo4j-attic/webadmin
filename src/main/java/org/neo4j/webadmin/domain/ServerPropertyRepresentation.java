@@ -89,6 +89,11 @@ public class ServerPropertyRepresentation implements Representation
         return key;
     }
 
+    public String getValue()
+    {
+        return value;
+    }
+
     //
     // SETTERS
     //
