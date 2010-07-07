@@ -389,7 +389,7 @@ public class ServerProperties implements Representation
             }
 
             in.close();
-            
+
             // Add admin-defined jvm arguments
             int argNo = 1;
             for ( ServerPropertyRepresentation prop : properties )

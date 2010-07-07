@@ -9,6 +9,7 @@ import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.PlatformUtils;
+import org.tanukisoftware.wrapper.WrapperManager;
 
 /**
  * Triggers a full restart of the enclosing JVM upon instantiation.
@@ -26,23 +27,8 @@ public class JvmRestartTask implements Runnable
 
             if ( PlatformUtils.isProductionMode() )
             {
-
                 // PRODUCTION MODE
-                if ( PlatformUtils.useBatScripts() )
-                {
-                    Runtime.getRuntime().exec( "bin\neo4j-webadmin.bat restart" );
-                }
-                else
-                {
-                    System.out.println( "JVM Reboot. Shutting down server." );
-                    Process result = Runtime.getRuntime().exec(
-                            "bin/neo4j-webadmin restart" );
-                    int val;
-                    while ( ( val = result.getInputStream().read() ) != -1 )
-                    {
-                        System.out.print( (char) val );
-                    }
-                }
+                WrapperManager.restart();
             }
             else
             {

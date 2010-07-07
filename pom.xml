@@ -80,6 +80,10 @@
 											<name>wrapper.logfile</name>
 											<value>logs/wrapper.log</value>
 										</property>
+										<property>
+											<name>wrapper.restart.reload_configuration</name>
+											<value>TRUE</value>
+										</property>
 									</configuration>
 								</generatorConfiguration>
 							</generatorConfigurations>
@@ -149,6 +153,13 @@
 			<version>1.4.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>tanukisoft</groupId>
+			<artifactId>wrapper</artifactId>
+			<version>3.2.3</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>
