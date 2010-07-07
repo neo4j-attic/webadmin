@@ -31,6 +31,7 @@
 					<mainClass>org.neo4j.webadmin.Main</mainClass>
 					<arguments>
 						<argument>-webRoot=src/main/resources/public</argument>
+						<argument>-development=true</argument>
 					</arguments>
 				</configuration>
 			</plugin>

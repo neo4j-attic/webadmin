@@ -8,4 +8,4 @@ else
 	EXTRA_JVM_ARGS="-Xmx512M"
 fi
 
-env MAVEN_OPTS=$EXTRA_JVM_ARGS mvn --settings neo4j-repo.xml compile exec:java $*
+env MAVEN_OPTS="$EXTRA_JVM_ARGS" mvn --settings neo4j-repo.xml compile exec:java $*

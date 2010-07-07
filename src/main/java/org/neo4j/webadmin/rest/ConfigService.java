@@ -33,6 +33,8 @@ import org.neo4j.webadmin.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
+import org.neo4j.webadmin.task.DeferredTask;
+import org.neo4j.webadmin.task.JvmRestartTask;
 
 /**
  * A web service that exposes various configuration settings for a running neo4j
@@ -179,6 +181,7 @@ public class ConfigService
             else if ( hasJvmChanges )
             {
                 // Client has changed settings that require a JVM restart
+                DeferredTask.defer( new JvmRestartTask(), 10 );
             }
             else
             {

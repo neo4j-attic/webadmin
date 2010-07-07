@@ -14,16 +14,21 @@ import org.neo4j.webadmin.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
 
 /**
- * Static, hard-coded definition of what properties are available.
+ * Allows changing two out of the threee available types of properties that
+ * affects a neo4j instance. Ie. the properties file and the JVM arguments. This
+ * may allow for changing db creation settings in the future, but currently
+ * throws operationnotsupportedexception if you try.
  * 
- * This implementation is a bit hacky right now, and will probably change quite
- * a bit.
+ * This class also contains a hard-coded definition of what settings are to be
+ * available to the client, and how to handle them.
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
 public class ServerProperties implements Representation
 {
+
+    public static final String SERVICE_CONFIG_PATH = "../conf/wrapper.conf";
 
     /**
      * Get database config file, creating one if it does not exist.
@@ -65,12 +70,12 @@ public class ServerProperties implements Representation
     }
 
     /**
-     * Get file that stores JVM startup arguments.
+     * Get file that stores JVM startup arguments during development.
      * 
      * @return
      * @throws IOException
      */
-    public static File getJVMArgsFile() throws IOException
+    public static File getDevelopmentJvmArgsFile() throws IOException
     {
 
         File configFile = new File( new File( DatabaseLocator.DB_PATH ),
@@ -84,10 +89,48 @@ public class ServerProperties implements Representation
         return configFile;
     }
 
-    /*
-     * TODO: I've only added a few test properties here, still need
-     * to add fetching of actual values from running db etc, as well
-     * as adding all the values we'd like to modify here.
+    /**
+     * Get the service configuration file, this is where JVM args are changed
+     * when running in production. This method is slightly different from the
+     * above, it does not try to create a file if one does not exist. It assumes
+     * that if there is no service config file, the environment we're running in
+     * is not the production service env.
+     * 
+     * @return the service file or null if no file exists.
+     * @throws IOException
+     */
+    public static File getServiceConfigFile() throws IOException
+    {
+
+        File configFile = new File( SERVICE_CONFIG_PATH );
+
+        if ( !configFile.exists() )
+        {
+            return null;
+        }
+
+        return configFile;
+    }
+
+    /**
+     * This is the hard-coded settings that will be exposed to the user.
+     * 
+     * Each property should have a unique key, for neo4j config file and server
+     * creation properties this should be the property name. For JVM args it is
+     * irrellevant, but it is recommended to name them something like
+     * "jvm.myproperty".
+     * 
+     * A note on how values are fetched:
+     * 
+     * For CONFIG_PROPERTY properties, the value will be fetched from the neo4j
+     * config file. If no property with a matching key is found, the default
+     * value you specify will be used.
+     * 
+     * For JVM_ARGUMENT and DB_CREATION_PROPERTY the value will be fetched from
+     * a separate config file, startup.properties in the neo4j database folder.
+     * If no property with a matching key is found, the default value you
+     * specify will be used.
+     * 
      */
     protected static ArrayList<ServerPropertyRepresentation> createProperties()
     {
@@ -101,6 +144,9 @@ public class ServerProperties implements Representation
 
         properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
                 "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
+
+        properties.add( new ServerPropertyRepresentation( "web.root",
+                "Web root", "-DwebRoot=../public", PropertyType.JVM_ARGUMENT ) );
 
         // CONFIG FILE ARGS
 
@@ -245,7 +291,7 @@ public class ServerProperties implements Representation
         default:
             startupConfig.put( key, value );
             saveProperties( startupConfig, getStartupConfigFile() );
-            generateJvmArgs();
+            writeJvmArgs();
         }
     }
 
@@ -289,23 +335,93 @@ public class ServerProperties implements Representation
      * @throws IOException
      * @throws FileNotFoundException
      */
-    protected void generateJvmArgs() throws FileNotFoundException, IOException
+    protected synchronized void writeJvmArgs() throws FileNotFoundException,
+            IOException
     {
-        // TODO: Check for presence of config/wrapper.conf. If present, update
-        // that file according to that format.
-        FileOutputStream out = new FileOutputStream( getJVMArgsFile() );
-        StringBuilder args = new StringBuilder();
+        File serviceConfig = getServiceConfigFile();
 
-        for ( ServerPropertyRepresentation prop : properties )
+        if ( serviceConfig != null )
         {
-            if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
-            {
-                args.append( prop.getValue() );
-                args.append( " " );
-            }
-        }
+            // PRODUCTION MODE
 
-        out.write( args.toString().getBytes() );
-        out.close();
+            // This is loaded here, since it is fairly likely the user, if she
+            // has made changes, has made them while the JVM has been running.
+            // This way we don't risk undoing any of her changes (except for
+            // changes to JVM args).
+            Properties serviceProperties = new Properties();
+            FileInputStream in = new FileInputStream( serviceConfig );
+            serviceProperties.load( in );
+            in.close();
+
+            // Find config-file defined JVM args
+            String strKey;
+            ArrayList<Object> toRemove = new ArrayList<Object>();
+            for ( Object objKey : serviceProperties.keySet() )
+            {
+                strKey = (String) objKey;
+                if ( strKey.startsWith( "wrapper.java.additional" ) )
+                {
+                    toRemove.add( objKey );
+                }
+            }
+
+            // Remove config-file args, not done above because there is no
+            // iterator available for Properties. This avoids
+            // concurrent modification problems.
+            for ( Object key : toRemove )
+            {
+                serviceProperties.remove( key );
+            }
+
+            // Add admin-defined jvm arguments
+            int argNo = 1;
+            for ( ServerPropertyRepresentation prop : properties )
+            {
+                if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
+                {
+                    // Heap memory size is a special case parameter in the
+                    // service config file.
+                    if ( prop.getValue().toLowerCase().startsWith( "-xmx" ) )
+                    {
+                        serviceProperties.put( "wrapper.java.maxmemory",
+                                prop.getValue().substring( 4 ) );
+                    }
+                    else if ( prop.getValue().toLowerCase().startsWith( "-xms" ) )
+                    {
+                        serviceProperties.put( "wrapper.java.minmemory",
+                                prop.getValue().substring( 4 ) );
+                    }
+                    else
+                    {
+                        // Write normal JVM arg
+                        serviceProperties.put( "wrapper.java.additional."
+                                               + ( argNo++ ), prop.getValue() );
+                    }
+                }
+            }
+
+            // Write changes to disc
+            saveProperties( serviceProperties, serviceConfig );
+
+        }
+        else
+        {
+            // DEVELOPMENT MODE
+            FileOutputStream out = new FileOutputStream(
+                    getDevelopmentJvmArgsFile() );
+            StringBuilder args = new StringBuilder();
+
+            for ( ServerPropertyRepresentation prop : properties )
+            {
+                if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
+                {
+                    args.append( prop.getValue() );
+                    args.append( " " );
+                }
+            }
+
+            out.write( args.toString().getBytes() );
+            out.close();
+        }
     }
 }

@@ -72,6 +72,21 @@ morpheus.components.serverconfig = (function($, undefined) {
     };
     
     /**
+     * Set all changes committed.
+     */
+    me.allChangesCommitted = function(args) {
+        var args = args || {};
+        for( var key in me.config) {
+            if( me.config[key].newValue !== undefined && ( !args.excludeType || me.config[key].type !== args.excludeType)) {
+                me.config[key].value = me.config[key].newValue;
+                delete(me.config[key].newValue);
+            }
+        }
+        
+        $(".mor_config_value",me.basePage).removeClass('uncommitted');
+    };
+    
+    /**
      * Enable save button if there are uncommitted changes. Disable it otherwise.
      */
     me.updateSaveButtonState = function() {
@@ -160,7 +175,8 @@ morpheus.components.serverconfig = (function($, undefined) {
             $("input",me.basePage).attr('disabled', 'disabled');
             
             me.server.admin.post("config",{value:JSON.stringify(changed)},function(data){
-                $("input",me.basePage).removeClass('uncommitted');
+                me.allChangesCommitted({excludeType:"DB_CREATION_PROPERTY"});
+                
                 $("input",me.basePage).removeAttr('disabled');
                 me.updateSaveButtonState();
             }, function(ev){
