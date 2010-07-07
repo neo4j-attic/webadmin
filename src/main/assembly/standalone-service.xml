@@ -68,6 +68,7 @@
             <outputDirectory>public</outputDirectory>
             <includes>
                 <include>*</include>
+                <include>**/**</include>
             </includes>
         </fileSet>
         

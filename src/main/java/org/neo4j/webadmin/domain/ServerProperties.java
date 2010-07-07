@@ -1,9 +1,11 @@
 package org.neo4j.webadmin.domain;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -27,8 +29,9 @@ import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
  */
 public class ServerProperties implements Representation
 {
-
-    public static final String SERVICE_CONFIG_PATH = "../conf/wrapper.conf";
+    public static final String SERVICE_CONFIG_PATH = "./conf/wrapper.conf";
+    public static final String FALLBACK_MAX_HEAP = "512M";
+    public static final String FALLBACK_MIN_HEAP = "512M";
 
     /**
      * Get database config file, creating one if it does not exist.
@@ -124,7 +127,7 @@ public class ServerProperties implements Representation
      * 
      * For CONFIG_PROPERTY properties, the value will be fetched from the neo4j
      * config file. If no property with a matching key is found, the default
-     * value you specify will be used.
+     * value you speciSizefy will be used.
      * 
      * For JVM_ARGUMENT and DB_CREATION_PROPERTY the value will be fetched from
      * a separate config file, startup.properties in the neo4j database folder.
@@ -344,35 +347,49 @@ public class ServerProperties implements Representation
         {
             // PRODUCTION MODE
 
-            // This is loaded here, since it is fairly likely the user, if she
-            // has made changes, has made them while the JVM has been running.
-            // This way we don't risk undoing any of her changes (except for
-            // changes to JVM args).
-            Properties serviceProperties = new Properties();
-            FileInputStream in = new FileInputStream( serviceConfig );
-            serviceProperties.load( in );
-            in.close();
+            // So uh. This is not very nice.
+            // The reason for this is to a) conserve config file formatting and
+            // b) config file is not a "normal" properties file, and escaping
+            // special
+            // chars etc. that is done by Properties will screw up running the
+            // service. So we have to do some manual labour here.
 
-            // Find config-file defined JVM args
-            String strKey;
-            ArrayList<Object> toRemove = new ArrayList<Object>();
-            for ( Object objKey : serviceProperties.keySet() )
+            // This will contain the end-result config file
+            StringBuilder configFileBuilder = new StringBuilder();
+
+            // We need to keep track of heap settings, b/c they are for some
+            // reason not passed as pure command-line arguments in the config
+            // file
+            String maxHeap = null, minHeap = null;
+
+            // Read the whole config file, discard any pre-existing JVM args
+            FileReader in = new FileReader( serviceConfig );
+            BufferedReader br = new BufferedReader( in );
+            String line;
+            while ( ( line = br.readLine() ) != null )
             {
-                strKey = (String) objKey;
-                if ( strKey.startsWith( "wrapper.java.additional" ) )
+                if ( !line.startsWith( "wrapper.java.additional" ) )
                 {
-                    toRemove.add( objKey );
+
+                    if ( line.startsWith( "wrapper.java.maxmemory" ) )
+                    {
+                        maxHeap = line.substring( 23 );
+                    }
+                    else if ( line.startsWith( "wrapper.java.initmemory" ) )
+                    {
+                        minHeap = line.substring( 23 );
+                    }
+                    else
+                    {
+
+                        configFileBuilder.append( line );
+                        configFileBuilder.append( "\n" );
+                    }
                 }
             }
 
-            // Remove config-file args, not done above because there is no
-            // iterator available for Properties. This avoids
-            // concurrent modification problems.
-            for ( Object key : toRemove )
-            {
-                serviceProperties.remove( key );
-            }
-
+            in.close();
+            
             // Add admin-defined jvm arguments
             int argNo = 1;
             for ( ServerPropertyRepresentation prop : properties )
@@ -383,26 +400,37 @@ public class ServerProperties implements Representation
                     // service config file.
                     if ( prop.getValue().toLowerCase().startsWith( "-xmx" ) )
                     {
-                        serviceProperties.put( "wrapper.java.maxmemory",
-                                prop.getValue().substring( 4 ) );
+                        maxHeap = prop.getValue().substring( 4 );
                     }
                     else if ( prop.getValue().toLowerCase().startsWith( "-xms" ) )
                     {
-                        serviceProperties.put( "wrapper.java.minmemory",
-                                prop.getValue().substring( 4 ) );
+                        minHeap = prop.getValue().substring( 4 );
                     }
                     else
                     {
                         // Write normal JVM arg
-                        serviceProperties.put( "wrapper.java.additional."
-                                               + ( argNo++ ), prop.getValue() );
+                        configFileBuilder.append( "wrapper.java.additional." );
+                        configFileBuilder.append( ( argNo++ ) );
+                        configFileBuilder.append( "=" );
+                        configFileBuilder.append( prop.getValue() );
+                        configFileBuilder.append( "\n" );
                     }
                 }
             }
 
-            // Write changes to disc
-            saveProperties( serviceProperties, serviceConfig );
+            // Handle heap special cases
+            maxHeap = ( maxHeap == null ) ? FALLBACK_MAX_HEAP : maxHeap;
+            minHeap = ( minHeap == null ) ? FALLBACK_MIN_HEAP : minHeap;
 
+            configFileBuilder.append( "wrapper.java.maxmemory=" + maxHeap
+                                      + "\n" );
+            configFileBuilder.append( "wrapper.java.initmemory=" + minHeap
+                                      + "\n" );
+
+            // Write changes to file.
+            FileOutputStream out = new FileOutputStream( serviceConfig );
+            out.write( configFileBuilder.toString().getBytes() );
+            out.close();
         }
         else
         {

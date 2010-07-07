@@ -1,6 +1,5 @@
 package org.neo4j.webadmin.task;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,8 +19,6 @@ import org.neo4j.webadmin.PlatformUtils;
 public class JvmRestartTask implements Runnable
 {
 
-    File serviceBinFolder = new File( "../bin" );
-
     public synchronized void run()
     {
         try
@@ -29,14 +26,22 @@ public class JvmRestartTask implements Runnable
 
             if ( PlatformUtils.isProductionMode() )
             {
+
                 // PRODUCTION MODE
                 if ( PlatformUtils.useBatScripts() )
                 {
-                    Runtime.getRuntime().exec( "neo4j-webadmin.bat restart" );
+                    Runtime.getRuntime().exec( "bin\neo4j-webadmin.bat restart" );
                 }
                 else
                 {
-                    Runtime.getRuntime().exec( "./neo4j-webadmin restart" );
+                    System.out.println( "JVM Reboot. Shutting down server." );
+                    Process result = Runtime.getRuntime().exec(
+                            "bin/neo4j-webadmin restart" );
+                    int val;
+                    while ( ( val = result.getInputStream().read() ) != -1 )
+                    {
+                        System.out.print( (char) val );
+                    }
                 }
             }
             else
