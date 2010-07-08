@@ -69,11 +69,11 @@ public class JmxService
         JmxDomainRepresentation domain = new JmxDomainRepresentation(
                 domainName );
 
-        for ( ObjectName objInstance : server.queryNames( null, null ) )
+        for ( Object objName : server.queryNames( null, null ) )
         {
-            if ( objInstance.toString().startsWith( domainName ) )
+            if ( objName.toString().startsWith( domainName ) )
             {
-                domain.addBean( objInstance );
+                domain.addBean( (ObjectName) objName );
             }
         }
 
@@ -97,12 +97,12 @@ public class JmxService
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
             ArrayList<Object> beans = new ArrayList<Object>();
-            for ( ObjectName objInstance : server.queryNames( new ObjectName(
+            for ( Object objName : server.queryNames( new ObjectName(
                     domainName + ":"
                             + URLDecoder.decode( objectName, WebUtils.UTF8 ) ),
                     null ) )
             {
-                beans.add( ( new JmxMBeanRepresentation( objInstance ) ).serialize() );
+                beans.add( ( new JmxMBeanRepresentation( (ObjectName) objName ) ).serialize() );
             }
 
             String entity = JsonHelper.createJsonFrom( beans );
@@ -143,10 +143,11 @@ public class JmxService
             for ( Object queryObj : queries )
             {
                 assert queryObj instanceof String;
-                for ( ObjectName objInstance : server.queryNames(
-                        new ObjectName( (String) queryObj ), null ) )
+                for ( Object objName : server.queryNames( new ObjectName(
+                        (String) queryObj ), null ) )
                 {
-                    beans.add( ( new JmxMBeanRepresentation( objInstance ) ).serialize() );
+                    beans.add( ( new JmxMBeanRepresentation(
+                            (ObjectName) objName ) ).serialize() );
                 }
             }
 

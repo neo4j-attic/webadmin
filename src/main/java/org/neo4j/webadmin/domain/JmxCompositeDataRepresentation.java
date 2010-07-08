@@ -27,12 +27,12 @@ public class JmxCompositeDataRepresentation implements Representation
         serialData.put( "description", data.getCompositeType().getDescription() );
 
         ArrayList<Object> values = new ArrayList<Object>();
-        for ( String key : data.getCompositeType().keySet() )
+        for ( Object key : data.getCompositeType().keySet() )
         {
             Map<String, Object> value = new HashMap<String, Object>();
             value.put( "name", key );
 
-            Object rawValue = data.get( key );
+            Object rawValue = data.get( (String) key );
             if ( rawValue instanceof CompositeData )
             {
                 value.put( "value", ( new JmxCompositeDataRepresentation(
