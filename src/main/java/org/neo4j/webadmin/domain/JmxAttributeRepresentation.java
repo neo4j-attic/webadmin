@@ -12,6 +12,7 @@ import javax.management.MBeanException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.RuntimeMBeanException;
 import javax.management.openmbean.CompositeData;
 
 import org.neo4j.rest.domain.Representation;
@@ -47,7 +48,12 @@ public class JmxAttributeRepresentation implements Representation
         {
             Object value = jmxServer.getAttribute( objectName,
                     attrInfo.getName() );
-            if ( value.getClass().isArray() )
+
+            if ( value == null )
+            {
+                data.put( "value", null );
+            }
+            else if ( value.getClass().isArray() )
             {
                 ArrayList<Object> values = new ArrayList<Object>();
                 for ( Object subValue : (Object[]) value )
@@ -87,6 +93,15 @@ public class JmxAttributeRepresentation implements Representation
             data.put( "value", "N/A" );
         }
         catch ( ReflectionException e )
+        {
+            e.printStackTrace();
+            data.put( "value", "N/A" );
+        }
+        catch ( RuntimeMBeanException e )
+        {
+            data.put( "value", "N/A" );
+        }
+        catch ( ClassCastException e )
         {
             e.printStackTrace();
             data.put( "value", "N/A" );

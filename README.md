@@ -1,9 +1,11 @@
 Morpheus - keeping track of Neo4j
 =================================
 
-This will be (it is not currently in a usable state) a stand-alone, 
+This is a stand-alone, 
 full feature Neo4j distribution that exposes a Neo4j database over 
 REST together with a web-based administrative interface for said database.
+
+It is currently in a very early stage, but new features are added on almost a daily basis.
 
 <img src="http://github.com/downloads/neo4j/webadmin/config-small.png" />
 

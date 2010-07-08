@@ -57,3 +57,12 @@ h6 { font-size:0.7em; }
 
 .mor_overview_server_name a { color: #333; font-weight:bold; font-size:1.2em; text-decoration:none; }
 .mor_overview_server_info { float:left; padding: 0 0 0 10px; } 
+
+/* JMX */
+
+.mor_jmx_list { margin:0; padding:0; list-style:none; font-size:70%; }
+
+.mor_jmx_list li h2 { margin: 6px 0; }
+.mor_jmx_list li ul { margin:0; list-style:none; padding: 0 0 0 5px;} 
+
+.mor_jmx_list li ul li { }
