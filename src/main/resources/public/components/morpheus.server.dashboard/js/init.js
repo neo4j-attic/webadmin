@@ -9,7 +9,7 @@ morpheus.components.serverdash = (function($, undefined) {
     //
 
     me.page = $( "<div></div>" );
-    me.template = "components/morpheus.serverdash/templates/dashboard.tp";
+    me.template = "components/morpheus.server.dashboard/templates/dashboard.tp";
     me.currentServer = null;
     
     me.ui = {};

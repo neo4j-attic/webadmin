@@ -1,4 +1,4 @@
-package org.neo4j.webadmin;
+package org.neo4j.webadmin.domain;
 
 /**
  * Thrown when trying to set a non-existant property.

@@ -12,7 +12,7 @@ morpheus.components.Lifecycle = function( server, template )
     // PRIVATE
     //
 
-    me.template = template || "components/morpheus.lifecycle/templates/widget.tp";
+    me.template = template || "components/morpheus.server.lifecycle/templates/widget.tp";
     
     me.element = false;
 
@@ -123,7 +123,7 @@ morpheus.components.Lifecycle = function( server, template )
             me.statusElement.html( "Stopped" );
         }
     };
-
+    
     //
     // CONSTRUCT
     //
@@ -150,7 +150,7 @@ morpheus.components.Lifecycle = function( server, template )
 
     // Check server status at regular intervals
     me.check();
-
+    
     //
     // PUBLIC INTERFACE
     //

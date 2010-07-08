@@ -12,7 +12,6 @@ import java.util.Properties;
 
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.Representation;
-import org.neo4j.webadmin.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
 
 /**

@@ -32,7 +32,7 @@ morpheus.components.serverconfig = (function($, undefined) {
             me.visible = true;
             
             if( me.uiLoaded === false ) {
-                me.basePage.setTemplateURL("components/morpheus.serverconfig/templates/index.tp");
+                me.basePage.setTemplateURL("components/morpheus.server.config/templates/index.tp");
             }
             
             // If configuration has not been loaded for the current server
