@@ -3,7 +3,7 @@ package org.neo4j.webadmin;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.neo4j.commons.commandline.Args;
+import org.neo4j.helpers.Args;
 import org.neo4j.rest.WebServer;
 import org.neo4j.rest.domain.DatabaseLocator;
 
