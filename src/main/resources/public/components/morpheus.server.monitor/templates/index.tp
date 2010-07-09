@@ -22,19 +22,12 @@
 		<table class="mor_jmx_table" cellspacing="0">
 			<tbody>
 				<tr>
-					<th>Attribute</th>
+					<th class="mor_jmx_table_name">Attribute</th>
 					<th>Value</th>
 				</tr>
+				{#param name=depth value=0}
 				{#foreach $T.bean.attributes as attribute}
-					<tr>
-						<td>
-							<h3>{$T.attribute.name}</h3>
-							<p class="description">{$T.attribute.description}</p>
-						</td>
-						<td>
-							{#include attribute root=$T.attribute}
-						</td>
-					</tr>
+					{#include attribute root=$T.attribute}
 				{#/for}
 			</tbody>
 		</table>
@@ -43,46 +36,31 @@
 {#/template MAIN}
 
 {#template attribute}
-	{#if $T.value === null}
-	<span class="mor_null-value">NULL</span>
+	{#if $T instanceof Array}
+		{#param name=depth value=$P.depth+1}
+		{#foreach $T as attribute}
+			{#include attribute root=$T.attribute}
+		{#/for}
+		{#param name=depth value=$P.depth-1}
 	{#else}
+		<tr>
+			<td class="mor_jmx_table_name" style="padding-left:{$P.depth * 8}px;">
+				<h3>{#if $T.name}{$T.name}{#else}{$T.type}{#/if}</h3>
+				<p class="description">{$T.description}</p>
+			</td>
+			<td style="padding-left:{$P.depth * 4}px;">
+				{#if $T.value === null}
+				<span class="mor_null-value">NULL</span>
+				{#/if}
+				{#if typeof($T.value) !== "object" }
+					{$T.value}
+				{#/if}
+			</td>
+		</tr>
 		{#if typeof($T.value) === "object" }
-			<table>
-				<tbody>
-					<tr>
-						<th>Sub-attribute</th>
-						<th>Value</th>
-					</tr>
-					{#foreach $T.value as subAttribute}
-						<tr>
-							<td>
-								{#if typeof($T.subAttribute) === "object"}
-									<h3>{$T.subAttribute.type}</h3>
-									<p class="description">{$T.subAttribute.description}</p>
-								{#/if}
-							</td>
-							<td>
-								{#if typeof($T.subAttribute) === "object"}
-									<table>
-										<tbody>
-											{#foreach $T.subAttribute.value as subSubAttribute}
-												<tr>
-													<td><h4>{$T.subSubAttribute.name}</h4></td>
-													<td>{$T.subSubAttribute.value}</td>
-												<tr>
-											{#/for}
-										</tbody>
-									</table>
-								{#else}
-									{$T.subAttribute.value}
-								{#/if}
-							</td>
-						</tr>
-					{#/for}
-				</tbody>
-			</table>
-		{#else }
-			{$T.value}
+		{#param name=depth value=$P.depth+1}
+		{#include attribute root=$T.value}
+		{#param name=depth value=$P.depth-1}
 		{#/if}
 	{#/if}
 {#/template attribute}

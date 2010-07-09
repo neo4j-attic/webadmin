@@ -31,6 +31,8 @@ public class JmxCompositeDataRepresentation implements Representation
         {
             Map<String, Object> value = new HashMap<String, Object>();
             value.put( "name", key );
+            value.put( "description", data.getCompositeType().getDescription(
+                    (String) key ) );
 
             Object rawValue = data.get( (String) key );
             if ( rawValue instanceof CompositeData )
