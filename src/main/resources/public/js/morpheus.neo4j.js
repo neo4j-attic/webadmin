@@ -18,7 +18,6 @@ morpheus.neo4j = function( data )
     me.urls = {
         admin : data.urls.admin || "",
         rest  : data.urls.rest  || "",
-        jmx   : data.urls.jmx   || ""
     };
     
     // Remote API
@@ -30,7 +29,6 @@ morpheus.neo4j = function( data )
             put  : function(resource, data, success, failure) { return morpheus.put(  me.urls.admin + resource, data, success, failure ); },
             del  : function(resource, data, success, failure) { return morpheus.del(  me.urls.admin + resource, data, success, failure ); }
     };
-    me.jmx = {};
     
     //
     // CONSTRUCT

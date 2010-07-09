@@ -128,7 +128,7 @@
 			<artifactId>neo4j-kernel</artifactId>
 			<version>1.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-rest</artifactId>
@@ -167,6 +167,13 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.tinkerpop</groupId>
+			<artifactId>gremlin</artifactId>
+			<version>0.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<distributionManagement>
