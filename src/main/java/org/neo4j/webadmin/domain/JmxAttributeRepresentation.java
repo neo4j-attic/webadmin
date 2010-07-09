@@ -56,6 +56,7 @@ public class JmxAttributeRepresentation implements Representation
             else if ( value.getClass().isArray() )
             {
                 ArrayList<Object> values = new ArrayList<Object>();
+
                 for ( Object subValue : (Object[]) value )
                 {
                     if ( subValue instanceof CompositeData )

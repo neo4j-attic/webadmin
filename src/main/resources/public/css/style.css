@@ -2,7 +2,7 @@
  * Style for Morpheus Neo4j administration.
  */ 
 
-body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:"Lucida Sans","Trebuchet MS",sans-serif; }
+body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:arial, sans-serif; }
 
 h1 { font-size:1.2em; }
 h2 { font-size:1.1em; }
@@ -23,6 +23,8 @@ h6 { font-size:0.7em; }
 
 .uncommitted { background:#A1D46A; }
 
+.small { font-size:90%; color:#555; }
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
@@ -41,7 +43,7 @@ h6 { font-size:0.7em; }
 /* 
    PAGE STUFF
                  */
-.mor_page_leftcol { width: 30%; float:left; }
+.mor_page_leftcol { width: 25%; float:left; }
 .mor_page_rightcol { width: 60%; float:left; padding: 0 0 0 20px; }
 
 
@@ -60,9 +62,16 @@ h6 { font-size:0.7em; }
 
 /* JMX */
 
-.mor_jmx_list { margin:0; padding:0; list-style:none; font-size:70%; }
-
+.mor_jmx_list { margin:0; padding:5px; list-style:none; font-size:70%; }
 .mor_jmx_list li h2 { margin: 6px 0; }
 .mor_jmx_list li ul { margin:0; list-style:none; padding: 0 0 0 5px;} 
-
 .mor_jmx_list li ul li { }
+
+.mor_jmx_table { border-spacing:0; table-layout:fixed; width:100%; }
+.mor_jmx_table table { table-layout:fixed; width:100%; }
+.mor_jmx_table  p.description { font-size:90%; color:#555; }
+
+.mor_jmx_table td, .mor_jmx_table th {vertical-align:top;}
+.mor_jmx_table h3 { margin: 2px 0; font-size:13px; }
+.mor_jmx_table h4 {margin: 2px 0;  font-size:12px;}
+.mor_jmx_table td, .mor_jmx_table th {margin: 2px 0; font-size:12px; border-bottom:1px solid #c5c5c5; }

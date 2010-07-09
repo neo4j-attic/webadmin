@@ -11,6 +11,7 @@ morpheus.components.server.monitor = (function($, undefined) {
     me.server = null;
     
     me.jmxData = null;
+    me.currentBean = null;
     
     me.visible = false;
     
@@ -19,9 +20,63 @@ morpheus.components.server.monitor = (function($, undefined) {
     //
     
     me.public = {
+            
             getPage :  function() {
                 return me.basePage;
             },
+            
+            /**
+             * Get bean data, given a bean name. This takes a callback since it
+             * is not for sure that data has been loaded yet.
+             * @param name is the bean name to find
+             * @param cb is a callback that will be called with an array of matching beans 
+             *        (usually just one, but could be several if you use wildcard markers in the name)
+             */
+            findBeans : function(name, cb) {
+                
+                var beanInfo = me.public.parseBeanName(name);
+                var domain = me.getDomain(beanInfo.domain);
+                
+                if( me.jmxData !== null && domain !== null ) {
+                    
+                    // It seems we have the data..
+                    for( var index in domain.beans ) {
+                        if( domain.beans[index].name === name ) {
+                            cb([domain.beans[index]]);
+                            return;
+                        }
+                        
+                    }
+                }
+                
+                // The requested bean is not available locally, check if there is a server connection
+                
+                if( me.server === null ) { // Nope
+                    cb([]);
+                    return;
+                }
+                    
+                
+                // Server available
+                me.server.admin.get("jmx/" + beanInfo.domain + "/" + beanInfo.name, (function(cb) {
+                    return function(data) {
+                        cb(data);
+                    };
+                })(cb));
+                
+            },
+            
+            /**
+             * Extract data from a bean name
+             */
+            parseBeanName : function(beanName) {
+                
+                var parts = beanName.split(":");
+                
+                return {domain:parts[0], name:parts[1]};
+                
+            },
+            
             pageChanged : function(ev) {
                 
                 if(ev.data === "morpheus.server.monitor") {
@@ -43,6 +98,7 @@ morpheus.components.server.monitor = (function($, undefined) {
                     me.visible = false;
                 }
             },
+            
             serverChanged : function(ev) {
                 
                 me.jmxData = null;
@@ -53,7 +109,13 @@ morpheus.components.server.monitor = (function($, undefined) {
                     me.loadJMXDomains(me.server);
                 }
                 
+            },
+            
+            init : function() {
+                $( window ).bind( "hashchange", me.hashchange );
+                me.hashchange();
             }
+            
     };
     
     // 
@@ -86,12 +148,8 @@ morpheus.components.server.monitor = (function($, undefined) {
                 // Make sure server hasn't changed
                 if( me.server === server ) {
                     me.jmxData = {};
-                    
-                    // Server unreachable
-                    me.basePage.processTemplate({
-                        jmx : {},
-                        server : false
-                    });
+
+                    me.render();
                 }
             });   
         }
@@ -116,10 +174,9 @@ morpheus.components.server.monitor = (function($, undefined) {
                         }
                     }
                     
-                    me.basePage.processTemplate({
-                        jmx : me.jmxData,
-                        server : me.server
-                    });
+                    // Trigger a re-load of the currently visible bean, if there is one.
+                    me.hashchange();
+                    me.render();
                     
                 }
                 
@@ -144,6 +201,53 @@ morpheus.components.server.monitor = (function($, undefined) {
         return null;
     };
     
+    /**
+     * Triggered when the URL hash state changes.
+     */
+    me.hashchange = function(ev) {
+        var beanName = $.bbq.getState( "jmxbean" );
+        
+        if( typeof(beanName) !== "undefined" ) {
+            
+            me.public.findBeans(beanName, function(beans) { 
+                
+                if(beans.length > 0) {
+                    me.currentBean = beans[0];
+                    me.render();
+                }
+                
+            });
+            
+        }
+    };
+    
+    me.render = function() {
+        
+        me.basePage.processTemplate({
+            jmx : (me.jmxData === null) ? [] : me.jmxData,
+            server : me.server,
+            bean : me.currentBean
+        });
+        
+    };
+    
+    //
+    // CONSTRUCT
+    //
+    
+    $('.mor_monitor_jmxbean_button').live('click', function(ev) {
+        
+        setTimeout((function(ev){
+            return function() {
+                $.bbq.pushState({
+                    jmxbean : $(ev.originalTarget).attr('data-bean')
+                });
+            };
+        })(ev));
+    
+        ev.preventDefault();
+    });
+    
     return me.public;
     
 })(jQuery);
@@ -155,5 +259,6 @@ morpheus.components.server.monitor = (function($, undefined) {
 morpheus.ui.addPage("morpheus.server.monitor",morpheus.components.server.monitor);
 morpheus.ui.mainmenu.add("Monitor","morpheus.server.monitor", null, "server");
 
+morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.monitor.pageChanged);
 morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.monitor.serverChanged);
