@@ -8,7 +8,7 @@ import org.neo4j.rest.WebServer;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
-import org.neo4j.webadmin.PlatformUtils;
+import org.neo4j.webadmin.utils.PlatformUtils;
 import org.tanukisoftware.wrapper.WrapperManager;
 
 /**

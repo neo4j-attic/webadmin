@@ -1,4 +1,4 @@
-package org.neo4j.webadmin;
+package org.neo4j.webadmin.utils;
 
 /**
  * Get info on the current platform we are running.

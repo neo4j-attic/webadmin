@@ -33,7 +33,7 @@ morpheus.components.server.monitor = (function($, undefined) {
              *        (usually just one, but could be several if you use wildcard markers in the name)
              */
             findBeans : function(name, cb) {
-                
+
                 var beanInfo = me.public.parseBeanName(name);
                 var domain = me.getDomain(beanInfo.domain);
                 
@@ -208,9 +208,7 @@ morpheus.components.server.monitor = (function($, undefined) {
         var beanName = $.bbq.getState( "jmxbean" );
         
         if( typeof(beanName) !== "undefined" ) {
-            
             me.public.findBeans(beanName, function(beans) { 
-                
                 if(beans.length > 0) {
                     me.currentBean = beans[0];
                     me.render();
@@ -240,10 +238,10 @@ morpheus.components.server.monitor = (function($, undefined) {
         setTimeout((function(ev){
             return function() {
                 $.bbq.pushState({
-                    jmxbean : $(ev.originalTarget).attr('data-bean')
+                    jmxbean : $('.bean-name',ev.target.parentNode).val()
                 });
             };
-        })(ev));
+        })(ev),0);
     
         ev.preventDefault();
     });

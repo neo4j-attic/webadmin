@@ -14,7 +14,7 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.neo4j.rest.domain.Representation;
-import org.neo4j.webadmin.JmxUtils;
+import org.neo4j.webadmin.utils.JmxUtils;
 
 @SuppressWarnings( "restriction" )
 public class JmxMBeanRepresentation implements Representation

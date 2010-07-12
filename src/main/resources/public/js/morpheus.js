@@ -230,7 +230,7 @@ var morpheus = ( function( $, undefined )
         get : me.get,
         put : me.put,
         post : me.post,
-        delete : me.delete,
+        del : me.del,
         ajax : me.ajax
     };
 

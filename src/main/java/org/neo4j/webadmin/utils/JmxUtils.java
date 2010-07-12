@@ -1,4 +1,4 @@
-package org.neo4j.webadmin;
+package org.neo4j.webadmin.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
