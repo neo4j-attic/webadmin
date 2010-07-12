@@ -4,6 +4,7 @@ import static org.neo4j.rest.domain.JsonHelper.jsonToMap;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
+import org.neo4j.webadmin.gremlin.GremlinSessions;
 
 /**
  * A web service that keeps track of client sessions and then passes control
@@ -66,12 +69,12 @@ public class GremlinService
 
             String sessionId = req.getSession( true ).getId();
 
-            // List<String> resultLines = GremlinWorkerPool.evaluate( sessionId,
-            // (String) args.get( "command" ) );
+            List<String> resultLines = GremlinSessions.getSession( sessionId ).evaluate(
+                    (String) args.get( "command" ) );
 
-            // String entity = JsonHelper.createJsonFrom( resultLines );
+            String entity = JsonHelper.createJsonFrom( resultLines );
 
-            return addHeaders( Response.ok( "[]" ) ).build();
+            return addHeaders( Response.ok( entity ) ).build();
         }
         catch ( IllegalArgumentException e )
         {

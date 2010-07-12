@@ -12,6 +12,8 @@ morpheus.components.server.gremlin = (function($, undefined) {
     
     me.visible = false;
     
+    me.consoleElement = null;
+    
     //
     // PUBLIC
     //
@@ -45,8 +47,30 @@ morpheus.components.server.gremlin = (function($, undefined) {
                 
                 // If the monitor page is currently visible, load jmx stuff
                 if( me.visible === true ) {
-                    
+                     
                 }
+                
+            },
+            
+            /**
+             * Send a gremlin command up to the server to be evaluated.
+             * 
+             * @param statement
+             *            is the statement string
+             * @param cb
+             *            (optional) callback that is called with the result
+             *            object. If this is not specified, the result will be
+             *            printed to the console.
+             */
+            evaluate : function(statement, cb) {
+                var cb = cb || me.evalCallback;
+                
+                console.log(me.server);
+                me.server.admin.post("gremlin/", {value:JSON.stringify({command:statement})}, (function(statement, cb) {
+                    return function(data) {
+                        cb(statement, data);
+                    };
+                })(statement, cb));
                 
             },
             
@@ -87,11 +111,42 @@ morpheus.components.server.gremlin = (function($, undefined) {
             server : me.server
         });
         
+        me.consoleElement   = $("#mor_gremlin_console");
+        me.consoleInputWrap = $("#mor_gremlin_console_input_wrap");
+        me.consoleInput     = $("#mor_gremlin_console_input");
+        me.consoleLineCount     = $(".mor_gremlin_linecount ");
+        
+    };
+    
+    /**
+     * Default callback for evaluated gremlin statements. Prints the result to
+     * the ui console.
+     */
+    me.evalCallback = function(originalStatement, data) {
+
+        me.consoleInputWrap.before($("<p>" + originalStatement + "</p>"));
+        for( var key in data ) {
+            me.consoleInputWrap.before($("<p> ==&gt;" + data[key] + "</p>"));
+            me.consoleLineCount.append($("<li></li>"));
+        }
+
+        me.consoleLineCount.append($("<li><p>&gt;</p></li>"));
+        
     };
     
     //
     // CONSTRUCT
     //
+    
+    /**
+     * Look for enter-key press on input field.
+     */
+    $("#mor_gremlin_console_input").live("keyup", function(ev) {
+        if( ev.keyCode === 13 ) {
+            me.public.evaluate(me.consoleInput.val());
+            me.consoleInput.val("");
+        }
+    });
     
     return me.public;
     

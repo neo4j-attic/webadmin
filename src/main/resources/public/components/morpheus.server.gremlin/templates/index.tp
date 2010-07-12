@@ -1,6 +1,13 @@
 {#template MAIN}
 	<div class="mor_page_leftcol">
 		<h1>Gremlin Console</h1>
-		
+	</div>
+	<div class="mor_page_rightcol">
+		<ol class="mor_gremlin_linecount">
+			<li><p>&gt;</p></li>
+		</ol>
+		<div id="mor_gremlin_console" class="mor_gremlin_console">
+			<p id="mor_gremlin_console_input_wrap"> <input type="text" id="mor_gremlin_console_input" /></p>
+		</div>
 	</div>
 {#/template MAIN}

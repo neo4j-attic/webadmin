@@ -75,3 +75,14 @@ h6 { font-size:0.7em; }
 .mor_jmx_table h3 { margin: 2px 0; font-size:13px; }
 .mor_jmx_table h4 {margin: 2px 0;  font-size:12px;}
 .mor_jmx_table td, .mor_jmx_table th {margin: 2px 0; font-size:12px; border-bottom:1px solid #c5c5c5; }
+
+/* Gremlin */
+
+.mor_gremlin_linecount { width: 10px; background: #333;  border-left: 20px solid black; float:left; margin:0; padding:0 0 385px 10px; font-weight:bold; color: #aaa; font-family: monospace; }
+.mor_gremlin_linecount li { margin:0px; padding:0px; }
+
+.mor_gremlin_console { width: 90%; background: #333; height: 400px; float:left; }
+
+.mor_gremlin_linecount li p, .mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
+
+.mor_gremlin_console p input { display:block; width: 100%; background:transparent; border:none; color:inherit; }
