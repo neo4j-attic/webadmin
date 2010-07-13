@@ -13,7 +13,7 @@ import com.tinkerpop.gremlin.GremlinEvaluator;
 public class GremlinFactory
 {
 
-    protected static boolean initiated = false;
+    protected volatile static boolean initiated = false;
 
     public static GremlinEvaluator createGremlinEvaluator()
     {
@@ -21,11 +21,11 @@ public class GremlinFactory
         return ge;
     }
 
-    protected void ensureInitiated()
+    protected synchronized void ensureInitiated()
     {
         if ( initiated == false )
         {
-
+            new GremlinGarbageCollector();
         }
     }
 }

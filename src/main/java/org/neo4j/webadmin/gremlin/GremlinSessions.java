@@ -1,5 +1,6 @@
 package org.neo4j.webadmin.gremlin;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,10 +19,29 @@ public class GremlinSessions
     // PUBLIC
     //
 
+    /**
+     * Gets a GremlinSesssion for a given sessionId, creating a GremlinSession
+     * if one does not exist.
+     */
     public static GremlinSession getSession( String sessionId )
     {
         ensureSessionExists( sessionId );
         return sessions.get( sessionId );
+    }
+
+    public static void destroySession( String sessionId )
+    {
+        sessions.remove( sessionId );
+    }
+
+    public static boolean hasSession( String sessionId )
+    {
+        return sessions.containsKey( sessionId );
+    }
+
+    public static Collection<String> getSessionIds()
+    {
+        return sessions.keySet();
     }
 
     //

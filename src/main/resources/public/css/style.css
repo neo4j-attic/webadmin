@@ -44,8 +44,8 @@ h6 { font-size:0.7em; }
    PAGE STUFF
                  */
 .mor_page_leftcol { width: 25%; float:left; }
-.mor_page_rightcol { width: 60%; float:left; padding: 0 0 0 20px; }
-
+.mor_page_rightcol { width: 70%; float:left; padding: 0 0 0 20px; }
+.mor_page_widecol { width: 100%; }
 
 /* 
    COMPONENTS   
@@ -78,11 +78,10 @@ h6 { font-size:0.7em; }
 
 /* Gremlin */
 
-.mor_gremlin_linecount { width: 10px; background: #333;  border-left: 20px solid black; float:left; margin:0; padding:0 0 385px 10px; font-weight:bold; color: #aaa; font-family: monospace; }
-.mor_gremlin_linecount li { margin:0px; padding:0px; }
+.mor_gremlin_console_wrap { border-left: 10px solid black;  background: #333; height:400px; overflow:auto;  }
 
 .mor_gremlin_console { width: 90%; background: #333; height: 400px; float:left; }
 
-.mor_gremlin_linecount li p, .mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
+.mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
 
-.mor_gremlin_console p input { display:block; width: 100%; background:transparent; border:none; color:inherit; }
+.mor_gremlin_console p input { display:block; width: 95%; float:left; background:transparent; border:none; color:inherit; font-size: inherit; font-family: inherit;  }
