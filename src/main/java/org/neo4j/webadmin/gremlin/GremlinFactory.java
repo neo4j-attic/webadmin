@@ -18,6 +18,11 @@ public class GremlinFactory
     public static GremlinEvaluator createGremlinEvaluator()
     {
         GremlinEvaluator ge = new GremlinEvaluator();
+
+        // Load the local database instance by default
+        ge.evaluate( "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'" );
+        ge.evaluate( "$_g := webadmin:loadLocalDb()" );
+
         return ge;
     }
 

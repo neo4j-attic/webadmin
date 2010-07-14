@@ -8,6 +8,6 @@
 		</div>
 	</div>
 	<p>Temporary guide:</p>
-	<p>Import webadmin functions: include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'</p>
-	<p>Load local database: $myVar := webadmin:loadLocalDb()</p>
+	<p>Local database is available as $_g by default.</p>
+	<p>To load local database again: webadmin:loadLocalDb()</p>
 {#/template MAIN}
