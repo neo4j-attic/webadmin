@@ -11,4 +11,5 @@ morpheus.componentList = [
         'morpheus.server.dashboard',
         'morpheus.server.monitor',
         'morpheus.server.gremlin',
-        'morpheus.server.config'];
+        'morpheus.server.config',
+        'morpheus.server.backup'];

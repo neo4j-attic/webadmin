@@ -46,7 +46,6 @@ morpheus.components.server.gremlin = (function($, undefined) {
             
             serverChanged : function(ev) {
                 
-                me.jmxData = null;
                 me.server = ev.data.server;
                 
                 if( me.visible === true ) {
@@ -77,8 +76,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
             },
             
             init : function() {
-                $( window ).bind( "hashchange", me.hashchange );
-                me.hashchange();
+
             },
             
             pushHistory : function(cmd) {
@@ -111,26 +109,6 @@ morpheus.components.server.gremlin = (function($, undefined) {
     // 
     // PRIVATE
     //
-    
-    /**
-     * Triggered when the URL hash state changes.
-     */
-    me.hashchange = function(ev) {
-        var beanName = $.bbq.getState( "jmxbean" );
-        
-        if( typeof(beanName) !== "undefined" ) {
-            
-            me.public.findBeans(beanName, function(beans) { 
-                
-                if(beans.length > 0) {
-                    me.currentBean = beans[0];
-                    me.render();
-                }
-                
-            });
-            
-        }
-    };
     
     me.render = function() {
         
@@ -200,6 +178,6 @@ morpheus.components.server.gremlin = (function($, undefined) {
 morpheus.ui.addPage("morpheus.server.gremlin",morpheus.components.server.gremlin);
 morpheus.ui.mainmenu.add("Gremlin","morpheus.server.gremlin", null, "server");
 
-morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.init);
+morpheus.event.bind("morpheus.init", morpheus.components.server.gremlin.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.gremlin.pageChanged);
 morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.gremlin.serverChanged);

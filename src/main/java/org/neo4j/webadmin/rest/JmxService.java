@@ -93,14 +93,14 @@ public class JmxService
         try
         {
 
-            System.out.println( URLDecoder.decode( objectName, WebUtils.UTF8 ) );
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
             ArrayList<Object> beans = new ArrayList<Object>();
-            for ( Object objName : server.queryNames( new ObjectName(
-                    domainName + ":"
-                            + URLDecoder.decode( objectName, WebUtils.UTF8 ) ),
-                    null ) )
+            for ( Object objName : server.queryNames(
+                    new ObjectName( domainName
+                                    + ":"
+                                    + URLDecoder.decode( objectName,
+                                            WebUtils.UTF8 ) ), null ) )
             {
                 beans.add( ( new JmxMBeanRepresentation( (ObjectName) objName ) ).serialize() );
             }
