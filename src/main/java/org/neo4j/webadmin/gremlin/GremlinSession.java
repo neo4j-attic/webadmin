@@ -42,26 +42,27 @@ public class GremlinSession
             this.lastTimeUsed = new Date();
             List<Object> resultLines = gremlin.evaluate( line );
 
-            // Make sure all lines are strings
+            
             List<String> outputLines = new ArrayList<String>();
-            for ( Object resultLine : resultLines )
-            {
-                outputLines.add( resultLine.toString() );
+            if( resultLines == null) {
+                outputLines.add("null");
+            } else {
+                // Make sure all lines are strings
+                for ( Object resultLine : resultLines )
+                {
+                    outputLines.add( resultLine.toString() );
+                }
             }
 
             return outputLines;
         }
         catch ( SyntaxException e )
         {
-            List<String> response = new ArrayList<String>();
-            response.add( e.getMessage() );
-            return response;
+            return exceptionToResultList(e);
         }
         catch ( EvaluationException e )
         {
-            List<String> response = new ArrayList<String>();
-            response.add( e.getMessage() );
-            return response;
+            return exceptionToResultList(e);
         }
     }
 
@@ -79,6 +80,22 @@ public class GremlinSession
     public long getIdleTime()
     {
         return ( new Date() ).getTime() - lastTimeUsed.getTime();
+    }
+    
+    //
+    // INTERNALS
+    //
+    
+    protected List<String> exceptionToResultList(Exception e) {
+        ArrayList<String> resultList = new ArrayList<String>();
+        
+        resultList.add(e.getMessage());
+        
+        for(StackTraceElement stackTraceElement : e.getStackTrace()) {
+            resultList.add(stackTraceElement.toString());
+        }
+        
+        return resultList;
     }
 
 }
