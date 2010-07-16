@@ -1,15 +1,11 @@
 package org.neo4j.webadmin.rest;
 
-import static org.neo4j.rest.domain.JsonHelper.jsonToMap;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,9 +16,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.BackupStatusRepresentation;
-import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.task.BackupFoundationTask;
+import org.neo4j.webadmin.task.BackupTask;
+import org.neo4j.webadmin.task.DeferredTask;
 
 /**
  * Lays the groundwork for online backups, allows triggering of backup jobs,
@@ -54,18 +51,6 @@ public class BackupService
 
         try
         {
-            // Is backup enabled?
-
-            BackupStatusRepresentation.Status status;
-            try
-            {
-                status = properties.get( "backup.enabled" ).equals( "true" ) ? BackupStatusRepresentation.Status.ENABLED
-                        : BackupStatusRepresentation.Status.DISABLED;
-            }
-            catch ( NoSuchPropertyException e )
-            {
-                status = BackupStatusRepresentation.Status.DISABLED;
-            }
 
             // Is there some sort of action running?
 
@@ -89,8 +74,28 @@ public class BackupService
                 /* NOP */
             }
 
+            try
+            {
+
+                if ( BackupTask.getInstance().isRunning() )
+                {
+                    currentAction = BackupStatusRepresentation.CurrentAction.BACKING_UP;
+                    actionStarted = BackupTask.getInstance().getStarted();
+                    actionEta = BackupTask.getInstance().getEta();
+                }
+                else if ( BackupTask.getInstance().needsFoundation() )
+                {
+                    currentAction = BackupStatusRepresentation.CurrentAction.WAITING_FOR_FOUNDATION;
+                }
+
+            }
+            catch ( IllegalStateException e )
+            {
+                /* NOP */
+            }
+
             BackupStatusRepresentation backupInfo = new BackupStatusRepresentation(
-                    status, currentAction, actionStarted, actionEta );
+                    currentAction, actionStarted, actionEta );
             String entity = JsonRenderers.DEFAULT.render( backupInfo );
 
             return addHeaders(
@@ -105,34 +110,41 @@ public class BackupService
     }
 
     @POST
-    @Path( "/backupfolder/create" )
+    @Path( "/trigger" )
     @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public Response formInitBackupFolder( @FormParam( "value" ) String data )
-    {
-        return initBackupFolder( data );
-    }
-
-    @POST
-    @Path( "/backupfolder/create" )
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_JSON )
-    public Response initBackupFolder( String data )
+    public Response triggerBackup()
     {
         try
         {
-            Map<String, Object> args = jsonToMap( data );
 
-            if ( !args.containsKey( "backup_folder" ) )
-            {
-                throw new IllegalArgumentException(
-                        "No backup folder specified." );
-            }
+            DeferredTask.defer( BackupTask.getInstance() );
+            return addHeaders( Response.ok() ).build();
 
-            return null;
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
+            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
+                    "An unexpected internal server error occurred.", e,
+                    JsonRenderers.DEFAULT );
+        }
+    }
+
+    @POST
+    @Path( "/triggerfoundation" )
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response triggerBackupFoundation()
+    {
+        try
+        {
+
+            DeferredTask.defer( BackupFoundationTask.getInstance() );
+            return addHeaders( Response.ok() ).build();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
             return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
                     "An unexpected internal server error occurred.", e,
                     JsonRenderers.DEFAULT );

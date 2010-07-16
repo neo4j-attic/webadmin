@@ -21,11 +21,31 @@ import org.neo4j.rest.domain.Representation;
 public class ServerPropertyRepresentation implements Representation
 {
 
+    /**
+     * The various types of properties that are available.
+     * 
+     * <ul>
+     * <li>CONFIG_PROPERTY is a setting that ends up in the neo4j properties
+     * file. Keys with this property type map directly to standard neo4j
+     * properties.</li>
+     * <li>JVM_ARGUMENT is a jvm command-line argument that will be passed
+     * directly to the JVM</li>
+     * <li>DB_CREATION_PROPERTY are properties that only apply when creating
+     * neo4j databases</li>
+     * <li>GENERAL_PROPERTY is any other property, it will not be magically
+     * applied anywhere, but is to be used as a general key-value storage for
+     * each neo4j server</li>
+     * </ul>
+     * 
+     * @author Jacob Hansson <jacob@voltvoodoo.com>
+     * 
+     */
     public enum PropertyType
     {
         CONFIG_PROPERTY,
         JVM_ARGUMENT,
-        DB_CREATION_PROPERTY
+        DB_CREATION_PROPERTY,
+        GENERAL_PROPERTY
     }
 
     protected String key;

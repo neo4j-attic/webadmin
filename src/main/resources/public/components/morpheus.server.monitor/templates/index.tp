@@ -7,7 +7,7 @@
 				<h2>{$T.domain.name}</h2>
 				<ul>
 					{#foreach $T.domain.beans as bean}
-					<li><a class="mor_monitor_jmxbean_button" href="#">{$T.bean.name}<input type="hidden" class="bean-name" value="{$T.bean.name}" /></a></li>
+					<li><a class="mor_monitor_jmxbean_button" href="#">{$T.bean.name.split(":")[1]}<input type="hidden" class="bean-name" value="{$T.bean.name}" /></a></li>
 					{#/for}
 				</ul>	
 			</li>

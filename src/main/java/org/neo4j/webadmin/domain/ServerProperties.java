@@ -33,6 +33,71 @@ public class ServerProperties implements Representation
     public static final String FALLBACK_MIN_HEAP = "512M";
 
     /**
+     * This is the hard-coded settings that will be exposed to the user.
+     * 
+     * Each property should have a unique key, for neo4j config file and server
+     * creation properties this should be the property name. For JVM args it is
+     * irrellevant, but it is recommended to name them something like
+     * "jvm.myproperty".
+     * 
+     * A note on how values are fetched:
+     * 
+     * For CONFIG_PROPERTY properties, the value will be fetched from the neo4j
+     * config file. If no property with a matching key is found, the default
+     * value you speciSizefy will be used.
+     * 
+     * For JVM_ARGUMENT and DB_CREATION_PROPERTY the value will be fetched from
+     * a separate config file, startup.properties in the neo4j database folder.
+     * If no property with a matching key is found, the default value you
+     * specify will be used.
+     * 
+     */
+    protected static ArrayList<ServerPropertyRepresentation> createProperties()
+    {
+        ArrayList<ServerPropertyRepresentation> properties = new ArrayList<ServerPropertyRepresentation>();
+
+        // JVM ARGS
+
+        properties.add( new ServerPropertyRepresentation(
+                "jvm.garbagecollector", "Garbage collector",
+                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT ) );
+
+        properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
+                "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
+
+        properties.add( new ServerPropertyRepresentation( "web.root",
+                "Web root", "-DwebRoot=../public", PropertyType.JVM_ARGUMENT ) );
+
+        // CONFIG FILE ARGS
+
+        properties.add( new ServerPropertyRepresentation( "keep_logical_logs",
+                "Enable logical logs", "false", PropertyType.CONFIG_PROPERTY ) );
+
+        properties.add( new ServerPropertyRepresentation(
+                "enable_remote_shell", "Enable remote shell", "false",
+                PropertyType.CONFIG_PROPERTY ) );
+
+        // DB CREATION ARGS
+
+        properties.add( new ServerPropertyRepresentation(
+                "create.array_block_size", "Array block size", "133",
+                PropertyType.DB_CREATION_PROPERTY ) );
+
+        properties.add( new ServerPropertyRepresentation(
+                "create.string_block_size", "String block size", "133",
+                PropertyType.DB_CREATION_PROPERTY ) );
+
+        // GENERAL SETTINGS
+
+        properties.add( new ServerPropertyRepresentation(
+                "general.backup.path", "Backup path", "",
+                PropertyType.GENERAL_PROPERTY ) );
+
+        return properties;
+
+    }
+
+    /**
      * Get database config file, creating one if it does not exist.
      * 
      * @return
@@ -57,7 +122,7 @@ public class ServerProperties implements Representation
      * @return
      * @throws IOException
      */
-    public static File getStartupConfigFile() throws IOException
+    public static File getGeneralConfigFile() throws IOException
     {
 
         File configFile = new File( new File( DatabaseLocator.DB_PATH ),
@@ -115,65 +180,6 @@ public class ServerProperties implements Representation
     }
 
     /**
-     * This is the hard-coded settings that will be exposed to the user.
-     * 
-     * Each property should have a unique key, for neo4j config file and server
-     * creation properties this should be the property name. For JVM args it is
-     * irrellevant, but it is recommended to name them something like
-     * "jvm.myproperty".
-     * 
-     * A note on how values are fetched:
-     * 
-     * For CONFIG_PROPERTY properties, the value will be fetched from the neo4j
-     * config file. If no property with a matching key is found, the default
-     * value you speciSizefy will be used.
-     * 
-     * For JVM_ARGUMENT and DB_CREATION_PROPERTY the value will be fetched from
-     * a separate config file, startup.properties in the neo4j database folder.
-     * If no property with a matching key is found, the default value you
-     * specify will be used.
-     * 
-     */
-    protected static ArrayList<ServerPropertyRepresentation> createProperties()
-    {
-        ArrayList<ServerPropertyRepresentation> properties = new ArrayList<ServerPropertyRepresentation>();
-
-        // JVM ARGS
-
-        properties.add( new ServerPropertyRepresentation(
-                "jvm.garbagecollector", "Garbage collector",
-                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT ) );
-
-        properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
-                "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
-
-        properties.add( new ServerPropertyRepresentation( "web.root",
-                "Web root", "-DwebRoot=../public", PropertyType.JVM_ARGUMENT ) );
-
-        // CONFIG FILE ARGS
-
-        properties.add( new ServerPropertyRepresentation( "keep_logical_logs",
-                "Enable logical logs", "true", PropertyType.CONFIG_PROPERTY ) );
-
-        properties.add( new ServerPropertyRepresentation(
-                "enable_remote_shell", "Enable remote shell", "true",
-                PropertyType.CONFIG_PROPERTY ) );
-
-        // DB CREATION ARGS
-
-        properties.add( new ServerPropertyRepresentation(
-                "create.array_block_size", "Array block size", "133",
-                PropertyType.DB_CREATION_PROPERTY ) );
-
-        properties.add( new ServerPropertyRepresentation(
-                "create.string_block_size", "String block size", "133",
-                PropertyType.DB_CREATION_PROPERTY ) );
-
-        return properties;
-
-    }
-
-    /**
      * Somewhat cumbersome singleton implementation to allow IOException to
      * bubble up nicely.
      * 
@@ -199,7 +205,7 @@ public class ServerProperties implements Representation
      * This property file stores configuration used when launching the JVM and
      * when creating a new database.
      */
-    protected static volatile Properties startupConfig;
+    protected static volatile Properties generalConfig;
 
     protected static ServerProperties INSTANCE;
 
@@ -219,11 +225,11 @@ public class ServerProperties implements Representation
             in.close();
         }
 
-        if ( startupConfig == null )
+        if ( generalConfig == null )
         {
-            startupConfig = new Properties();
-            FileInputStream in = new FileInputStream( getStartupConfigFile() );
-            startupConfig.load( in );
+            generalConfig = new Properties();
+            FileInputStream in = new FileInputStream( getGeneralConfigFile() );
+            generalConfig.load( in );
             in.close();
         }
 
@@ -238,9 +244,9 @@ public class ServerProperties implements Representation
                     prop.setValue( dbConfig.getProperty( prop.getKey() ) );
                 }
             default:
-                if ( startupConfig.containsKey( prop.getKey() ) )
+                if ( generalConfig.containsKey( prop.getKey() ) )
                 {
-                    prop.setValue( startupConfig.getProperty( prop.getKey() ) );
+                    prop.setValue( generalConfig.getProperty( prop.getKey() ) );
                 }
             }
         }
@@ -291,8 +297,8 @@ public class ServerProperties implements Representation
             saveProperties( dbConfig, getDbConfigFile() );
             break;
         default:
-            startupConfig.put( key, value );
-            saveProperties( startupConfig, getStartupConfigFile() );
+            generalConfig.put( key, value );
+            saveProperties( generalConfig, getGeneralConfigFile() );
             writeJvmArgs();
         }
     }

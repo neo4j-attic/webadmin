@@ -93,7 +93,7 @@ public class ConfigService
         return setMany( data );
     }
 
-    // 
+    //
     // INTERNALS
     //
 
@@ -129,6 +129,7 @@ public class ConfigService
 
             boolean hasJvmChanges = false;
             boolean hasCreationChanges = false;
+            boolean hasDbConfigChanges = false;
 
             for ( Object property : newProperties )
             {
@@ -161,6 +162,9 @@ public class ConfigService
                 case DB_CREATION_PROPERTY:
                     hasCreationChanges = true;
                     break;
+                case CONFIG_PROPERTY:
+                    hasDbConfigChanges = true;
+                    break;
                 }
             }
 
@@ -183,7 +187,7 @@ public class ConfigService
                 // Client has changed settings that require a JVM restart
                 DeferredTask.defer( new JvmRestartTask(), 10 );
             }
-            else
+            else if ( hasDbConfigChanges )
             {
                 // Client has changed settings that only require REST-server
                 // restart.

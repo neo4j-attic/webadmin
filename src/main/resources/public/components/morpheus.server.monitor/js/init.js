@@ -207,11 +207,14 @@ morpheus.components.server.monitor = (function($, undefined) {
     me.hashchange = function(ev) {
         var beanName = $.bbq.getState( "jmxbean" );
         
-        if( typeof(beanName) !== "undefined" ) {
+        if( typeof(beanName) !== "undefined" && (me.currentBean === null || beanName !== me.currentBean.name)) {
             me.public.findBeans(beanName, function(beans) { 
                 if(beans.length > 0) {
                     me.currentBean = beans[0];
-                    me.render();
+                    
+                    if( me.visible ) {
+                    	me.render();
+                    }
                 }
                 
             });

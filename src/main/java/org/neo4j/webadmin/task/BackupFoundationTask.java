@@ -1,10 +1,17 @@
 package org.neo4j.webadmin.task;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.Date;
 
+import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
+import org.neo4j.webadmin.domain.BackupFailedException;
+import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.rest.LifeCycleService;
@@ -51,16 +58,25 @@ public class BackupFoundationTask implements Runnable
 
         try
         {
-            backupPath = new File( props.get( "backup.path" ).getValue() );
+            String strPath = props.get( "general.backup.path" ).getValue();
+            if ( strPath.length() > 0 )
+            {
+                backupPath = new File( strPath );
+            }
+            else
+            {
+                throw new NoBackupPathException(
+                        "The backup path property is empty, cannot instantiate BackupFoundationTask." );
+            }
         }
         catch ( NoSuchPropertyException e )
         {
-            throw new IllegalStateException(
+            throw new NoBackupPathException(
                     "You cannot instantiate a BackupFoundationTask without first having set a backup path in ServerProperties." );
         }
 
         if ( INSTANCE == null
-             || INSTANCE.backupPath != backupPath.getAbsoluteFile() )
+             || !INSTANCE.backupPath.equals( backupPath.getAbsoluteFile() ) )
         {
             INSTANCE = new BackupFoundationTask( backupPath );
         }
@@ -85,42 +101,59 @@ public class BackupFoundationTask implements Runnable
 
     public void run()
     {
-        if ( this.isRunning() )
+        try
         {
-            throw new IllegalStateException(
-                    "Only one backup foundation task can run at a time." );
+            if ( this.isRunning() )
+            {
+                throw new BackupAlreadyRunningException(
+                        "Only one backup foundation task can run at a time." );
+            }
+
+            this.running = true;
+            this.started = new Date();
+            BackupTask.getInstance().needFoundation = false;
+
+            // 1 - Calculate approximate eta
+            this.calculateEta();
+
+            // 2 - Create folder structure
+            this.setupBackupFolders();
+
+            // 3 - Shut down main database
+            lifecycle.stop();
+
+            // 4 - Perform copy
+            cpTree( mainDbPath, backupPath );
+
+            // 5 - Ensure logical logging is on
+            ServerProperties.getInstance().set( "keep_logical_logs", "true" );
+
+            // 6 - Start up main db again
+            lifecycle.start();
+
+            this.running = false;
         }
-
-        this.running = true;
-        this.started = new Date();
-
-        // 1 - Calculate approximate eta
-        this.calculateEta();
-
-        // 2 - Create folder structure
-        this.setupBackupFolders();
-
-        // 3 - Shut down main database
-        lifecycle.stop();
-
-        // 4 - Perform copy
-
-        // 5 - Ensure logical logging is on
-
-        // 6 - Start up main db again
-        lifecycle.start();
-
-        this.running = false;
+        catch ( IOException e )
+        {
+            throw new BackupFailedException(
+                    "Unable to write to database configuration file, not sure if logical logging is on or not.",
+                    e );
+        }
+        catch ( URISyntaxException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public synchronized Date getEta()
     {
-        return new Date( this.eta.getTime() );
+        return new Date( this.eta != null ? this.eta.getTime() : 0 );
     }
 
     public synchronized Date getStarted()
     {
-        return new Date( this.started.getTime() );
+        return new Date( this.started != null ? this.started.getTime() : 0 );
     }
 
     public boolean isRunning()
@@ -188,6 +221,52 @@ public class BackupFoundationTask implements Runnable
             {
                 return file.length();
             }
+        }
+    }
+
+    /**
+     * Copy a file system folder/file tree from one spot to another. This
+     * implementation will ignore copying logical logs.
+     * 
+     * @param src
+     * @param target
+     * @throws IOException
+     */
+    protected void cpTree( File src, File target ) throws IOException
+    {
+        if ( src.isDirectory() )
+        {
+
+            if ( !target.exists() )
+            {
+                target.mkdir();
+            }
+
+            for ( File childFile : src.listFiles() )
+            {
+                // Ignore logical log files
+                if ( !childFile.getName().matches( LOGICAL_LOG_REGEX ) )
+                {
+                    cpTree( childFile, new File( target, childFile.getName() ) );
+                }
+            }
+        }
+        else
+        {
+            InputStream in = new FileInputStream( src );
+            OutputStream out = new FileOutputStream( target );
+
+            byte[] buf = new byte[1024];
+
+            int len;
+
+            while ( ( len = in.read( buf ) ) > 0 )
+            {
+                out.write( buf, 0, len );
+            }
+
+            in.close();
+            out.close();
         }
     }
 

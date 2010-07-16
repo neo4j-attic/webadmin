@@ -188,12 +188,14 @@ var morpheus = ( function( $, undefined )
                             // This happens when the server returns an empty response.
                             success(null);
                         } else {
-                            failure(req);
+                        	if( typeof(failure) === "function") {
+                        		failure(req);
+                        	}
                         }
                     },
                     dataType : "json"
-                }
-            );};
+                });
+            };
         })(method, url, data, success, failure), 0);
     };
     

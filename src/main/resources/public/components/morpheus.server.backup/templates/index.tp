@@ -1,8 +1,26 @@
 {#template MAIN}
 	<div class="mor_page_leftcol">
 		<h1>Backups</h1>
-		<div class="coolbox">
+		<div class="coolbox small">
 			<p>Perform backups on your neo4j database.</p>
+		</div>
+	</div>
+	<div class="mor_page_rightcol">
+		<div class="mor_backup_configbox">
+			<h2>Backup path</h2>
+			<input type="text" class="mor_backup_path" />
+			<button class="mor_backup_setpathbutton" disabled="disabled">Set</button>
+		</div>
+		<div class="mor_backup_triggerbox">
+			<h2>Trigger backup</h2>
+			<button class="mor_backup_triggerbutton" disabled="disabled" >Perform backup</button>
+			<p class="mor_backup_status"></p>
+		</div>
+		<div class="mor_backup_foundationbox" style="display:none;">
+			<h2>No foundation</h2>
+			<p>Your server has not yet been configured to use online backups. I can do this for you, but it requires me to turn off your neo4j database for a while while I copy files to your backup location.</p>
+			<p>Proceeed?</p>
+			<button class="mor_backup_foundation_triggerbutton">Yes, configure my server for online backups</button>
 		</div>
 	</div>
 {#/template MAIN}
