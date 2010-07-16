@@ -1,5 +1,6 @@
 <div class="mor_page_leftcol">
 	<h1>Servers</h1>
+	<p class="small">Please pick a server.</p>
 	<ul class="mor_overview_server-list">
 	
 	</ul>

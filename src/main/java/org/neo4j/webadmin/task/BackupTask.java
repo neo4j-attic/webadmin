@@ -105,7 +105,8 @@ public class BackupTask implements Runnable
             // Naive check to see if folder is initialized
             // I don't want to add an all-out check here, it'd be better
             // for the Neo4jBackup class to throw an exception.
-            if ( this.backupPath.listFiles().length == 0 )
+            if ( this.backupPath.listFiles() == null
+                 || this.backupPath.listFiles().length == 0 )
             {
                 throw new IllegalStateException(
                         "Database has not been copied to backup folder." );
