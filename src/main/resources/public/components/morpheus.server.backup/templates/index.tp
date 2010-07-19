@@ -10,6 +10,7 @@
 			<h2>Backup path</h2>
 			<input type="text" class="mor_backup_path" />
 			<button class="mor_backup_setpathbutton" disabled="disabled">Set</button>
+			<p class="small"><b>Warning:</b> Any content in the folder you specify here will be <i>destroyed</i>. Please make sure to specify a non-existant or empty folder. Better safety-checks will be added as Morpheus matures.</p>
 		</div>
 		<div class="mor_backup_triggerbox">
 			<h2>Trigger backup</h2>
