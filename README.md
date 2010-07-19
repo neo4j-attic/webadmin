@@ -13,7 +13,7 @@ Quickstart
 ------------
 To try the admin interface out:
 
-	git clone git@github.com:neo4j/webadmin.git
+	git clone http://github.com/neo4j/webadmin.git
 	cd webadmin
 	./start
 	
