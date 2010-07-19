@@ -10,17 +10,17 @@
 			<h2>Backup path</h2>
 			<input type="text" class="mor_backup_path" />
 			<button class="mor_backup_setpathbutton" disabled="disabled">Set</button>
-			<p class="small"><b>Warning:</b> Any content in the folder you specify here will be <i>destroyed</i>. Please make sure to specify a non-existant or empty folder. Better safety-checks will be added as Morpheus matures.</p>
 		</div>
 		<div class="mor_backup_triggerbox">
 			<h2>Trigger backup</h2>
 			<button class="mor_backup_triggerbutton" disabled="disabled" >Perform backup</button>
-			<p class="mor_backup_status"></p>
+			<p class="mor_backup_status info" style="display:none;"></p>
 		</div>
-		<div class="mor_backup_foundationbox" style="display:none;">
+		<div class="mor_backup_foundationbox info" style="display:none;">
 			<h2>No foundation</h2>
-			<p>Your server has not yet been configured to use online backups. I can do this for you, but it requires me to turn off your neo4j database for a while while I copy files to your backup location.</p>
+			<p class="small">Your server has not yet been configured to use online backups. I can do this for you, but it requires me to turn off your neo4j database for a while while I copy files to your backup location.</p>
 			<p>Proceeed?</p>
+			<p class="warning small"><b>Warning:</b> Any content in the backup folder you specified above will be <i>destroyed</i>. Please make sure to specify a non-existant or empty folder.</p>
 			<button class="mor_backup_foundation_triggerbutton">Yes, configure my server for online backups</button>
 		</div>
 	</div>

@@ -106,7 +106,8 @@ public class BackupTask implements Runnable
             // I don't want to add an all-out check here, it'd be better
             // for the Neo4jBackup class to throw an exception.
             if ( this.backupPath.listFiles() == null
-                 || this.backupPath.listFiles().length == 0 )
+                 || this.backupPath.listFiles().length == 0
+                 || !( new File( this.backupPath, "neostore" ) ).exists() )
             {
                 throw new IllegalStateException(
                         "Database has not been copied to backup folder." );

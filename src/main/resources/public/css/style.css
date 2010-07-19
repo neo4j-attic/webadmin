@@ -19,7 +19,8 @@ h6 { font-size:0.7em; }
 .coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
 
 .warning { padding: 6px 10px; background:#EB7775; border:1px solid #d5d5d5; }
-.info { padding: 6px 10px; background:#FAF68C; border:1px solid #d5d5d5; }
+.notice { padding: 6px 10px; background:#FAF68C; border:1px solid #d5d5d5; }
+.info { padding: 6px 10px; background:#C0F09C; border:1px solid #d5d5d5; }
 
 .uncommitted { background:#A1D46A; }
 
@@ -51,14 +52,16 @@ h6 { font-size:0.7em; }
    COMPONENTS   
                  */
 
-/* Overview */
+/* Backup */
 
-.mor_overview_server-list { list-style:none; margin:0; padding:0; }
+.mor_backup_foundationbox { padding: 6px 10px; margin: 16px 0;}
 
-.mor_overview_server img { float:left; border:1px solid #d5d5d5; padding:3px; }
+/* Gremlin */
 
-.mor_overview_server_name a { color: #333; font-weight:bold; font-size:1.2em; text-decoration:none; }
-.mor_overview_server_info { float:left; padding: 0 0 0 10px; } 
+.mor_gremlin_console_wrap { border-left: 10px solid black;  background: #333; height:400px; overflow:auto;  }
+.mor_gremlin_console { width: 90%; background: #333; height: 400px; float:left; }
+.mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
+.mor_gremlin_console p input { display:block; width: 95%; float:left; background:transparent; border:none; color:inherit; font-size: inherit; font-family: inherit;  }
 
 /* JMX */
 
@@ -76,12 +79,11 @@ h6 { font-size:0.7em; }
 .mor_jmx_table h4 {margin: 2px 0;  font-size:12px;}
 .mor_jmx_table td, .mor_jmx_table th {margin: 2px 0; font-size:12px; border-bottom:1px solid #c5c5c5; }
 
-/* Gremlin */
+/* Overview */
 
-.mor_gremlin_console_wrap { border-left: 10px solid black;  background: #333; height:400px; overflow:auto;  }
+.mor_overview_server-list { list-style:none; margin:0; padding:0; }
 
-.mor_gremlin_console { width: 90%; background: #333; height: 400px; float:left; }
+.mor_overview_server img { float:left; border:1px solid #d5d5d5; padding:3px; }
 
-.mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
-
-.mor_gremlin_console p input { display:block; width: 95%; float:left; background:transparent; border:none; color:inherit; font-size: inherit; font-family: inherit;  }
+.mor_overview_server_name a { color: #333; font-weight:bold; font-size:1.2em; text-decoration:none; }
+.mor_overview_server_info { float:left; padding: 0 0 0 10px; } 

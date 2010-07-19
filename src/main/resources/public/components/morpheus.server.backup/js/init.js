@@ -20,6 +20,8 @@ morpheus.components.server.backup.init = (function($, undefined) {
     
     me.currentBackupPath = "";
     
+    me.prevAction = null;
+    
     me.visible = false;
     
     //
@@ -103,6 +105,8 @@ morpheus.components.server.backup.init = (function($, undefined) {
     	$('.mor_backup_path').val(me.currentBackupPath);
 		$('button.mor_backup_setpathbutton').attr('disabled', 'disabled');
 		
+		me.hideStatus();
+		
 		if(me.currentBackupPath.length > 0) {
 			$('button.mor_backup_triggerbutton').removeAttr('disabled');
 		} else {
@@ -114,37 +118,52 @@ morpheus.components.server.backup.init = (function($, undefined) {
      * This is a callback for StatusTracker, called every time status changes.
      */
     me.statusChanged = function(data) {
+    	
+    	var keepPolling = false;
+    	
     	if( data.current_action === "WAITING_FOR_FOUNDATION" ) {
     		
-    		$('p.mor_backup_status').html("");
+    		$('p.mor_backup_status').hide();
     		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
     		$('div.mor_backup_foundationbox').show();
     		
     		// No more polling, please.
-    		return false;
+    		keepPolling = false;
     	} else if ( data.current_action === "BACKING_UP" ) {
     		
-    		$('p.mor_backup_status').html("Performing backup..");
+    		me.showStatus("Performing backup..");
     		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
-    		$('div.mor_backup_foundationbox').hide();
     		
     		// Keep polling, please.
-    		return true;
+    		keepPolling = true;
     	} else if ( data.current_action === "CREATING_FOUNDATION" ) {
     		
-    		$('p.mor_backup_status').html("Copying files and preparing your database for online backups..");
+    		me.showStatus("Copying files and preparing your database for online backups..");
     		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
-    		$('div.mor_backup_foundationbox').hide();
     		
     		// Keep polling, please.
-    		return true;
+    		keepPolling = true;
+    		
+    	} else if ( me.prevAction ===  "BACKING_UP" ) { 
+    		
+    		me.showStatus("Backup successful!");
+    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
+    		
+    	} else if ( me.prevAction ===  "CREATING_FOUNDATION" ) { 
+    		
+    		me.showStatus("Foundation successful! Your database is now ready for online backups.");
+    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
+    		
+    	} else {
+    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
+    		me.hideStatus();
+        	
     	}
     	
-    	$('p.mor_backup_status').html("");
-		$('button.mor_backup_triggerbutton').removeAttr('disabled');
-		$('div.mor_backup_foundationbox').hide();
+    	console.log(me.prevAction, data.current_action);
+    	me.prevAction = data.current_action;
     	
-    	return false;
+    	return keepPolling;
     };
     
     /**
@@ -158,6 +177,23 @@ morpheus.components.server.backup.init = (function($, undefined) {
 				statusTracker.run();
 			};
 		})(statusTracker),400);
+    };
+    
+    /**
+     * Show a simple status message. This will hide the big backup foundation-message.
+     */
+    me.showStatus = function(message) {
+    	$('p.mor_backup_status').html(message);
+		$('p.mor_backup_status').show();
+		$('div.mor_backup_foundationbox').hide();
+    };
+    
+    /**
+     * Hide all status messages.
+     */
+    me.hideStatus = function() {
+    	$('p.mor_backup_status').hide();
+		$('div.mor_backup_foundationbox').hide();
     };
     
     //
@@ -207,13 +243,16 @@ morpheus.components.server.backup.init = (function($, undefined) {
     
     $('button.mor_backup_foundation_triggerbutton').live('click', function(ev) {
     	
-    	$('div.mor_backup_foundationbox').hide();
+    	if( confirm("This will DESTROY any files in '" + me.currentBackupPath + "', are you sure?") ) {
     	
-    	me.server.admin.post("backup/triggerfoundation", function(data) {
-    		$('p.mor_backup_status').html("Checking status..");
-    		
-    		me.trackStatus();
-    	});
+	    	$('div.mor_backup_foundationbox').hide();
+	    	
+	    	me.server.admin.post("backup/triggerfoundation", function(data) {
+	    		$('p.mor_backup_status').html("Checking status..");
+	    		
+	    		me.trackStatus();
+	    	});
+    	}
     	
     });
 
