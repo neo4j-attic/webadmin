@@ -49,7 +49,8 @@ public class Neo4jGraphTemp implements Graph
         this( directory, null );
     }
 
-    public Neo4jGraphTemp( final String directory, Map<String, String> configuration )
+    public Neo4jGraphTemp( final String directory,
+            Map<String, String> configuration )
     {
         this.directory = directory;
         if ( null != configuration )
@@ -116,6 +117,9 @@ public class Neo4jGraphTemp implements Graph
         {
             Long longId = Double.valueOf( id.toString() ).longValue();
             Node node = this.neo4j.getNodeById( longId );
+
+            System.out.println( "Current transaction state: " + tx );
+
             return new Neo4jVertex( node, this );
         }
         catch ( NotFoundException e )
@@ -189,6 +193,8 @@ public class Neo4jGraphTemp implements Graph
                 this.tx.success();
                 this.tx.finish();
                 this.tx = neo4j.beginTx();
+
+                System.out.println( "Started transation" + tx );
             }
             else
             {

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.tinkerpop.gremlin.GremlinEvaluator;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+
 import com.tinkerpop.gremlin.statements.EvaluationException;
 import com.tinkerpop.gremlin.statements.SyntaxException;
 
@@ -25,7 +27,7 @@ public class GremlinSession
     /**
      * The gremlin evaluator instance beeing wrapped.
      */
-    protected GremlinEvaluator gremlin = GremlinFactory.createGremlinEvaluator();
+    protected ScriptEngine scriptEngine = GremlinFactory.createGremlinScriptEngine();
 
     //
     // PUBLIC
@@ -40,13 +42,15 @@ public class GremlinSession
         try
         {
             this.lastTimeUsed = new Date();
-            List<Object> resultLines = gremlin.evaluate( line );
+            List<Object> resultLines = (List<Object>) scriptEngine.eval( line );
 
-            
             List<String> outputLines = new ArrayList<String>();
-            if( resultLines == null) {
-                outputLines.add("null");
-            } else {
+            if ( resultLines == null )
+            {
+                outputLines.add( "null" );
+            }
+            else
+            {
                 // Make sure all lines are strings
                 for ( Object resultLine : resultLines )
                 {
@@ -58,11 +62,15 @@ public class GremlinSession
         }
         catch ( SyntaxException e )
         {
-            return exceptionToResultList(e);
+            return exceptionToResultList( e );
         }
         catch ( EvaluationException e )
         {
-            return exceptionToResultList(e);
+            return exceptionToResultList( e );
+        }
+        catch ( ScriptException e )
+        {
+            return exceptionToResultList( e );
         }
     }
 
@@ -71,7 +79,7 @@ public class GremlinSession
      */
     public synchronized void reset()
     {
-        this.gremlin = GremlinFactory.createGremlinEvaluator();
+        this.scriptEngine = GremlinFactory.createGremlinScriptEngine();
     }
 
     /**
@@ -81,20 +89,22 @@ public class GremlinSession
     {
         return ( new Date() ).getTime() - lastTimeUsed.getTime();
     }
-    
+
     //
     // INTERNALS
     //
-    
-    protected List<String> exceptionToResultList(Exception e) {
+
+    protected List<String> exceptionToResultList( Exception e )
+    {
         ArrayList<String> resultList = new ArrayList<String>();
-        
-        resultList.add(e.getMessage());
-        
-        for(StackTraceElement stackTraceElement : e.getStackTrace()) {
-            resultList.add(stackTraceElement.toString());
+
+        resultList.add( e.getMessage() );
+
+        for ( StackTraceElement stackTraceElement : e.getStackTrace() )
+        {
+            resultList.add( stackTraceElement.toString() );
         }
-        
+
         return resultList;
     }
 

@@ -1,6 +1,18 @@
 package org.neo4j.webadmin.gremlin;
 
-import com.tinkerpop.gremlin.GremlinEvaluator;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.rest.WebServer;
+import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.gremlin.tmpimpl.Neo4jGraphTemp;
+
+import com.tinkerpop.gremlin.GremlinEngine;
 
 /**
  * Builds gremlin evaluators that come pre-packaged with astonishing connective
@@ -15,15 +27,31 @@ public class GremlinFactory
 
     protected volatile static boolean initiated = false;
 
-    public static GremlinEvaluator createGremlinEvaluator()
+    public static ScriptEngine createGremlinScriptEngine()
     {
-        GremlinEvaluator ge = new GremlinEvaluator();
+        try
+        {
+            ScriptEngine engine = new GremlinEngine();
 
-        // Load the local database instance by default
-        ge.evaluate( "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'" );
-        ge.evaluate( "$_g := webadmin:loadLocalDb()" );
+            // Inject the local database
+            GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase( new URI(
+                    WebServer.getLocalhostBaseUri( Main.restPort ) ) );
 
-        return ge;
+            engine.getBindings( ScriptContext.ENGINE_SCOPE ).put(
+                    "$_g",
+                    new Neo4jGraphTemp( dbInstance,
+                            DatabaseLocator.getIndexService( dbInstance ) ) );
+
+            // ge.evaluate(
+            // "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'");
+
+            return engine;
+        }
+        catch ( URISyntaxException e )
+        {
+            throw new RuntimeException(
+                    "Db path is corrupt, see nested exception.", e );
+        }
     }
 
     protected synchronized void ensureInitiated()
