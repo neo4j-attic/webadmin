@@ -160,7 +160,6 @@ morpheus.components.server.backup.init = (function($, undefined) {
         	
     	}
     	
-    	console.log(me.prevAction, data.current_action);
     	me.prevAction = data.current_action;
     	
     	return keepPolling;
