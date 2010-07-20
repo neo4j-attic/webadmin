@@ -8,51 +8,154 @@ morpheus.neo4j = function( data )
 {
 
     var me = {};
-
-    //
-    // PRIVATE
-    //
- 
-    me.domain = data.domain || "unknown";
-    
-    me.urls = {
-        admin : data.urls.admin || "",
-        rest  : data.urls.rest  || "",
-    };
-    
-    // Remote API
-    
-    me.rest = {};
-    me.admin = {
-            get  : function(resource, data, success, failure) { return morpheus.get(  me.urls.admin + resource, data, success, failure ); },
-            post : function(resource, data, success, failure) { return morpheus.post( me.urls.admin + resource, data, success, failure ); },
-            put  : function(resource, data, success, failure) { return morpheus.put(  me.urls.admin + resource, data, success, failure ); },
-            del  : function(resource, data, success, failure) { return morpheus.del(  me.urls.admin + resource, data, success, failure ); }
-    };
     
     //
-    // CONSTRUCT
-    //
-    
-    
-    
-    //
-    // PUBLIC API
+    // PUBLIC
     //
 
-    me.api = {
+    me.public = {
             toJSON : function() {
                 return {urls:me.urls, domain:me.domain};
             },
             
-            urls : me.urls,
-            domain : me.domain,
-            admin : me.admin,
-            rest : me.rest,
-            jmx : me.jmx
+            urls : {
+                admin : data.urls.admin || "",
+                rest  : data.urls.rest  || "",
+            },
+            
+            domain : data.domain || "unknown",
+            
+            admin : {
+                get  : function(resource, data, success, failure) { return morpheus.get(  me.public.urls.admin + resource, data, success, failure ); },
+                post : function(resource, data, success, failure) { return morpheus.post( me.public.urls.admin + resource, data, success, failure ); },
+                put  : function(resource, data, success, failure) { return morpheus.put(  me.public.urls.admin + resource, data, success, failure ); },
+                del  : function(resource, data, success, failure) { return morpheus.del(  me.public.urls.admin + resource, data, success, failure ); }
+            },
+            
+            rest : {
+                get  : function(resource, data, success, failure) { return morpheus.get(  me.public.urls.rest + resource, data, success, failure ); },
+                post : function(resource, data, success, failure) { return morpheus.post( me.public.urls.rest + resource, data, success, failure ); },
+                put  : function(resource, data, success, failure) { return morpheus.put(  me.public.urls.rest + resource, data, success, failure ); },
+                del  : function(resource, data, success, failure) { return morpheus.del(  me.public.urls.rest + resource, data, success, failure ); }
+            },
+            
+            /**
+			 * Get a list of jmx domains, or specific beans by their names.
+			 * 
+			 * The name parameter is a string with a colon, ":", separating bean
+			 * domain and bean name. You can use the same wildcard patterns that
+			 * you can when working with jmx in java. For instance, somedomain:*
+			 * will fetch all beans in the somedomain domain.
+			 * 
+			 * There is a special domain for fetching kernel beans for the
+			 * current local kernel. This is put in place because the name of
+			 * the neo4j beans changes each time the kernel is restarted, and
+			 * since there can be several kernels running in the backend.
+			 * 
+			 * jmx("localkernel:*") will fetch all beans for the local neo4j
+			 * kernel. To fetch specific beans for the local kernel, you only
+			 * specify the name attribute.
+			 * 
+			 * Example:
+			 * 
+			 * jmx("localkernel:Configuration", myCallback)
+			 * jmx("localkernel:Cache", myCallback)
+			 * 
+			 * @param name
+			 *            is the jmx bean to load. If this is omitted, a list of
+			 *            available domains will be passed to the callback.
+			 * 
+			 * @param cb
+			 *            is a callback that will be called with the result.
+			 * 
+			 */
+            jmx : function(name, cb) {
+            	
+            	var noNameSpecified = (typeof(cb) === "undefined");
+            	
+            	var beanName = me.public.parseBeanName(name);
+            	var cb = cb || name || function() {};
+            	
+            	
+            	if( noNameSpecified ) { 
+            		// List all available domains
+            		
+            		if( me.domains ) {
+            			cb(me.domains);
+            		} else {
+		            	me.public.admin.get("jmx", (function(cb) {
+		                    return function(data) {
+		                    	me.domains = data;
+		                        cb(data);
+		                    };
+		                })(cb));
+            		}
+            		
+            	} else {
+            		// Load specific bean(s)
+            		if( beanName.domain === "localkernel") {
+            			
+            			// Find out what instance name the local kernel has
+            			me.public.kernelInstanceName((function(cb, name) {
+            				return function(instanceName) {
+            					me.public.admin.get("jmx/org.neo4j/instance=" + instanceName + ",name=" + name, (function(cb) {
+        		                    return function(data) {
+        		                        cb(data.beans);
+        		                    };
+        		                })(cb));
+            				};
+            			})(cb,beanName.name));
+            			
+            		} else {
+		            	me.public.admin.get("jmx/" + beanName.domain + "/" + beanName.name, (function(cb) {
+		                    return function(data) {
+		                        cb(data.beans);
+		                    };
+		                })(cb));
+            		}
+            	}
+            	
+            },
+            
+            /**
+             * Get the current jmx instance name for the local neo4j instance.
+             * @cb is a callback that will be called with the name
+             */
+            kernelInstanceName : function(cb) {
+            	me.public.admin.get("jmx/kernelinstancename", (function(cb) { 
+            		return function(data) {
+            			cb(data);
+            		};
+            	})(cb));
+            },
+            
+            /**
+			 * Extract data from a bean name
+			 */
+            parseBeanName : function(beanName) {
+                
+            	if( typeof(beanName) === "string") {
+	                var parts = beanName.split(":");
+	                
+	                return {domain:parts[0], name: parts.length > 1 ? parts[1] : "*"};
+            	} else {
+            		return { domain: "*", name: "*"};
+            	}
+                
+            }
     };
+    
+    //
+    // PRIVATE
+    //
+    
+    
+    
+    //
+    // CONSTRUCT
+    //
 
-    return me.api;
+    return me.public;
 
 };
 
@@ -73,8 +176,8 @@ morpheus.neo4jHandler = (function(undefined) {
     me.triedLocal = false;
     
     /**
-     * Called when servers are loaded and morpheus is initiated.
-     */
+	 * Called when servers are loaded and morpheus is initiated.
+	 */
     me.init = function() {
 
         $( window ).bind( "hashchange", me.hashchange );
@@ -84,8 +187,8 @@ morpheus.neo4jHandler = (function(undefined) {
     };
     
     /**
-     * Called when morpheus is initiated
-     */
+	 * Called when morpheus is initiated
+	 */
     me.morpheusInit = function () {
         me.morpheusInitiated = true;
         if(me.servers !== false ) {
@@ -161,11 +264,11 @@ morpheus.neo4jHandler = (function(undefined) {
     };
     
     /**
-     * Get a server given its name, return the server object or null.
-     * 
-     * TODO: This currently uses the server domain as a unique identifier, we
-     * need to switch to something else to allow for several servers per domain.
-     */
+	 * Get a server given its name, return the server object or null.
+	 * 
+	 * TODO: This currently uses the server domain as a unique identifier, we
+	 * need to switch to something else to allow for several servers per domain.
+	 */
     me.getServer = function(serverName) {
         for( var key in me.servers ) {
             if( me.servers[key].domain === serverName ) {

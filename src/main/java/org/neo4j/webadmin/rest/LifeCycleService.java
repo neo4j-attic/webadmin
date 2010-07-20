@@ -1,9 +1,7 @@
 package org.neo4j.webadmin.rest;
 
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import static org.neo4j.webadmin.utils.GraphDatabaseUtils.shutdownLocalDatabase;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,11 +11,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.neo4j.rest.WebServer;
-import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonRenderers;
-import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
+import org.neo4j.webadmin.gremlin.GremlinSessions;
 
 /**
  * REST service to start, stop and restart the neo4j backend.
@@ -66,6 +63,7 @@ public class LifeCycleService
         if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
         {
             WebServer.INSTANCE.startServer( Main.restPort );
+            GremlinSessions.destroyAllSessions();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.RUNNING,
                     LifecycleRepresentation.PerformedAction.STARTED );
@@ -90,36 +88,28 @@ public class LifeCycleService
     @Path( "/stop" )
     public synchronized Response stop()
     {
-        try
+        LifecycleRepresentation status;
+
+        if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
         {
-            LifecycleRepresentation status;
-
-            if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
-            {
-                WebServer.INSTANCE.stopServer();
-                DatabaseLocator.shutdownGraphDatabase( new URI(
-                        AdminServer.INSTANCE.getBaseUri() ) );
-                status = new LifecycleRepresentation(
-                        LifecycleRepresentation.Status.STOPPED,
-                        LifecycleRepresentation.PerformedAction.STOPPED );
-            }
-            else
-            {
-                status = new LifecycleRepresentation(
-                        LifecycleRepresentation.Status.STOPPED,
-                        LifecycleRepresentation.PerformedAction.NONE );
-            }
-
-            serverStatus = LifecycleRepresentation.Status.STOPPED;
-            String entity = JsonRenderers.DEFAULT.render( status );
-
-            return addHeaders(
-                    Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+            WebServer.INSTANCE.stopServer();
+            shutdownLocalDatabase();
+            status = new LifecycleRepresentation(
+                    LifecycleRepresentation.Status.STOPPED,
+                    LifecycleRepresentation.PerformedAction.STOPPED );
         }
-        catch ( URISyntaxException e )
+        else
         {
-            throw new RuntimeException( e );
+            status = new LifecycleRepresentation(
+                    LifecycleRepresentation.Status.STOPPED,
+                    LifecycleRepresentation.PerformedAction.NONE );
         }
+
+        serverStatus = LifecycleRepresentation.Status.STOPPED;
+        String entity = JsonRenderers.DEFAULT.render( status );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
     }
 
     @POST
@@ -127,27 +117,20 @@ public class LifeCycleService
     @Path( "/restart" )
     public synchronized Response restart()
     {
-        try
-        {
 
-            WebServer.INSTANCE.stopServer();
-            DatabaseLocator.shutdownGraphDatabase( new URI(
-                    AdminServer.INSTANCE.getBaseUri() ) );
-            WebServer.INSTANCE.startServer( Main.restPort );
+        WebServer.INSTANCE.stopServer();
+        shutdownLocalDatabase();
+        WebServer.INSTANCE.startServer( Main.restPort );
+        GremlinSessions.destroyAllSessions();
 
-            LifecycleRepresentation status = new LifecycleRepresentation(
-                    LifecycleRepresentation.Status.RUNNING,
-                    LifecycleRepresentation.PerformedAction.RESTARTED );
-            String entity = JsonRenderers.DEFAULT.render( status );
+        LifecycleRepresentation status = new LifecycleRepresentation(
+                LifecycleRepresentation.Status.RUNNING,
+                LifecycleRepresentation.PerformedAction.RESTARTED );
+        String entity = JsonRenderers.DEFAULT.render( status );
 
-            serverStatus = LifecycleRepresentation.Status.RUNNING;
+        serverStatus = LifecycleRepresentation.Status.RUNNING;
 
-            return addHeaders(
-                    Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
-        }
-        catch ( URISyntaxException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
     }
 }

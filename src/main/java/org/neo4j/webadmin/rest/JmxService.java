@@ -174,4 +174,22 @@ public class JmxService
     {
         return queryBeans( data );
     }
+
+    /**
+     * This returns the instance name for the current "main" neo4j kernel, ie.
+     * the one that runs behind the REST server.
+     * 
+     * TODO: Write real implementation, waiting for info from kernel devs on how
+     * to do this..
+     * 
+     * @return
+     */
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "/kernelinstancename" )
+    public Response currentKernelInstance()
+    {
+        return addHeaders(
+                Response.ok( "kernel#0", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
 }

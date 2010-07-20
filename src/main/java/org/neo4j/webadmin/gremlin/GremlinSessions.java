@@ -1,6 +1,7 @@
 package org.neo4j.webadmin.gremlin;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -33,6 +34,15 @@ public class GremlinSessions
     {
         sessions.get( sessionId ).die();
         sessions.remove( sessionId );
+    }
+
+    public static void destroyAllSessions()
+    {
+        Iterator<String> keys = sessions.keySet().iterator();
+        while ( keys.hasNext() )
+        {
+            destroySession( keys.next() );
+        }
     }
 
     public static boolean hasSession( String sessionId )

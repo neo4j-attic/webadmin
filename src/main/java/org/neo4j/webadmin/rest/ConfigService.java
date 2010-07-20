@@ -33,6 +33,7 @@ import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
+import org.neo4j.webadmin.gremlin.GremlinSessions;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
 
@@ -197,6 +198,7 @@ public class ConfigService
                     DatabaseLocator.shutdownGraphDatabase( new URI(
                             AdminServer.INSTANCE.getBaseUri() ) );
                     WebServer.INSTANCE.startServer( Main.restPort );
+                    GremlinSessions.destroyAllSessions();
                 }
             }
 

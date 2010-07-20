@@ -1,6 +1,12 @@
-morpheus.provide("morpheus.components.server.monitor");
+morpheus.provide("morpheus.components.server.monitor.base");
 
-morpheus.components.server.monitor = (function($, undefined) {
+/**
+ * Base module for the monitor component.
+ * 
+ * TODO: This needs to start using the jmx interface provided by neo4j instances instead of implementing it's own.
+ * TODO: Break out jmx into a sub-module
+ */
+morpheus.components.server.monitor.base = (function($, undefined) {
     
     var me = {};
     
@@ -257,9 +263,9 @@ morpheus.components.server.monitor = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.server.monitor",morpheus.components.server.monitor);
+morpheus.ui.addPage("morpheus.server.monitor",morpheus.components.server.monitor.base);
 morpheus.ui.mainmenu.add("Monitor","morpheus.server.monitor", null, "server");
 
-morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.init);
-morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.monitor.pageChanged);
-morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.monitor.serverChanged);
+morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.base.init);
+morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.monitor.base.pageChanged);
+morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.monitor.base.serverChanged);
