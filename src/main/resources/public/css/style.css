@@ -4,6 +4,8 @@
 
 body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:arial, sans-serif; }
 
+p { margin: 0.7em 0; font-size:0.9em; }
+
 h1 { font-size:1.2em; }
 h2 { font-size:1.1em; }
 h3 { font-size:1.0em; }
@@ -26,6 +28,11 @@ h6 { font-size:0.7em; }
 
 .small { font-size:90%; color:#555; }
 
+.mor_info_list { font-size:70%; list-style:none; margin:0; padding:0; }
+.mor_info_list li { }
+.mor_info_list li h3 { margin: 0; padding: 4px 0 0 0; }
+.mor_info_list li p { margin: 0; padding: 2px 4px; }
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
@@ -44,9 +51,9 @@ h6 { font-size:0.7em; }
 /* 
    PAGE STUFF
                  */
-.mor_page_leftcol { width: 25%; float:left; }
-.mor_page_rightcol { width: 70%; float:left; padding: 0 0 0 20px; }
-.mor_page_widecol { width: 100%; }
+.mor_page_leftcol { width: 20%; float:left; }
+.mor_page_rightcol { width: 75%; float:left; padding: 0 0 0 20px; }
+                           
 
 /* 
    COMPONENTS   

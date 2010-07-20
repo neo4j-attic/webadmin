@@ -155,6 +155,7 @@ public class GremlinSession implements Runnable
         try
         {
             this.lastTimeUsed = new Date();
+
             List<Object> resultLines = (List<Object>) scriptEngine.eval( line );
 
             List<String> outputLines = new ArrayList<String>();
