@@ -118,8 +118,6 @@ public class Neo4jGraphTemp implements Graph
             Long longId = Double.valueOf( id.toString() ).longValue();
             Node node = this.neo4j.getNodeById( longId );
 
-            System.out.println( "Current transaction state: " + tx );
-
             return new Neo4jVertex( node, this );
         }
         catch ( NotFoundException e )
@@ -190,11 +188,10 @@ public class Neo4jGraphTemp implements Graph
         {
             if ( null != tx )
             {
+
                 this.tx.success();
                 this.tx.finish();
                 this.tx = neo4j.beginTx();
-
-                System.out.println( "Started transation" + tx );
             }
             else
             {
@@ -205,6 +202,18 @@ public class Neo4jGraphTemp implements Graph
     }
 
     public void startTransaction()
+    {
+        if ( this.automaticTransactions )
+            throw new RuntimeException(
+                    "Turn off automatic transactions to use manual transaction handling" );
+
+        this.tx = neo4j.beginTx();
+    }
+
+    /**
+     * Start a transaction, but only if automatic transactions are on.
+     */
+    public void autoStartTransaction()
     {
         if ( this.automaticTransactions )
             throw new RuntimeException(

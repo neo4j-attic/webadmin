@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.rest.WebServer;
@@ -22,6 +23,7 @@ import com.tinkerpop.gremlin.GremlinEngine;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
+@SuppressWarnings( "restriction" )
 public class GremlinFactory
 {
 
@@ -42,8 +44,7 @@ public class GremlinFactory
                     new Neo4jGraphTemp( dbInstance,
                             DatabaseLocator.getIndexService( dbInstance ) ) );
 
-            // ge.evaluate(
-            // "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'");
+            engine.eval( "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'" );
 
             return engine;
         }
@@ -51,6 +52,12 @@ public class GremlinFactory
         {
             throw new RuntimeException(
                     "Db path is corrupt, see nested exception.", e );
+        }
+        catch ( ScriptException e )
+        {
+            throw new RuntimeException(
+                    "Unable to import webadmin functions to gremlin. See nested exception.",
+                    e );
         }
     }
 

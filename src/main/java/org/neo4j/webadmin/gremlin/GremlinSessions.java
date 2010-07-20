@@ -31,6 +31,7 @@ public class GremlinSessions
 
     public static void destroySession( String sessionId )
     {
+        sessions.get( sessionId ).die();
         sessions.remove( sessionId );
     }
 
