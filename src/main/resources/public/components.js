@@ -7,8 +7,7 @@
 var morpheus = morpheus || {};
 morpheus.componentList = [ 
         'morpheus.overview',
-        'morpheus.server.lifecycle', 
-        'morpheus.server.dashboard',
+        'morpheus.server.lifecycle',
         'morpheus.server.monitor',
         'morpheus.server.gremlin',
         'morpheus.server.config',

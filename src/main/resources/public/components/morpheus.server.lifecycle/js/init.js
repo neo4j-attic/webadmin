@@ -53,7 +53,7 @@ morpheus.components.Lifecycle = function( server, template )
     {
         if ( me.server )
         {
-            me.enable()
+            me.enable();
             me.serverAction( "status", me.statusElement.html(), "GET" );
         }
         else
@@ -162,7 +162,8 @@ morpheus.components.Lifecycle = function( server, template )
         stop      : me.stop,
         start     : me.start,
         restart   : me.restart,
-        getWidget : me.getWidget
+        getWidget : me.getWidget,
+        render    : me.getWidget
     };
 
     return me.api;

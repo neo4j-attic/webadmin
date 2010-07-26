@@ -1,5 +1,8 @@
 morpheus.provide("morpheus.components.overview");
 
+/**
+ * TODO: This is planned for removal. Instead, there will be a list of servers presented on the dashboard page.
+ */
 morpheus.components.overview = (function($, undefined) {
 	
 	var me = {};
@@ -90,7 +93,7 @@ morpheus.components.overview = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.overview",morpheus.components.overview);
-morpheus.ui.mainmenu.add("Overview","morpheus.overview");
+morpheus.ui.mainmenu.add("Servers","morpheus.overview");
 
 morpheus.event.bind("morpheus.init", morpheus.components.overview.init );
 morpheus.event.bind("morpheus.ui.page.changed", function(ev) {

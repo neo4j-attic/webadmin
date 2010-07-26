@@ -81,6 +81,8 @@ morpheus.components.server.monitor.base = (function($, undefined) {
         
         if( me.server ) {
         	me.loadValueTrackers(me.server);
+        	$("#mor_monitor_lifecycle").empty();
+        	$("#mor_monitor_lifecycle").append( morpheus.components.Lifecycle(me.server).render() );
         }
         
     };
@@ -130,7 +132,7 @@ morpheus.components.server.monitor.base = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.monitor",morpheus.components.server.monitor.base);
-morpheus.ui.mainmenu.add("Monitor","morpheus.server.monitor", null, "server");
+morpheus.ui.mainmenu.add("Dashboard","morpheus.server.monitor", null, "server");
 
 morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.base.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.monitor.base.pageChanged);

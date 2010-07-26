@@ -1,8 +1,0 @@
-<div class="mor_page_leftcol">
-	<h1 class="mor_serverdash_servername"></h1>
-	
-	<div class="mor_serverdash_serverlife_wrap coolbox">
-		<div>Lifecycle</div>
-		<div class="mor_serverdash_serverlife"></div>
-	</div>
-</div>
