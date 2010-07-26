@@ -1,9 +1,8 @@
 <div class="mor_page_leftcol">
 	<h1>Neo4j server monitor</h1>
-	<div class="coolbox small">
-		<p>Get an overview on your neo4j server.</p>
-		
-		<a href="#" class="mor_monitor_showjmx">View raw JMX</a>
+	<div class="mor_module">
+		<p class="mor_info">Get an overview on your neo4j server.</p>
+		<p class="mor_info"><a href="#" class="mor_monitor_showjmx">View raw JMX</a></p>
 	</div>
 </div>
 

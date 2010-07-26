@@ -1,5 +1,7 @@
 /**
  * Style for Morpheus Neo4j administration.
+ *
+ * Some widgets borrowed from Grappelli django skin.
  */ 
 
 body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:arial, sans-serif; }
@@ -20,18 +22,35 @@ h6 { font-size:0.7em; }
 .small { font-size:.8em; font-weight:light; color: #444; } 
 .coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
 
-.warning { padding: 6px 10px; background:#EB7775; border:1px solid #d5d5d5; }
-.notice { padding: 6px 10px; background:#FAF68C; border:1px solid #d5d5d5; }
-.info { padding: 6px 10px; background:#C0F09C; border:1px solid #d5d5d5; }
+.warning { padding: 0; background:#EB7775; border:1px solid #d5d5d5; }
+.notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
+.info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
 
 .uncommitted { background:#A1D46A; }
 
 .small { font-size:90%; color:#555; }
 
-.mor_info_list { font-size:70%; list-style:none; margin:0; padding:0; }
+.mor_info_list { font-size:70%; list-style:none; margin:0; padding: 5px 10px; }
 .mor_info_list li { }
 .mor_info_list li h3 { margin: 0; padding: 4px 0 0 0; }
 .mor_info_list li p { margin: 0; padding: 2px 4px; }
+
+/* Modules */
+.mor_module { margin-bottom: 5px; border: 1px solid #d4d4d4; -moz-border-radius: 5px; -webkit-border-radius: 5px; background: #fff; }
+.mor_module .mor_info { font-size:12px; line-height: 13px; padding: 5px 10px; }
+.mor_module > h2 { margin: 0; padding: 7px 5px 6px 10px; color: #444; font-size: 12px; line-height: 16px; font-weight: bold; border-bottom: 1px solid #d4d4d4; -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; background-color: #e6e6e6; }
+
+/* Fancy table */
+table.mor_fancy { margin: 0; padding: 0; border-spacing: none; }
+table.mor_fancy td, table.mor_fancy th { font-size: 11px; line-height: 15px; vertical-align: top; padding: 5px 10px; }
+table.mor_fancy th { text-align: left; font-size: 12px; font-weight: bold; }
+
+table.mor_fancy tr.alt th, table.mor_fancy tr.alt td { background: #f4f4f4; }
+table.mor_fancy .odd th, table.mor_fancy .even td { background: #f4f4f4; }
+table.mor_fancy .odd th, table.mor_fancy .even td { background: #fff; }
+
+/* Key-value table */
+
 
 /* UI ROOT */
 
@@ -52,7 +71,7 @@ h6 { font-size:0.7em; }
    PAGE STUFF
                  */
 .mor_page_leftcol { width: 20%; float:left; }
-.mor_page_rightcol { width: 75%; float:left; padding: 0 0 0 20px; }
+.mor_page_rightcol { width: 75%; float:left; padding: 48px 0 0 20px; }
                            
 
 /* 
@@ -61,7 +80,6 @@ h6 { font-size:0.7em; }
 
 /* Backup */
 
-.mor_backup_foundationbox { padding: 6px 10px; margin: 16px 0;}
 
 /* Gremlin */
 

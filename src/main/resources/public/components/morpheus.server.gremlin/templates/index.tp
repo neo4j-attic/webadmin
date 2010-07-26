@@ -1,6 +1,6 @@
 {#template MAIN}
-	<div class="mor_page_leftcol coolbox">
-		<p>Cheat sheet</p>
+	<div class="mor_page_leftcol mor_module">
+		<h2>Cheat sheet</h2>
 		<ul class="mor_info_list">
 			<li>
 				<h3>Local graph</h3>
@@ -62,11 +62,14 @@
 		</ul>
 	</div>
 	<div class="mor_page_rightcol">
-		<div class="mor_gremlin_console_wrap">
-			<div id="mor_gremlin_console" class="mor_gremlin_console">
-				<p id="mor_gremlin_console_input_wrap"><span style="float:left;"> &gt; </span> <input type="text" id="mor_gremlin_console_input" value=" " /></p>
+		<div class="mor_module">
+			<h2>Gremlin console</h2>
+			<div class="mor_gremlin_console_wrap">
+				<div id="mor_gremlin_console" class="mor_gremlin_console">
+					<p id="mor_gremlin_console_input_wrap"><span style="float:left;"> &gt; </span> <input type="text" id="mor_gremlin_console_input" value=" " /></p>
+				</div>
+				<div class="break"></div>
 			</div>
-			<div class="break"></div>
 		</div>
 	</div>
 {#/template MAIN}

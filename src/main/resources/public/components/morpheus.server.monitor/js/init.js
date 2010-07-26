@@ -39,16 +39,14 @@ morpheus.components.server.monitor.base = (function($, undefined) {
                 
                 if(ev.data === "morpheus.server.monitor") {
                     
-                	if( me.visible === false ) {
-                		me.visible = true;
-                    
-	                    if( me.uiLoaded === false ) {
-	                    	me.uiLoaded = true;
-	                        me.basePage.setTemplateURL("components/morpheus.server.monitor/templates/index.tp");
-	                    }
+            		me.visible = true;
+                
+                    if( me.uiLoaded === false ) {
+                    	me.uiLoaded = true;
+                        me.basePage.setTemplateURL("components/morpheus.server.monitor/templates/index.tp");
 	                    
 	                    me.reload();
-                	}
+                    }
                 	
                 } else {
                     me.visible = false;

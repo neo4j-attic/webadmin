@@ -18,7 +18,7 @@ morpheus.components.server.monitor.PrimitiveCountWidget = function(server,
 
 	me.server = server;
 	me.tracker = null;
-	me.ui = $("<div></div>");
+	me.ui = $("<div class='mor_module'></div>");
 	
 	//
 	// PUBLIC

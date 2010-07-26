@@ -1,34 +1,38 @@
 <div class="mor_page_leftcol">
 	<h1>Server configuration</h1>
-	<div class="coolbox small">
-		<p>Changing settings will always require a restart of the neo4j server, some settings, like changing JVM memory, also requires a JVM restart.</p>
-		<p>Work is beeing done on making these settings "smarter", so that you don't have to enter raw string values. Until that is done though, be careful and make sure to enter valid values.</p>
-		<p>Refer to <a href="http://wiki.neo4j.org/content/Configuration_Settings" target="_BLANK">the wiki</a> for info on various settings.</p>
+	<div class="mor_module">
+		<p class="mor_info">Changing settings will always require a restart of the neo4j server, some settings, like changing JVM memory, also requires a JVM restart.</p>
+		<p class="mor_info">Work is beeing done on making these settings "smarter", so that you don't have to enter raw string values. Until that is done though, be careful and make sure to enter valid values.</p>
+		<p class="mor_info">Refer to <a href="http://wiki.neo4j.org/content/Configuration_Settings" target="_BLANK">the wiki</a> for info on various settings.</p>
 	</div>
 </div>
 <div class="mor_page_rightcol">
-	<h2>Database settings</h2>
-	<table>
-		<tbody>
-			{#foreach $T.config as item}
-			<tr>
-				<td>{$T.item.display_name}</td>
-				<td><input type="text" class="mor_config_value" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
-			</tr>
-			{#/for} 
-		</tbody>
-	</table>
-	<h2>JVM arguments</h2>
-	<table>
-		<tbody>
-			{#foreach $T.jvm_config as item}
-			<tr>
-				<td>{$T.item.display_name}</td>
-				<td><input type="text" class="mor_config_value" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
-			</tr>
-			{#/for} 
-		</tbody>
-	</table>
+	<div class="mor_module">
+		<h2>Database settings</h2>
+		<table class="mor_fancy">
+			<tbody>
+				{#foreach $T.config as item}
+				<tr>
+					<th>{$T.item.display_name}</th>
+					<td><input type="text" class="mor_config_value" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
+				</tr>
+				{#/for} 
+			</tbody>
+		</table>
+	</div>
+	<div class="mor_module">
+		<h2>JVM arguments</h2>
+		<table class="mor_fancy">
+			<tbody>
+				{#foreach $T.jvm_config as item}
+				<tr>
+					<th>{$T.item.display_name}</th>
+					<td><input type="text" class="mor_config_value" name="{$T.item.key}" id="mor_setting_{$T.item.key}" value="{$T.item.value}" /></td>
+				</tr>
+				{#/for} 
+			</tbody>
+		</table>
+	</div>
 	<input type="button" id="mor_setting_save" disabled="disabled" value="Save changes" />
 	<!--h2>Advanced settings</h2>
 	<p class="warning small">These settings are defined at the time the database is created. Changing these means the server has to create a new database, and then copy all nodes and relations from the old one, one by one. That may take a very long time, and error-proof results are NOT guaranteed.</p>
