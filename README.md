@@ -9,7 +9,7 @@ It is currently in a very early stage, but new features are added on almost a da
 
 <a href="http://github.com/downloads/neo4j/webadmin/monitor.png"><img src="http://github.com/downloads/neo4j/webadmin/monitor-small.png" /></a>
 <a href="http://github.com/downloads/neo4j/webadmin/backup.png"><img src="http://github.com/downloads/neo4j/webadmin/backup-small.png" /></a>
-<a href="http://github.com/downloads/neo4j/webadmin/config.png"><img src="http://github.com/downloads/neo4j/webadmin/backup-config.png" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/config.png"><img src="http://github.com/downloads/neo4j/webadmin/config-small.png" /></a>
 
 Quickstart
 ------------
