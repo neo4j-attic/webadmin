@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.neo4j</groupId>
 		<artifactId>parent-pom</artifactId>
-		<version>6</version>
+		<version>7-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -177,12 +177,12 @@
 	</dependencies>
 
 	<distributionManagement>
-		<repository>
-			<id>neo4j-upload-repository</id>
-			<name>Developers-only Maven 2 upload repository for Neo4j</name>
-			<url>scpexe://m2.neo4j.org/home/neo/maven2</url>
+		<snapshotRepository>
+			<id>snapshots@repo.neo4j.org</id>
+			<name>snapshots@repo.neo4j.org</name>
 			<uniqueVersion>false</uniqueVersion>
-		</repository>
+			<url>https://repo.neo4j.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
 
 	<repositories>
