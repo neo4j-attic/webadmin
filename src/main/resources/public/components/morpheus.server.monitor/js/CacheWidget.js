@@ -3,7 +3,7 @@ morpheus.provide("morpheus.components.server.monitor.PrimitiveCountWidget");
 $.require("components/morpheus.server.monitor/js/JmxValueTracker.js");
 
 /**
- * Used to keep track of the current status of a neo4j server.
+ * Used to keep track of the current cache status.
  * 
  * @param server
  *            is the server instance to track
@@ -11,7 +11,7 @@ $.require("components/morpheus.server.monitor/js/JmxValueTracker.js");
  *            (optional) is the update interval in milliseconds. The default is
  *            10000.
  */
-morpheus.components.server.monitor.PrimitiveCountWidget = function(server,
+morpheus.components.server.monitor.CacheWidget = function(server,
 		interval) {
 
 	var me = {};
@@ -34,7 +34,7 @@ morpheus.components.server.monitor.PrimitiveCountWidget = function(server,
 			
 			if ( ! me.uiLoaded ) {
 				me.uiLoaded = true;
-				me.ui.setTemplateURL("components/morpheus.server.monitor/templates/PrimitiveCountWidget.tp");
+				me.ui.setTemplateURL("components/morpheus.server.monitor/templates/CacheWidget.tp");
 			}
 			
 			if ( ! me.runnning ) {
@@ -87,7 +87,7 @@ morpheus.components.server.monitor.PrimitiveCountWidget = function(server,
 	// 
 
 	me.tracker = morpheus.components.server.monitor.JmxValueTracker(me.server,
-			"localkernel:Primitive count", me.extractor, me.valueChanged,
+			"localkernel:Cache", me.extractor, me.valueChanged,
 			interval || 10000);
 
 	return me.public;

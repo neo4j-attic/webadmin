@@ -1,5 +1,10 @@
 morpheus.provide("morpheus.components.server.monitor.base");
 
+$.require( "components/morpheus.server.monitor/js/jmx.js" );
+$.require( "components/morpheus.server.monitor/js/PrimitiveCountWidget.js" );
+$.require( "components/morpheus.server.monitor/js/DiskUsageWidget.js" );
+$.require( "components/morpheus.server.monitor/js/CacheWidget.js" );
+
 /**
  * Base module for the monitor component.
  * 
@@ -16,10 +21,9 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     me.uiLoaded  = false;
     me.server = null;
     
-    me.jmxData = null;
-    me.currentBean = null;
-    
     me.visible = false;
+    
+    me.valueTrackers = [];
     
     //
     // PUBLIC
@@ -31,75 +35,21 @@ morpheus.components.server.monitor.base = (function($, undefined) {
                 return me.basePage;
             },
             
-            /**
-             * Get bean data, given a bean name. This takes a callback since it
-             * is not for sure that data has been loaded yet.
-             * @param name is the bean name to find
-             * @param cb is a callback that will be called with an array of matching beans 
-             *        (usually just one, but could be several if you use wildcard markers in the name)
-             */
-            findBeans : function(name, cb) {
-
-                var beanInfo = me.public.parseBeanName(name);
-                var domain = me.getDomain(beanInfo.domain);
-                
-                if( me.jmxData !== null && domain !== null ) {
-                    
-                    // It seems we have the data..
-                    for( var index in domain.beans ) {
-                        if( domain.beans[index].name === name ) {
-                            cb([domain.beans[index]]);
-                            return;
-                        }
-                        
-                    }
-                }
-                
-                // The requested bean is not available locally, check if there is a server connection
-                
-                if( me.server === null ) { // Nope
-                    cb([]);
-                    return;
-                }
-                    
-                
-                // Server available
-                me.server.admin.get("jmx/" + beanInfo.domain + "/" + beanInfo.name, (function(cb) {
-                    return function(data) {
-                        cb(data);
-                    };
-                })(cb));
-                
-            },
-            
-            /**
-             * Extract data from a bean name
-             */
-            parseBeanName : function(beanName) {
-                
-                var parts = beanName.split(":");
-                
-                return {domain:parts[0], name:parts[1]};
-                
-            },
-            
             pageChanged : function(ev) {
                 
                 if(ev.data === "morpheus.server.monitor") {
                     
-                    me.visible = true;
+                	if( me.visible === false ) {
+                		me.visible = true;
                     
-                    if( me.uiLoaded === false ) {
-                        me.basePage.setTemplateURL("components/morpheus.server.monitor/templates/index.tp");
-                    }
-                    
-                    // If jmx data has not been loaded for the current server
-                    if( me.server !== null && me.jmxData === null ) {
-                        
-                        me.loadJMXDomains(me.server);
-                        
-                    }
-                    
+	                    if( me.uiLoaded === false ) {
+	                    	me.uiLoaded = true;
+	                        me.basePage.setTemplateURL("components/morpheus.server.monitor/templates/index.tp");
+	                    }
+	                    
+	                    me.reload();
+                	}
+                	
                 } else {
                     me.visible = false;
                 }
@@ -107,20 +57,15 @@ morpheus.components.server.monitor.base = (function($, undefined) {
             
             serverChanged : function(ev) {
                 
-                me.jmxData = null;
                 me.server = ev.data.server;
                 
-                // If the monitor page is currently visible, load jmx stuff
+                // If the monitor page is currently visible
                 if( me.visible === true ) {
-                    me.loadJMXDomains(me.server);
+                	me.reload();
                 }
-                
             },
             
-            init : function() {
-                $( window ).bind( "hashchange", me.hashchange );
-                me.hashchange();
-            }
+            init : function() { }
             
     };
     
@@ -128,129 +73,52 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     // PRIVATE
     //
     
-    me.loadJMXDomains = function(server) {
-        if(me.server !== null ) {
-            me.server.admin.get("jmx", function(data) {
-                
-                // Make sure server hasn't changed
-                if( me.server === server ) {
-                    me.jmxData = [];
-                    
-                    for( var index in data ) {
-                        // Push all jmx domains to the jmx list
-                        me.jmxData.push( { name: data[index], loaded:false });
-                        
-                        // Fetch JMX data for this domain
-                        setTimeout( (function(server, domain) {
-                            return function() {
-                                me.loadJMXData(server, domain);
-                            };
-                        })(server, data[index]), 0);
-                    }
-                }
-                
-            }, function() {
-                
-                // Make sure server hasn't changed
-                if( me.server === server ) {
-                    me.jmxData = {};
-
-                    me.render();
-                }
-            });   
-        }
-    };
-    
-    me.loadJMXData = function(server, domain) {
-        
-        if(me.server !== null ) {
-            me.server.admin.get("jmx/" + domain, function(data) {
-                
-                // Make sure server hasn't changed
-                if( me.server === server ) {
-                
-                    // Check if everything is loaded
-                    var domain = me.getDomain(data.domain);
-                    domain.loaded = true;
-                    domain.beans = data.beans;
-                    
-                    for(var index in me.jmxData) {
-                        if( me.jmxData[index].loaded === false ) {
-                            return;
-                        }
-                    }
-                    
-                    // Trigger a re-load of the currently visible bean, if there is one.
-                    me.hashchange();
-                    me.render();
-                    
-                }
-                
-            }, function() {
-                
-                // Make sure server hasn't changed
-                if( me.server === server ) {
-                    
-                }
-            });   
-        }
-        
-    };
-    
-    me.getDomain = function(domain) {
-        for( var index in me.jmxData ) {
-            if(me.jmxData[index].name === domain) {
-                return me.jmxData[index];
-            }
-        }
-        
-        return null;
-    };
-    
-    /**
-     * Triggered when the URL hash state changes.
-     */
-    me.hashchange = function(ev) {
-        var beanName = $.bbq.getState( "jmxbean" );
-        
-        if( typeof(beanName) !== "undefined" && (me.currentBean === null || beanName !== me.currentBean.name)) {
-            me.public.findBeans(beanName, function(beans) { 
-                if(beans.length > 0) {
-                    me.currentBean = beans[0];
-                    
-                    if( me.visible ) {
-                    	me.render();
-                    }
-                }
-                
-            });
-            
-        }
-    };
-    
-    me.render = function() {
+    me.reload = function() {
         
         me.basePage.processTemplate({
-            jmx : (me.jmxData === null) ? [] : me.jmxData,
-            server : me.server,
-            bean : me.currentBean
+            server : me.server
         });
         
+        me.destroyValueTrackers();
+        
+        if( me.server ) {
+        	me.loadValueTrackers(me.server);
+        }
+        
+    };
+    
+    me.destroyValueTrackers = function() {
+    	for( var i = 0, l = me.valueTrackers.length; i < l ; i++ ) {
+    		me.valueTrackers[i].stopPolling();
+    	}
+    	me.valueTrackers = [];
+    };
+    
+    me.loadValueTrackers = function(server) {
+    	var box = $("#mor_monitor_valuetrackers");
+    	
+    	var primitiveTracker = morpheus.components.server.monitor.PrimitiveCountWidget(server);
+    	var diskTracker      = morpheus.components.server.monitor.DiskUsageWidget(server);
+    	var cacheTracker      = morpheus.components.server.monitor.CacheWidget(server);
+    	
+    	me.valueTrackers.push(primitiveTracker);
+    	me.valueTrackers.push(diskTracker);
+    	me.valueTrackers.push(cacheTracker);
+    	
+    	box.append(primitiveTracker.render());
+    	box.append(diskTracker.render());
+    	box.append(cacheTracker.render());
     };
     
     //
     // CONSTRUCT
     //
     
-    $('.mor_monitor_jmxbean_button').live('click', function(ev) {
+    $('.mor_monitor_showjmx').live('click', function(ev) {
         
-        setTimeout((function(ev){
-            return function() {
-                $.bbq.pushState({
-                    jmxbean : $('.bean-name',ev.target.parentNode).val()
-                });
-            };
-        })(ev),0);
+        $.bbq.pushState({
+            p :"morpheus.server.monitor.jmx"
+        });
     
         ev.preventDefault();
     });

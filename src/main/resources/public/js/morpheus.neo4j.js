@@ -98,9 +98,10 @@ morpheus.neo4j = function( data )
             			// Find out what instance name the local kernel has
             			me.public.kernelInstanceName((function(cb, name) {
             				return function(instanceName) {
-            					me.public.admin.get("jmx/org.neo4j/instance=" + instanceName + ",name=" + name, (function(cb) {
+            					var query = escape(instanceName + ",name=" + name);
+            					me.public.admin.get("jmx/org.neo4j/" + query, (function(cb) {
         		                    return function(data) {
-        		                        cb(data.beans);
+        		                        cb(data);
         		                    };
         		                })(cb));
             				};
@@ -109,7 +110,7 @@ morpheus.neo4j = function( data )
             		} else {
 		            	me.public.admin.get("jmx/" + beanName.domain + "/" + beanName.name, (function(cb) {
 		                    return function(data) {
-		                        cb(data.beans);
+		                        cb(data);
 		                    };
 		                })(cb));
             		}
@@ -122,9 +123,11 @@ morpheus.neo4j = function( data )
              * @cb is a callback that will be called with the name
              */
             kernelInstanceName : function(cb) {
-            	me.public.admin.get("jmx/kernelinstancename", (function(cb) { 
+            	me.public.admin.get("jmx/kernelquery", (function(cb) { 
             		return function(data) {
-            			cb(data);
+            			// Data looks like : org.neo4j:instance=kernel#0,name=*
+            			// Split it to be: instance=kernel#0
+            			cb(data.split(":")[1].split(",")[0]);
             		};
             	})(cb));
             },

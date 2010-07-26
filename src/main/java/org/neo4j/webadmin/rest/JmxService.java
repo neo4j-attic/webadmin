@@ -3,6 +3,7 @@ package org.neo4j.webadmin.rest;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 import static org.neo4j.webadmin.rest.WebUtils.dodgeStartingUnicodeMarker;
+import static org.neo4j.webadmin.utils.GraphDatabaseUtils.getLocalDatabase;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
@@ -24,6 +25,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.kernel.management.Kernel;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.JmxDomainListRepresentation;
@@ -179,17 +182,16 @@ public class JmxService
      * This returns the instance name for the current "main" neo4j kernel, ie.
      * the one that runs behind the REST server.
      * 
-     * TODO: Write real implementation, waiting for info from kernel devs on how
-     * to do this..
-     * 
      * @return
      */
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/kernelinstancename" )
+    @Path( "/kernelquery" )
     public Response currentKernelInstance()
     {
+        Kernel kernelBean = ( (EmbeddedGraphDatabase) getLocalDatabase() ).getManagementBean( Kernel.class );
         return addHeaders(
-                Response.ok( "kernel#0", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+                Response.ok( "\"" + kernelBean.getMBeanQuery().toString()
+                             + "\"", JsonRenderers.DEFAULT.getMediaType() ) ).build();
     }
 }

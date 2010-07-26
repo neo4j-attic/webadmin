@@ -1,4 +1,4 @@
-morpheus.provide("morpheus.components.server.monitor.JmxValueTracker);
+morpheus.provide("morpheus.components.server.monitor.JmxValueTracker");
 
 /**
  * Tracks a given jmx value of a given neo4j server.
@@ -37,6 +37,10 @@ morpheus.components.server.monitor.JmxValueTracker = function(server, beanName, 
 	me.public = {
 		run : function() {
 			me.poll();
+		},
+		
+		stop : function() {
+			me.stopIssued = true;
 		}
 	};
 	
@@ -45,37 +49,32 @@ morpheus.components.server.monitor.JmxValueTracker = function(server, beanName, 
 	//
 	
 	me.poll = function() {
-		
-//		me.server.admin.get("backup/status", function(data) {
-//			
-//			// If any data has changed
-//			if( data.current_action !== me.prevAction ||
-//				data.started !== me.prevStarted ||
-//				data.eta !== me.prevEta ) {
-//				
-//				me.prevAction = data.current_action;
-//				me.prevStarted = data.started;
-//				me.prevEta = data.eta;
-//				
-//				// Call callback, if it returns false, stop polling.
-//				if( ! me.callback(data) ) {
-//					return;
-//				}
-//				
-//				// Reset actual polling to the polling interval the user wanted.
-//				me.actual_polling_interval = me.polling_interval;
-//				
-//			} else {
-//				if( me.actual_polling_interval >= me.max_polling_interval ) {
-//					me.actual_polling_interval = me.max_polling_interval;
-//				} else {
-//					me.actual_polling_interval *= 2;
-//				}
-//			}
-//			
-//			setTimeout(me.poll, me.actual_polling_interval);
-//			
-//		});
+		me.server.jmx(beanName, function(beans) {
+			var value = me.extractor(beans[0]);
+			if ( value !== me.prevValue ) {
+				me.prevValue = value;
+				var keepPolling = me.callback({ value:value, bean:beans[0], beanName:me.beanName });
+				
+				if( keepPolling ){
+					
+					// Reset the polling interval
+					me.actual_polling_interval = me.polling_interval;
+					
+				} else {
+					return;
+				}
+			} else {
+				if( me.actual_polling_interval >= me.max_polling_interval ) {
+					me.actual_polling_interval = me.max_polling_interval;
+				} else {
+					me.actual_polling_interval *= 2;
+				}
+			}
+			
+			if ( ! me.stopIssued ) {
+				setTimeout(me.poll, me.actual_polling_interval);
+			}
+		});
 		
 	};
 	
