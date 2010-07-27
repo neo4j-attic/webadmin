@@ -133,10 +133,7 @@ var morpheus = ( function( $, undefined )
         }
         else
         {
-            $.post( me.PROPERTIES_URL + key,
-            {
-                value : JSON.stringify( value )
-            }, ( function( cb, key, value )
+            $.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
             {
                 return function()
                 {
@@ -169,20 +166,31 @@ var morpheus = ( function( $, undefined )
     };
     
     me.ajax = function(method, url, data, success, failure) {
-        if(typeof(data) === "function") {
+    	
+    	if(typeof(data) === "function") {
             failure = success;
             success = data;
-            data = {};
+            data = null;
         }
         
         setTimeout((function(method, url, data, success, failure){
+        	if( typeof(data) === "object") {
+        		data = JSON.stringify(data);
+        	}
+        	
+        	if( data === null || data === "null" ) {
+        		data = "";
+        	}
+        	
             return function() {
                 $.ajax(
                 {
                     url : url,
                     type : method,
                     data : data,
+                    processData: false,
                     success : success,
+                    contentType: "application/json",
                     error : function(req) {
                         if( req.status === 200 ) {
                             // This happens when the server returns an empty response.

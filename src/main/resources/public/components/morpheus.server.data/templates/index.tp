@@ -1,1 +1,139 @@
-<h1>Data browser</h1>
+{#template MAIN}
+<div class="mor_page_leftcol">
+	<h1>Data browser</h1>
+	<div class="mor_module">
+		<p class="mor_info">Browse the data in your neo4j server.</p>
+	</div>
+	{#if $T.item && $T.item.relationships }
+	<div class="mor_module">
+		<h2>Fields to list</h2>
+		<p class="mor_info">Comma-separated list of fields to show when listing related nodes.</p>
+		
+		<form action="#">
+			<p class="mor_info">
+				<input type="text" value="{$T.item.relationships.fields.join(",")}" id="mor_data_listfields" />
+				<input type="submit" value="Set" id="mor_data_listfields_button" />
+			</p>
+		</form>
+	</div>
+	{#/if}
+</div>
+
+<div class="mor_page_rightcol">
+
+	{#if $T.item.isNode }
+		<div class="mor_module mor_span-2">
+			<h2>Node</h2>
+			{#include propertyTable root=$T.item}
+		</div>
+		{#include nodeTable root=$T.item.relationships}
+	{#elseif $T.item.isRelationship}
+		<div class="mor_span-2">
+			<div class="mor_module">
+				<h2>Start node</h2>
+				{#if $T.item.startNode}
+				{#include propertyTable root=$T.item.startNode}
+				{#/if}
+			</div>
+		</div>
+		<div class="mor_module mor_span-2">
+			<h2>Relationship</h2>
+			{#include propertyTable root=$T.item}
+		</div>
+		<div class="mor_span-2">
+			<div class="mor_module">
+				<h2>End node</h2>
+				{#if $T.item.endNode}
+				{#include propertyTable root=$T.item.endNode}
+				{#/if}
+			</div>
+		</div>
+	{#/if}
+</div>
+{#/template MAIN}
+
+{#template propertyTable}
+<table class="mor_fancy" cell-spacing="0">
+	<tbody>
+		<tr>
+			<th>Id</th>
+			<td><a href="{ $T.self }" class="mor_data_url_button">{ $T.self }</a></td>
+		</tr>
+		{#if $T.type }
+		<tr>
+			<th>Type</th>
+			<td>{$T.type}</td>
+		</tr>
+		{#/if}
+		{#foreach $T.fields as field}
+		<tr>
+			<th>{$T.field}</th>
+			<td>{$T.data[$T.field]}</td>
+		</tr>
+		{#/for} 
+	</tbody>
+</table>
+{#/template propertyTable}
+
+{#template relationNodeTable}
+<table class="mor_fancy data-table" cell-spacing="0">
+	<thead>
+		<tr>
+			<th>Id</th>
+			{#foreach $T.fields as field}
+				<th>{$T.field}</th>	
+			{#/for }
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="odd">
+			<td><a href="{ $T.self }" class="mor_data_url_button">{ $T.self }</a></td>
+			{#foreach $T.fields as field}
+				<td><a href="{$T.self}" class="mor_data_url_button">{$T.data[$T.field]}</a></td>	
+			{#/for }
+		</tr>
+	</tbody>
+</table>
+{#/template relationNodeTable}
+
+{#template nodeTable}
+<div class="data-table-container mor_span-4">
+	<div class="actions">
+		Related nodes
+	</div>
+	<div class="data-table-body">
+		<table class="mor_fancy data-table" cell-spacing="0">
+			<thead>
+				<tr>
+					<th>Relation</th>
+					<th>Node id</th>
+					{#foreach $T.fields as field}
+						<th>{$T.field}</th>	
+					{#/for }
+				</tr>
+			</thead>
+			<tbody>
+				{#foreach $T.data as item}
+					{#param name=relatedNode value=$T.nodes[$T.item.otherNode]}
+					<tr class="odd">
+						<td><a href="{ $T.item.self }" class="mor_data_url_button">{ $T.item.type }</a></td>
+						<td><a href="{ $T.item.otherNode }" class="mor_data_url_button">{ $T.item.otherNode }</a></td>
+						{#if $P.relatedNode}
+							{#foreach $T.fields as field}
+								<td><a href="{$T.item.otherNode}" class="mor_data_url_button">{$P.relatedNode.data[$T.field]}</a></td>	
+							{#/for }
+						{#else }
+							<td></td>	
+							{#foreach $T.fields as field}
+								<td></td>	
+							{#/for }
+						{#/if}
+					</tr>
+				{#/for }
+			</tbody>
+		</table>
+	</div>
+	<div class="paginator">
+	</div>
+</div>
+{#/template nodeTable}

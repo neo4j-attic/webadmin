@@ -7,9 +7,6 @@ $.require( "components/morpheus.server.monitor/js/CacheWidget.js" );
 
 /**
  * Base module for the monitor component.
- * 
- * TODO: This needs to start using the jmx interface provided by neo4j instances instead of implementing it's own.
- * TODO: Break out jmx into a sub-module
  */
 morpheus.components.server.monitor.base = (function($, undefined) {
     

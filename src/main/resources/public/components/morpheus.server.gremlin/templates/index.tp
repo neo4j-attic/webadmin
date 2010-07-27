@@ -1,65 +1,68 @@
 {#template MAIN}
-	<div class="mor_page_leftcol mor_module">
-		<h2>Cheat sheet</h2>
-		<ul class="mor_info_list">
-			<li>
-				<h3>Local graph</h3>
-				<p class="mor_info_list_info">$_g</p>
-			</li>
-			<li>
-				<h3>Root list</h3>
-				<p class="mor_info_list_info">$_ (same as ".", but "." can't be set)</p>
-			</li>
-			<li>
-				<h3>Set variable</h3>
-				<p class="mor_info_list_info">$myVar := "My Value"</p>
-			</li>
-			<li>
-				<h3>Get node by id</h3>
-				<p class="mor_info_list_info">$myNode := g:id(1)</p>
-			</li>
-			<li>
-				<h3>Create node</h3>
-				<p class="mor_info_list_info">$myNode := g:add-v()</p>
-			</li>
-			<li>
-				<h3>Create relation</h3>
-				<p class="mor_info_list_info">$myRelation := g:add-e($myFirstNode, "relation type", $myOtherNode)</p>
-			</li>
-			<li>
-				<h3>Remove node or relation</h3>
-				<p class="mor_info_list_info">g:remove-ve($myNodeOrRelation)</p>
-			</li>
-			<li>
-				<h3>Set attribute</h3>
-				<p class="mor_info_list_info">$myNodeOrRelation/@attributeName := "My Value"</p>
-			</li>
-			<li>
-				<h3>Get attribute</h3>
-				<p class="mor_info_list_info">$myNodeOrRelation/@attributeName</p>
-			</li>
-			<li>
-				<h3>List relations of node</h3>
-				<p class="mor_info_list_info">
-						<ul>
-							<li>$myNode/bothE</li>
-							<li>$myNode/inE</li>
-							<li>$myNode/outE</li>
-							<li>$myNode/bothE[@label="relation type"]</li>
-						</ul>
-					</p>
-			</li>
-			<li>
-				<h3>List nodes of relation</h3>
-				<p class="mor_info_list_info">
-						<ul>
-							<li>$myRelation/bothV</li>
-							<li>$myRelation/inV</li>
-							<li>$myRelation/outV</li>
-						</ul>
-					</p>
-			</li>
-		</ul>
+	<div class="mor_page_leftcol">
+		<h1>Gremlin</h1>
+		<div class="mor_module">
+			<h2>Cheat sheet</h2>
+			<ul class="mor_info_list">
+				<li>
+					<h3>Local graph</h3>
+					<p class="mor_info_list_info">$_g</p>
+				</li>
+				<li>
+					<h3>Root list</h3>
+					<p class="mor_info_list_info">$_ (same as ".", but "." can't be set)</p>
+				</li>
+				<li>
+					<h3>Set variable</h3>
+					<p class="mor_info_list_info">$myVar := "My Value"</p>
+				</li>
+				<li>
+					<h3>Get node by id</h3>
+					<p class="mor_info_list_info">$myNode := g:id(1)</p>
+				</li>
+				<li>
+					<h3>Create node</h3>
+					<p class="mor_info_list_info">$myNode := g:add-v()</p>
+				</li>
+				<li>
+					<h3>Create relation</h3>
+					<p class="mor_info_list_info">$myRelation := g:add-e($myFirstNode, "relation type", $myOtherNode)</p>
+				</li>
+				<li>
+					<h3>Remove node or relation</h3>
+					<p class="mor_info_list_info">g:remove-ve($myNodeOrRelation)</p>
+				</li>
+				<li>
+					<h3>Set attribute</h3>
+					<p class="mor_info_list_info">$myNodeOrRelation/@attributeName := "My Value"</p>
+				</li>
+				<li>
+					<h3>Get attribute</h3>
+					<p class="mor_info_list_info">$myNodeOrRelation/@attributeName</p>
+				</li>
+				<li>
+					<h3>List relations of node</h3>
+					<p class="mor_info_list_info">
+							<ul>
+								<li>$myNode/bothE</li>
+								<li>$myNode/inE</li>
+								<li>$myNode/outE</li>
+								<li>$myNode/bothE[@label="relation type"]</li>
+							</ul>
+						</p>
+				</li>
+				<li>
+					<h3>List nodes of relation</h3>
+					<p class="mor_info_list_info">
+							<ul>
+								<li>$myRelation/bothV</li>
+								<li>$myRelation/inV</li>
+								<li>$myRelation/outV</li>
+							</ul>
+						</p>
+				</li>
+			</ul>
+		</div>
 	</div>
 	<div class="mor_page_rightcol">
 		<div class="mor_module">

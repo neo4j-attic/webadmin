@@ -28,6 +28,8 @@ public class WebUtils
     public static ResponseBuilder addHeaders( ResponseBuilder builder )
     {
         String entity = (String) builder.clone().build().getEntity();
+
+        // Check if response contains any data
         if ( entity != null )
         {
             byte[] entityAsBytes;

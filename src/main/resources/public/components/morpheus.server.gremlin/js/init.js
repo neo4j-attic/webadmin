@@ -67,7 +67,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
             evaluate : function(statement, cb) {
                 var cb = cb || me.evalCallback;
                 
-                me.server.admin.post("gremlin/", {value:JSON.stringify({command:statement})}, (function(statement, cb) {
+                me.server.admin.post("gremlin/", {command:statement}, (function(statement, cb) {
                     return function(data) {
                         cb(statement, data);
                     };

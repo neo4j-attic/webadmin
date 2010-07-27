@@ -46,10 +46,74 @@ table.mor_fancy td, table.mor_fancy th { font-size: 11px; line-height: 15px; ver
 table.mor_fancy th { text-align: left; font-size: 12px; font-weight: bold; }
 
 table.mor_fancy tr.alt th, table.mor_fancy tr.alt td { background: #f4f4f4; }
-table.mor_fancy .odd th, table.mor_fancy .even td { background: #f4f4f4; }
-table.mor_fancy .odd th, table.mor_fancy .even td { background: #fff; }
+table.mor_fancy .odd th, table.mor_fancy .odd td { background: #f4f4f4; }
+table.mor_fancy .even th, table.mor_fancy .even td { background: #fff; }
 
-/* Key-value table */
+table.mor_fancy thead th, table.mor_fancy tfoot td { color: #aaa; padding: 5px 10px; font-size: 11px; line-height: 12px; border-left: 1px solid #d4d4d4; border-bottom: 1px solid #d4d4d4; background: #eee; }
+table.mor_fancy thead th.sorted { border-bottom: 1px solid #ccc; background: #e0e0e0; }
+table.mor_fancy thead th a { position: relative; display: block; margin: -5px -10px -4px; padding: 5px 10px 4px; height: 100% !important;  white-space: nowrap; }
+table.mor_fancy thead th a:link, table.mor_fancy thead th a:visited { color: #59afcc; border-top: 1px solid #fff; }
+table.mor_fancy thead th a:hover, table.mor_fancy thead th a:active, 
+table.mor_fancy thead th.sorted a { color: #444; }
+
+
+table.mor_fancy tbody th, table.mor_fancy tbody td { border-top: 1px solid #fff; border-bottom: 1px solid #e0e0e0; }
+
+table.mor_fancy tfoot td {
+    border-bottom: none;
+    border-top: 1px solid #d4d4d4;
+}
+
+table.mor_fancy thead th:first-child,
+table.mor_fancy tfoot td:first-child {
+    border-left: none;
+}
+
+table.mor_fancy thead th.optional {
+    font-weight: normal !important;
+}
+
+fieldset table.mor_fancy {
+    border-right: 1px solid #eee;
+}
+
+table.mor_fancy tr.row-label td {
+    font-size: 9px;
+    padding-top: 2px;
+    padding-bottom: 0;
+    border-bottom: none;
+    color: #666;
+    margin-top: -1px;
+}
+
+table.mor_fancy tbody th:first-child, table.mor_fancy tbody td:first-child { border-left: none; }
+table.mor_fancy tbody tr:last-child td, table.mor_fancy tbody tr:last-child th { border-bottom: none; }
+
+/* Data table */
+
+.data-table-container .paginator { border-top:1px solid #FFFFFF; font-size:11px; font-weight:bold; margin:0; overflow:hidden; padding:10px 12px; }
+
+.data-table-container .actions { border-bottom:1px solid #D4D4D4; border-top:1px solid #FFFFFF; color:#666666; padding:5px 3px;	 }
+.data-table-container .actions:first-child { border-top:medium none;}
+.data-table-container { border: 1px solid #d4d4d4; -moz-border-radius: 5px; -webkit-border-radius: 5px; background: #eee;}
+
+table.data-table { margin-top: -1px; margin-right: -1px; border-right: 1px solid #d4d4d4; }
+.data-table tbody th, .data-table tbody td { border: none; border-top: 1px solid #e8e8e8; border-left: 1px solid #e0e0e0; }
+.data-table tbody tr:first-child th, .data-table tbody tr:first-child td {  border-top: 1px solid #fff; }
+.data-table tbody tr th:first-child, .data-table tbody tr td:first-child { border-left: none; }
+
+.data-table .result-list:first-child table { margin-top: 0; border-top: none; }
+.data-table .result-list:first-child thead th:first-child a { -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; }
+.data-table .result-list:first-child thead th:last-child a { -moz-border-radius-topright: 5px; -webkit-border-top-right-radius: 5px; }
+.data-table table:first-child thead th, 
+.data-table form > input + table thead th { border-top: none; }
+.data-table table:first-child thead th:first-child, 
+.data-table form > input + table thead th:first-child { -moz-border-radius-topleft: 5px; }
+
+.data-table form table tbody td, .data-table form table tbody th { padding-top: 10px; padding-bottom: 9px; line-height: 16px; }
+table:first-child thead th, table.data-table thead th { border-top:medium none; }
+
+.data-table-body { border-bottom:1px solid #D4D4D4; border-top:1px solid #FFFFFF; }
 
 
 /* UI ROOT */
@@ -72,6 +136,12 @@ table.mor_fancy .odd th, table.mor_fancy .even td { background: #fff; }
                  */
 .mor_page_leftcol { width: 20%; float:left; }
 .mor_page_rightcol { width: 75%; float:left; padding: 48px 0 0 20px; }
+
+.mor_span-1 { width: 7%; float:left;  margin-right:2%; }
+.mor_span-2 { width: 24%; float:left; margin-right:2%; }
+.mor_span-3 { width: 41%; float:left; margin-right:2%; }
+.mor_span-4 { width: 58%; float:left; margin-right:2%; }
+.mor_span-5 { width: 75%; float:left; margin-right:2%; }
                            
 
 /* 

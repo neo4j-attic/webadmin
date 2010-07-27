@@ -93,6 +93,10 @@ public class ServerProperties implements Representation
                 "general.backup.path", "Backup path", "",
                 PropertyType.GENERAL_PROPERTY ) );
 
+        properties.add( new ServerPropertyRepresentation(
+                "general.data.listfields", "Data browser list fields", "name",
+                PropertyType.GENERAL_PROPERTY ) );
+
         return properties;
 
     }

@@ -2,7 +2,7 @@
 	<div class="mor_page_leftcol">
 		<h1>Backups</h1>
 		<div class="mor_module">
-			<p class="mor_info">Perform backups on your neo4j database.</p>
+			<p class="mor_info">Perform backups on your Neo4j database.</p>
 		</div>
 	</div>
 	<div class="mor_page_rightcol">

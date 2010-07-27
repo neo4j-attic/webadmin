@@ -18,7 +18,7 @@ morpheus.components.server.monitor.CacheWidget = function(server,
 
 	me.server = server;
 	me.tracker = null;
-	me.ui = $("<div class='mor_module'></div>");
+	me.ui = $("<div class='mor_module mor_span-2'></div>");
 	
 	//
 	// PUBLIC

@@ -9,6 +9,7 @@ morpheus.componentList = [
         'morpheus.overview',
         'morpheus.server.lifecycle',
         'morpheus.server.monitor',
+        'morpheus.server.data',
         'morpheus.server.gremlin',
         'morpheus.server.config',
         'morpheus.server.backup'];

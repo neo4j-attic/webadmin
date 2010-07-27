@@ -21,6 +21,27 @@ morpheus.neo4j = function( data )
             urls : {
                 admin : data.urls.admin || "",
                 rest  : data.urls.rest  || "",
+                
+                /**
+				 * Takes a url. If the host in the url matches the REST base
+				 * url, the rest base url will be stripped off. If it matches
+				 * the admin base url, that will be stripped off.
+				 * 
+				 * If none of them match, the host will be stripped off.
+				 */
+                stripBase : function( url ) {
+            		if (typeof(url) === "undefined") {
+            			return url;
+            		}
+            		
+            		if ( url.indexOf(me.public.urls.rest) === 0 ) {
+            			return url.substring(me.public.urls.rest.length);
+            		} else if ( url.indexOf(me.public.urls.admin) === 0 ) {
+            			return url.substring(me.public.urls.admin.length);
+            		} else {
+            			return url.substring("/", 8);
+            		}
+            	}
             },
             
             domain : data.domain || "unknown",
@@ -119,9 +140,10 @@ morpheus.neo4j = function( data )
             },
             
             /**
-             * Get the current jmx instance name for the local neo4j instance.
-             * @cb is a callback that will be called with the name
-             */
+			 * Get the current jmx instance name for the local neo4j instance.
+			 * 
+			 * @cb is a callback that will be called with the name
+			 */
             kernelInstanceName : function(cb) {
             	me.public.admin.get("jmx/kernelquery", (function(cb) { 
             		return function(data) {
@@ -171,6 +193,7 @@ morpheus.neo4jHandler = (function(undefined) {
     //
     
     me.DEFAULT_ADMIN_URL = "/admin/server/";
+    me.DEFAULT_REST_URL = "http://" + document.domain + ":9999/";
     
     me.servers = false;
     me.currentServer = null;
@@ -212,7 +235,7 @@ morpheus.neo4jHandler = (function(undefined) {
                 url : me.DEFAULT_ADMIN_URL + "status",
                 success : function() {
                     // There is a local server running, start chatting
-                    var serv = morpheus.neo4j( { urls: {admin : me.DEFAULT_ADMIN_URL }, domain:document.domain } )
+                    var serv = morpheus.neo4j( { urls: {admin : me.DEFAULT_ADMIN_URL, rest : me.DEFAULT_REST_URL }, domain:document.domain } )
                 
                     var servers = [serv];
                     
@@ -233,6 +256,12 @@ morpheus.neo4jHandler = (function(undefined) {
             // Load available servers
             me.servers = [];
             for(var i = 0, l = servers.length; i < l ; i++) {
+                
+                // If no REST-url is specified, use default
+                if( ! servers[i].urls.rest ) {
+                	servers[i].urls.rest = me.DEFAULT_REST_URL;
+                }
+
                 me.servers.push( morpheus.neo4j(servers[i]) );
             }
             

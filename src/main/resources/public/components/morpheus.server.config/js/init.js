@@ -68,9 +68,7 @@ morpheus.components.server.config = (function($, undefined) {
         me.server = ev.data.server;
         
         // If the config page is currently visible, load config stuff
-        if( me.visible === true ) {
-            me.loadConfig();
-        }
+        me.loadConfig();
         
     };
     
@@ -211,7 +209,7 @@ morpheus.components.server.config = (function($, undefined) {
             // Disable controls while saving
             $("input",me.basePage).attr('disabled', 'disabled');
             
-            me.server.admin.post("config",{value:JSON.stringify(changed)},function(data){
+            me.server.admin.post("config",changed,function(data){
                 me.allChangesCommitted({excludeType:"DB_CREATION_PROPERTY"});
                 
                 $("input",me.basePage).removeAttr('disabled');
@@ -245,7 +243,7 @@ morpheus.components.server.config = (function($, undefined) {
     		    { 'key' : key, 'value' : val }
     		];
     		
-	    	me.server.admin.post("config",{value:JSON.stringify(changed)},function(data){
+	    	me.server.admin.post("config",changed,function(data){
 	    		// Update the UI if applicable
 	    		if ( me.config[key].type === "JVM_ARGUMENT" ||
                      me.config[key].type === "CONFIG_PROPERTY") {
