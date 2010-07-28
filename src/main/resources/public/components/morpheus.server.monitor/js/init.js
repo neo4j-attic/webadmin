@@ -4,6 +4,7 @@ $.require( "components/morpheus.server.monitor/js/jmx.js" );
 $.require( "components/morpheus.server.monitor/js/PrimitiveCountWidget.js" );
 $.require( "components/morpheus.server.monitor/js/DiskUsageWidget.js" );
 $.require( "components/morpheus.server.monitor/js/CacheWidget.js" );
+$.require( "components/morpheus.server.monitor/js/MonitorChart.js" );
 
 /**
  * Base module for the monitor component.
@@ -77,6 +78,9 @@ morpheus.components.server.monitor.base = (function($, undefined) {
         me.destroyValueTrackers();
         
         if( me.server ) {
+        	
+        	me.server.startMonitoring();
+        	
         	me.loadValueTrackers(me.server);
         	$("#mor_monitor_lifecycle").empty();
         	$("#mor_monitor_lifecycle").append( morpheus.components.Lifecycle(me.server).render() );
@@ -86,7 +90,11 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     
     me.destroyValueTrackers = function() {
     	for( var i = 0, l = me.valueTrackers.length; i < l ; i++ ) {
-    		me.valueTrackers[i].stopPolling();
+    		if(typeof(me.valueTrackers[i].stopPolling) === "function") {
+    			me.valueTrackers[i].stopPolling();
+    		} else {
+    			me.valueTrackers[i].stopDrawing();
+    		}
     	}
     	me.valueTrackers = [];
     };
@@ -98,13 +106,19 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     	var diskTracker      = morpheus.components.server.monitor.DiskUsageWidget(server);
     	var cacheTracker      = morpheus.components.server.monitor.CacheWidget(server);
     	
+    	var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
+    	
     	me.valueTrackers.push(primitiveTracker);
     	me.valueTrackers.push(diskTracker);
     	me.valueTrackers.push(cacheTracker);
+    	me.valueTrackers.push(monitorChart);
     	
     	box.append(primitiveTracker.render());
     	box.append(diskTracker.render());
     	box.append(cacheTracker.render());
+    	box.append(monitorChart.render());
+    	
+    	monitorChart.startDrawing();
     };
     
     //

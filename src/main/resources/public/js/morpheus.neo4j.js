@@ -9,6 +9,20 @@ morpheus.neo4j = function( data )
 
     var me = {};
     
+    me.monitoring = false;
+    me.monitorInterval = 3000;
+    me.latestDataPointTime = (new Date()).getTime();
+    
+    me.kernelQueryQueue = [];
+    me.kernelQueryRunning = false;
+    
+    me.monitorData = {
+    	timestamps : [],
+    	data : {},
+    	end_time : me.latestDataPointTime + 1,
+		start_time : me.latestDataPointTime
+    };
+    
     //
     // PUBLIC
     //
@@ -145,13 +159,28 @@ morpheus.neo4j = function( data )
 			 * @cb is a callback that will be called with the name
 			 */
             kernelInstanceName : function(cb) {
-            	me.public.admin.get("jmx/kernelquery", (function(cb) { 
-            		return function(data) {
-            			// Data looks like : org.neo4j:instance=kernel#0,name=*
-            			// Split it to be: instance=kernel#0
-            			cb(data.split(":")[1].split(",")[0]);
-            		};
-            	})(cb));
+            	
+            	me.kernelQueryQueue.push(cb);
+            	
+            	if( ! me.kernelQueryRunning ) {
+            		me.kernelQueryRunning = true;
+	            	me.public.admin.get("jmx/kernelquery",  
+	            		function(data) {
+	            			// Data looks like : org.neo4j:instance=kernel#0,name=*
+	            			// Split it to be: instance=kernel#0
+	            			var result = data.split(":")[1].split(",")[0];
+	            			var callbacks = me.kernelQueryQueue;
+	            			
+	            			me.kernelQueryQueue = [];
+	            			me.kernelQueryRunning = false;
+	            			
+	            			for( var i = 0, l = callbacks.length; i < l; i++ ) {
+	            				callbacks[i](result);
+	            			}
+	            			
+	            		}
+	            	);
+            	}
             },
             
             /**
@@ -167,6 +196,26 @@ morpheus.neo4j = function( data )
             		return { domain: "*", name: "*"};
             	}
                 
+            },
+            
+            /**
+			 * Start monitoring this server, polling it at regular intervals for
+			 * data about its health. Call this method, and then listen for
+			 * "morpheus.server.monitor.update" events.
+			 */
+            startMonitoring : function() {
+            	if( me.monitoring === false ) {
+            		me.monitoring = true;
+            		me.pollMonitor();
+            	}
+            },
+            
+            stopMonitoring : function() {
+            	me.monitoring = false;
+            },
+            
+            getMonitorData : function() {
+            	return me.monitorData;
             }
     };
     
@@ -174,7 +223,80 @@ morpheus.neo4j = function( data )
     // PRIVATE
     //
     
-    
+    /**
+	 * This will poll the monitoring service for this neo4j server, fetching any
+	 * new data that is available on the current health of the server. It will
+	 * also trigger itself to be called again at a regular interval.
+	 * 
+	 * To stop this, call me.public.stopMonitoring()
+	 */
+    me.pollMonitor = function() {
+    	
+    	if( me.monitoring ) {
+    		
+    		me.public.admin.get("monitor/" + me.latestDataPointTime, function(data) {
+				
+				// Find a data point list to check
+				var key;
+				for (key in data.data ) { break; }
+				
+				// If there is any data sources
+    			if( key ) {
+    				// Find the last timestamp that has any data associated with
+					// it
+	    			for( lastIndexWithData = data.timestamps.length - 1; lastIndexWithData >= 0; lastIndexWithData-- ) {
+	    				if( typeof(data.data[key][lastIndexWithData]) === "number" ) {
+	    					me.latestDataPointTime = data.timestamps[lastIndexWithData];
+	    					break;
+	    				}
+	    			}
+	    			
+	    			// If there is new data
+	    			if( lastIndexWithData >= 0 ) {
+	    				
+	    				// Add timestamps
+	    				var newTimestamps = data.timestamps.splice(0, lastIndexWithData + 1);
+	    				me.monitorData.timestamps = me.monitorData.timestamps.concat( newTimestamps );
+	    				
+	    				// Add data
+	    				var newData = {};
+	    				for( var key in data.data ) {
+	    					newData[key] = data.data[key].splice(0, lastIndexWithData + 1);
+	    					
+	    					if ( typeof(me.monitorData.data[key]) === "undefined" ) {
+	    						me.monitorData.data[key] = [];
+	    					}
+	    					
+	    					me.monitorData.data[key] = me.monitorData.data[key].concat( newTimestamps );
+	    				}
+	    				
+	    				me.monitorData.end_time = data.end_time;
+	    				
+	    				// Let the world know
+	    				morpheus.event.trigger("morpheus.server.monitor.update", {
+	    					server : me.public,
+	    					newData : {
+	    						data: newData,
+	    						timestamps : newTimestamps,
+	    						end_time : data.end_time,
+	    						start_time : data.start_time
+	    					},
+	    					
+	    					allData : me.monitorData
+	    				});
+	    			}
+	    			
+    			} else {
+    				// There is no data provided by the server
+    				me.latestDataPointTime = (new Date()).getTime();
+    			}
+    			
+    			// Trigger a new poll
+    			setTimeout( me.pollMonitor, me.monitorInterval);
+    			
+    		});
+    	}
+    };
     
     //
     // CONSTRUCT

@@ -1,6 +1,7 @@
 package org.neo4j.webadmin.rrd;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -118,7 +119,7 @@ public class RrdSampler
     {
         try
         {
-            sample.setTime( System.currentTimeMillis() );
+            sample.setTime( new Date().getTime() );
 
             sample.setValue( RrdManager.NODE_CACHE_SIZE,
                     cacheBean.getNodeCacheSize() );
