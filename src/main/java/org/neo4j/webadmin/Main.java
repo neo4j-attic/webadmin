@@ -1,11 +1,12 @@
 package org.neo4j.webadmin;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
 
 import org.neo4j.helpers.Args;
 import org.neo4j.rest.WebServer;
-import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.rrd.RrdManager;
+import org.neo4j.webadmin.rrd.RrdSampler;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 /**
  * Main entry point for the neo4j stand-alone REST system with web
@@ -29,10 +30,10 @@ public class Main
         // 1. ARGUMENT HANDLING
         //
 
-        System.setProperty( "org.neo4j.graphdb.location", args.get( "dbPath",
-                "neo4j-rest-db" ) );
-        System.setProperty( "org.neo4j.webadmin.developmentmode", args.get(
-                "development", "false" ) );
+        System.setProperty( "org.neo4j.graphdb.location",
+                args.get( "dbPath", "neo4j-rest-db" ) );
+        System.setProperty( "org.neo4j.webadmin.rrdb.location",
+                args.get( "rrdbPath", "neo4j-rrdb" ) );
 
         restPort = args.getNumber( "restPort", WebServer.DEFAULT_PORT ).intValue();
         adminPort = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
@@ -48,6 +49,9 @@ public class Main
 
         WebServer.INSTANCE.startServer( restPort );
         AdminServer.INSTANCE.startServer( adminPort, webRoot );
+
+        System.out.println( "Starting round-robin system state sampler.." );
+        RrdSampler.start();
 
         System.out.println( String.format( "Running REST at [%s]", restBaseUri ) );
         System.out.println( String.format( "Running admin interface at [%s]",
@@ -65,22 +69,28 @@ public class Main
             {
                 try
                 {
-                    // Kill the REST-server
-                    System.out.println( "\nShutting down the REST server.." );
-                    WebServer.INSTANCE.stopServer();
-                    DatabaseLocator.shutdownGraphDatabase( new URI( restBaseUri ) );
-
-                    // Kill the admin-server
-                    System.out.println( "Shutting down the admin server.." );
-                    AdminServer.INSTANCE.stopServer();
-
-                    System.out.println( "Shutdown complete." );
-
+                    // Kill the round robin sampler
+                    System.out.println( "\nShutting down the round robin database" );
+                    RrdSampler.stop();
+                    RrdManager.getRrdDB().close();
                 }
-                catch ( URISyntaxException e )
+                catch ( IOException e )
                 {
-                    throw new RuntimeException( e );
+                    throw new RuntimeException(
+                            "IO Error trying to access round robin database path. See nested exception.",
+                            e );
                 }
+
+                // Kill the REST-server
+                System.out.println( "Shutting down the REST server.." );
+                WebServer.INSTANCE.stopServer();
+                GraphDatabaseUtils.shutdownLocalDatabase();
+
+                // Kill the admin-server
+                System.out.println( "Shutting down the admin server.." );
+                AdminServer.INSTANCE.stopServer();
+
+                System.out.println( "Shutdown complete." );
             }
         } );
 

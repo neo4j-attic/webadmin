@@ -44,10 +44,11 @@ import org.neo4j.webadmin.task.JvmRestartTask;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-@Path( "/server/config" )
+@Path( ConfigService.ROOT_PATH )
 public class ConfigService
 {
 
+    protected static final String ROOT_PATH = "/server/config";
     protected ServerProperties properties;
 
     //

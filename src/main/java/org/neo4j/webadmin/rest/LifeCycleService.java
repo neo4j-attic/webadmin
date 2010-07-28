@@ -26,9 +26,11 @@ import org.neo4j.webadmin.gremlin.GremlinSessions;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-@Path( "/server" )
+@Path( LifeCycleService.ROOT_PATH )
 public class LifeCycleService
 {
+
+    protected static final String ROOT_PATH = "/server";
 
     /**
      * TODO: This is a bad way of keeping track of the status of the neo4j

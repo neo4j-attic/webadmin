@@ -30,9 +30,11 @@ import org.neo4j.rest.domain.JsonRenderers;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-@Path( "/properties" )
+@Path( AdminPropertiesService.ROOT_PATH )
 public class AdminPropertiesService
 {
+
+    protected static final String ROOT_PATH = "/properties";
 
     /**
      * Get settings file, creating one if it does not exist.
@@ -87,7 +89,7 @@ public class AdminPropertiesService
         }
     }
 
-    // 
+    //
     // PUBLIC
     //
 

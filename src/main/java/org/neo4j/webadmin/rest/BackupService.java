@@ -28,10 +28,10 @@ import org.neo4j.webadmin.task.DeferredTask;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-@Path( "/server/backup" )
+@Path( BackupService.ROOT_PATH )
 public class BackupService
 {
-
+    protected static final String ROOT_PATH = "/server/backup";
     protected ServerProperties properties;
 
     //
