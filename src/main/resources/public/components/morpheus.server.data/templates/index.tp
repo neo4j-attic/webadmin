@@ -123,7 +123,6 @@
 								<td><a href="{$T.item.otherNode}" class="mor_data_url_button">{$P.relatedNode.data[$T.field]}</a></td>	
 							{#/for }
 						{#else }
-							<td></td>	
 							{#foreach $T.fields as field}
 								<td></td>	
 							{#/for }

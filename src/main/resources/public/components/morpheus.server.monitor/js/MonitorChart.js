@@ -10,14 +10,14 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 	
 	me.server = server;
 	me.containerId = "mor_monitor_chart_" + morpheus.components.server.monitor.monitorCharts++;
-	me.container = $("<div class='mor_module span-6'><h2>Monitor</h2><div id='" + me.containerId + "'></div></div>")
+	me.container = $("<div class='mor_module mor_span-5'><h2>Number of nodes</h2><div id='" + me.containerId + "'></div></div>")
 	
 	me.drawing = false;
 	
 	me.public = {
 		
 		render : function() {
-		
+			return me.container;
 		},
 		
 		startDrawing : function() {
@@ -39,23 +39,34 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 	//
 	
 	me.draw = function(data) {
-		
+		$("#" + me.containerId).empty();
+		$.jqplot(me.containerId,   me.parseData(data),
+				{ title:'Monitor',
+				  axes:{
+					yaxis:{min:0, max:40},
+					xaxis:{min:data.end_time - (1000 * 60),max:data.end_time}
+				  },
+				  series:[{color:'#5FAB78'},{color:'#AB5F78'},{color:'#AB785F'}]
+				});
 	};
 	
 	me.parseData = function(data) {
-		var out = [];
+		var nodeCount = [];
+		var relCount = [];
+		var propCount = [];
+		
 		for( var i = 0, l = data.timestamps.length; i < l; i++ ) {
-			
+			nodeCount.push([ data.timestamps[i], data.data["node_count"][i] ]);
+			relCount.push([ data.timestamps[i], data.data["relationship_count"][i] ]);
+			propCount.push([ data.timestamps[i], data.data["property_count"][i] ]);
 		}
-		console.log(out);
-		return out;
+		return [nodeCount,relCount,propCount];
 	};
 	
 	// Listen for data updates
 	morpheus.event.bind("morpheus.server.monitor.update", function(ev) {
-		
-		if( ev.server === me.server ) {
-			me.draw( me.parseData(ev.allData) );
+		if( me.drawing && ev.data.server === me.server ) {
+			me.draw( ev.data.allData );
 		}
 		
 	});

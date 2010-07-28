@@ -30,6 +30,8 @@ public class RrdManager
 
     public static final String NODE_CACHE_SIZE = "node_cache_size";
     public static final String NODE_COUNT = "node_count";
+    public static final String RELATIONSHIP_COUNT = "relationship_count";
+    public static final String PROPERTY_COUNT = "property_count";
 
     /**
      * Singleton instance of central round robin database.
@@ -54,6 +56,12 @@ public class RrdManager
                         Long.MAX_VALUE );
 
                 rrdDef.addDatasource( NODE_COUNT, DsType.GAUGE, 3000, 0,
+                        Long.MAX_VALUE );
+
+                rrdDef.addDatasource( RELATIONSHIP_COUNT, DsType.GAUGE, 3000,
+                        0, Long.MAX_VALUE );
+
+                rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE, 3000, 0,
                         Long.MAX_VALUE );
 
                 // DEFINE ARCHIVES

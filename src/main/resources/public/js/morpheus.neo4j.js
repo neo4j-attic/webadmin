@@ -267,7 +267,7 @@ morpheus.neo4j = function( data )
 	    						me.monitorData.data[key] = [];
 	    					}
 	    					
-	    					me.monitorData.data[key] = me.monitorData.data[key].concat( newTimestamps );
+	    					me.monitorData.data[key] = me.monitorData.data[key].concat( newData[key] );
 	    				}
 	    				
 	    				me.monitorData.end_time = data.end_time;

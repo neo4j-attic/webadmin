@@ -123,8 +123,15 @@ public class RrdSampler
 
             sample.setValue( RrdManager.NODE_CACHE_SIZE,
                     cacheBean.getNodeCacheSize() );
+
             sample.setValue( RrdManager.NODE_COUNT,
                     primitivesBean.getNumberOfNodeIdsInUse() );
+
+            sample.setValue( RrdManager.RELATIONSHIP_COUNT,
+                    primitivesBean.getNumberOfRelationshipIdsInUse() );
+
+            sample.setValue( RrdManager.PROPERTY_COUNT,
+                    primitivesBean.getNumberOfPropertyIdsInUse() );
 
             sample.update();
         }

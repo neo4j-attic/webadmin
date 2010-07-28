@@ -7,9 +7,11 @@ REST together with a web-based administrative interface for said database.
 
 It is currently in a very early stage, but new features are added on almost a daily basis.
 
-<a href="http://github.com/downloads/neo4j/webadmin/monitor.png"><img src="http://github.com/downloads/neo4j/webadmin/monitor-small.png" /></a>
-<a href="http://github.com/downloads/neo4j/webadmin/backup.png"><img src="http://github.com/downloads/neo4j/webadmin/backup-small.png" /></a>
-<a href="http://github.com/downloads/neo4j/webadmin/config.png"><img src="http://github.com/downloads/neo4j/webadmin/config-small.png" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/dashboard.jpg"><img src="http://github.com/downloads/neo4j/webadmin/dashboard-small.jpg" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/data.jpg"><img src="http://github.com/downloads/neo4j/webadmin/data-small.jpg" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/gremlin.jpg"><img src="http://github.com/downloads/neo4j/webadmin/gremlin-small.jpg" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/settings.jpg"><img src="http://github.com/downloads/neo4j/webadmin/settings-small.jpg" /></a>
+<a href="http://github.com/downloads/neo4j/webadmin/backup.jpg"><img src="http://github.com/downloads/neo4j/webadmin/backup-small.jpg" /></a>
 
 Quickstart
 ------------

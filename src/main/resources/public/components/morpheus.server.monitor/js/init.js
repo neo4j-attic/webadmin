@@ -106,19 +106,19 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     	var diskTracker      = morpheus.components.server.monitor.DiskUsageWidget(server);
     	var cacheTracker      = morpheus.components.server.monitor.CacheWidget(server);
     	
-    	var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
+    	//var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
     	
     	me.valueTrackers.push(primitiveTracker);
     	me.valueTrackers.push(diskTracker);
     	me.valueTrackers.push(cacheTracker);
-    	me.valueTrackers.push(monitorChart);
+    	//me.valueTrackers.push(monitorChart);
     	
     	box.append(primitiveTracker.render());
     	box.append(diskTracker.render());
     	box.append(cacheTracker.render());
-    	box.append(monitorChart.render());
+    	//box.append(monitorChart.render());
     	
-    	monitorChart.startDrawing();
+    	//monitorChart.startDrawing();
     };
     
     //
