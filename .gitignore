@@ -3,3 +3,4 @@
 .classpath
 target
 neo4j-rest-db
+neo4j-rrdb
