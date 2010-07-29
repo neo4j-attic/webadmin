@@ -7,11 +7,11 @@ REST together with a web-based administrative interface for said database.
 
 It is currently in a very early stage, but new features are added on almost a daily basis.
 
-<a href="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/dashboard.jpg"><img src="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/dashboard-small.jpg" /></a>
-<a href="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/data.jpg"><img src="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/data-small.jpg" /></a>
-<a href="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/gremlin.jpg"><img src="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/gremlin-small.jpg" /></a>
-<a href="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/settings.jpg"><img src="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/settings-small.jpg" /></a>
-<a href="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/backup.jpg"><img src="http://github.com/neo4j/webadmin/tree/master/src/main/screenshots/backup-small.jpg" /></a>
+<a href="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/dashboard.jpg"><img src="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/dashboard-small.jpg" /></a>
+<a href="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/data.jpg"><img src="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/data-small.jpg" /></a>
+<a href="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/gremlin.jpg"><img src="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/gremlin-small.jpg" /></a>
+<a href="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/settings.jpg"><img src="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/settings-small.jpg" /></a>
+<a href="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/backup.jpg"><img src="http://github.com/neo4j/webadmin/raw/master/src/main/screenshots/backup-small.jpg" /></a>
 
 Quickstart
 ------------
