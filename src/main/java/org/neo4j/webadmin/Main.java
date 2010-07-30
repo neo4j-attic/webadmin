@@ -51,7 +51,7 @@ public class Main
         AdminServer.INSTANCE.startServer( adminPort, webRoot );
 
         System.out.println( "Starting round-robin system state sampler.." );
-        RrdSampler.start();
+        RrdSampler.INSTANCE.start();
 
         System.out.println( String.format( "Running REST at [%s]", restBaseUri ) );
         System.out.println( String.format( "Running admin interface at [%s]",
@@ -71,7 +71,7 @@ public class Main
                 {
                     // Kill the round robin sampler
                     System.out.println( "\nShutting down the round robin database" );
-                    RrdSampler.stop();
+                    RrdSampler.INSTANCE.stop();
                     RrdManager.getRrdDB().close();
                 }
                 catch ( IOException e )
