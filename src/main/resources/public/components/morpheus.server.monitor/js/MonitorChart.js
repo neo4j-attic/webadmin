@@ -11,7 +11,7 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 	
 	me.server = server;
 	me.containerId = "mor_monitor_chart_" + morpheus.components.server.monitor.monitorCharts++;
-	me.container = $("<div class='mor_module mor_span-5'><h2>Number of nodes</h2><div class='mor_chart_container'><div id='" + me.containerId + "'></div></div></div>")
+	me.container = $("<div class='mor_module mor_span-5'><h2>Data load</h2><div class='mor_chart_container'><div style='height:200px;' id='" + me.containerId + "'></div></div></div>")
 	
 	me.drawing = false;
 	
@@ -44,6 +44,7 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 		$.jqplot(me.containerId, me.parseData(data),
 				{ axes:{
 					yaxis:{
+						min : 0,
 						autoscale : true
 					},
 					xaxis:{
@@ -55,7 +56,17 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 						},
 					}
 				  },
-				  series:[{color:'#5FAB78'},{color:'#AB5F78'},{color:'#AB785F'}]
+				  legend : {
+					  show : true,
+					  location : 'nw'
+				  },
+				  series:[{
+					  label : 'Nodes'
+				  },{
+					  label : 'Relationships'
+				  },{
+					  label : 'Properties'
+				  }]
 				});
 	};
 	
