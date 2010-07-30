@@ -126,20 +126,33 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     	var diskTracker      = morpheus.components.server.monitor.DiskUsageWidget(server);
     	var cacheTracker      = morpheus.components.server.monitor.CacheWidget(server);
     	
-    	var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
+    	var primitivesChart = morpheus.components.server.monitor.MonitorChart(server, {
+    		label : 'Primitive entitites',
+    		data : {
+    		    node_count : {
+				    label : 'Nodes'
+				},
+				relationship_count : {
+				    label : 'Relationships'
+			    },
+			    property_count : {
+				    label : 'Properties'
+			    }
+    		}
+    	});
     	
     	me.valueTrackers.push(primitiveTracker);
     	me.valueTrackers.push(diskTracker);
     	me.valueTrackers.push(cacheTracker);
     	
-    	me.charts.push(monitorChart);
+    	me.charts.push(primitivesChart);
 
-    	box.append(monitorChart.render());
+    	box.append(primitivesChart.render());
     	box.append(primitiveTracker.render());
     	box.append(diskTracker.render());
     	box.append(cacheTracker.render());
     	
-    	monitorChart.startDrawing();
+    	primitivesChart.startDrawing();
     };
     
     //

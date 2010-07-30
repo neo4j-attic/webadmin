@@ -7,10 +7,25 @@ morpheus.components.server.monitor.monitorCharts = 0;
 
 /**
  * A chart that shows data from one or more monitor data sources over time. The
- * data is aquired via the morpheus.server.monitor.update event, which is
+ * data is acquired via the morpheus.server.monitor.update event, which is
  * triggered for each loaded server at regular intervals.
  * 
- * Available settings
+ * Available settings include:
+ * 
+ * <ul>
+ * <li>label : the label for the module that the graph is shown in</li>
+ * <li>height : integer value, height in pixels of the chart, default is 200</li>
+ * <li>data : an object with data source definitions. Each key in this object
+ * should correspond to a data set key used by the rrdb monitor system. See
+ * {@link org.neo4j.webadmin.rrd.RrdManager}. For available settings in each
+ * data set, see below</li>
+ * </ul>
+ * 
+ * Data sources have the following settings:
+ * 
+ * <ul>
+ * <li>label : is the label to show in the legend</li>
+ * </ul>
  * 
  * @param server
  *            is the server to work with
@@ -26,11 +41,19 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	me.settings = {
 		'label' : "",
 		'height' : 200,
+		data : []
 	};
 	
 	// Override defaults with user settings
 	var settings = settings || {};
 	$.extend( true, me.settings, settings );
+	
+	// Define data series
+	me.series = [];
+	for( var key in me.settings.data ) {
+		me.settings.data[key].key = key;
+		me.series.push(me.settings.data[key]);
+	}
 	
 	me.server = server;
 	me.containerId = "mor_monitor_chart_" + morpheus.components.server.monitor.monitorCharts++;
@@ -83,28 +106,27 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 					  show : true,
 					  location : 'nw'
 				  },
-				  series:[{
-					  label : 'Nodes'
-				  },{
-					  label : 'Relationships'
-				  },{
-					  label : 'Properties'
-				  }]
+				  series:me.series
 				});
 	};
 	
 	me.parseData = function(data) {
-		var nodeCount = [];
-		var relCount = [];
-		var propCount = [];
+		var output = [];
+		var numberOfDataSeries = me.series.length;
 		
-		for( var i = 0, l = data.timestamps.length; i < l; i++ ) {
-			nodeCount.push([ data.timestamps[i], data.data["node_count"][i] ]);
-			relCount.push([ data.timestamps[i],  data.data["relationship_count"][i] ]);
-			propCount.push([ data.timestamps[i], data.data["property_count"][i] ]);
+		// Initialize data arrays for all data series
+		for( var dataIndex = 0; dataIndex < numberOfDataSeries; dataIndex ++ ) {
+			output[dataIndex] = [];
 		}
 		
-		return [nodeCount,relCount,propCount];
+		// Format data for jqChart
+		for( var i = 0, l = data.timestamps.length; i < l; i++ ) {
+			for( var dataIndex = 0; dataIndex < numberOfDataSeries; dataIndex ++ ) {
+				output[dataIndex].push( [ data.timestamps[i], data.data[ me.series[dataIndex].key ][i] ] );
+			}
+		}
+		
+		return output;
 	};
 	
 	// Listen for data updates
