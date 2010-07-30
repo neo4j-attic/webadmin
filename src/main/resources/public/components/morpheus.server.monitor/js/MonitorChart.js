@@ -41,16 +41,18 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 	
 	me.draw = function(data) {
 		$("#" + me.containerId).empty();
-		$.jqplot(me.containerId,   me.parseData(data),
+		$.jqplot(me.containerId, me.parseData(data),
 				{ axes:{
-					yaxis:{min:0, max:80},
+					yaxis:{
+						autoscale : true
+					},
 					xaxis:{
 						min:data.end_time - (1000 * 60),
 						max:data.end_time,
 						renderer:$.jqplot.DateAxisRenderer,
 						tickOptions : {
 							formatString : "%H:%M:%S"
-						}
+						},
 					}
 				  },
 				  series:[{color:'#5FAB78'},{color:'#AB5F78'},{color:'#AB785F'}]
@@ -67,6 +69,7 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 			relCount.push([ data.timestamps[i], data.data["relationship_count"][i] ]);
 			propCount.push([ data.timestamps[i], data.data["property_count"][i] ]);
 		}
+		
 		return [nodeCount,relCount,propCount];
 	};
 	
