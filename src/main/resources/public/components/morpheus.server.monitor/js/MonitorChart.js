@@ -1,6 +1,7 @@
 morpheus.provide("morpheus.components.server.monitor.MonitorChart");
 
 $.require("js/vend/jquery.jqplot.js");
+$.require("js/vend/jqplot-plugins/jqplot.dateAxisRenderer.js");
 
 morpheus.components.server.monitor.monitorCharts = 0;
 
@@ -41,8 +42,7 @@ morpheus.components.server.monitor.MonitorChart = function(server) {
 	me.draw = function(data) {
 		$("#" + me.containerId).empty();
 		$.jqplot(me.containerId,   me.parseData(data),
-				{ title:'Monitor',
-				  axes:{
+				{ axes:{
 					yaxis:{min:0, max:40},
 					xaxis:{min:data.end_time - (1000 * 60),max:data.end_time}
 				  },

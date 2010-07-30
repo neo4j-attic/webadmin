@@ -11,7 +11,7 @@ morpheus.neo4j = function( data )
     
     me.monitoring = false;
     me.monitorInterval = 3000;
-    me.latestDataPointTime = (new Date()).getTime();
+    me.latestDataPointTime = (new Date()).getTime() - 1000 * 60 * 60;
     
     me.kernelQueryQueue = [];
     me.kernelQueryRunning = false;
@@ -244,9 +244,18 @@ morpheus.neo4j = function( data )
     			if( key ) {
     				// Find the last timestamp that has any data associated with
 					// it
+    				var lastIndexWithData, firstIndexWithData;
 	    			for( lastIndexWithData = data.timestamps.length - 1; lastIndexWithData >= 0; lastIndexWithData-- ) {
 	    				if( typeof(data.data[key][lastIndexWithData]) === "number" ) {
 	    					me.latestDataPointTime = data.timestamps[lastIndexWithData];
+	    					break;
+	    				}
+	    			}
+	    			
+	    			// Find the first timestamp that has any data associated with
+					// it
+	    			for( firstIndexWithData = 0; firstIndexWithData <= lastIndexWithData; firstIndexWithData++ ) {
+	    				if( typeof(data.data[key][firstIndexWithData]) === "number" ) {
 	    					break;
 	    				}
 	    			}
@@ -255,13 +264,13 @@ morpheus.neo4j = function( data )
 	    			if( lastIndexWithData >= 0 ) {
 	    				
 	    				// Add timestamps
-	    				var newTimestamps = data.timestamps.splice(0, lastIndexWithData + 1);
+	    				var newTimestamps = data.timestamps.splice(firstIndexWithData, lastIndexWithData - firstIndexWithData);
 	    				me.monitorData.timestamps = me.monitorData.timestamps.concat( newTimestamps );
 	    				
 	    				// Add data
 	    				var newData = {};
 	    				for( var key in data.data ) {
-	    					newData[key] = data.data[key].splice(0, lastIndexWithData + 1);
+	    					newData[key] = data.data[key].splice(firstIndexWithData, lastIndexWithData - firstIndexWithData);
 	    					
 	    					if ( typeof(me.monitorData.data[key]) === "undefined" ) {
 	    						me.monitorData.data[key] = [];
@@ -269,8 +278,8 @@ morpheus.neo4j = function( data )
 	    					
 	    					me.monitorData.data[key] = me.monitorData.data[key].concat( newData[key] );
 	    				}
-	    				
-	    				me.monitorData.end_time = data.end_time;
+
+	    				me.monitorData.end_time = me.latestDataPointTime;
 	    				
 	    				// Let the world know
 	    				morpheus.event.trigger("morpheus.server.monitor.update", {
@@ -278,7 +287,7 @@ morpheus.neo4j = function( data )
 	    					newData : {
 	    						data: newData,
 	    						timestamps : newTimestamps,
-	    						end_time : data.end_time,
+	    						end_time : me.latestDataPointTime,
 	    						start_time : data.start_time
 	    					},
 	    					

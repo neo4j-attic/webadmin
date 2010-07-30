@@ -117,6 +117,8 @@ table:first-child thead th, table.data-table thead th { border-top:medium none; 
 
 .data-table-body { border-bottom:1px solid #D4D4D4; border-top:1px solid #FFFFFF; }
 
+/* Charts */
+.mor_chart_container {  }
 
 /* UI ROOT */
 

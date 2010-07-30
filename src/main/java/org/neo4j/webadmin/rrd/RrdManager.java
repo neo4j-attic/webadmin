@@ -67,6 +67,7 @@ public class RrdManager
                 // DEFINE ARCHIVES
 
                 rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, 50 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10, 50 );
 
                 // INSTANTIATE
 

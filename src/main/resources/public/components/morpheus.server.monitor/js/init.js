@@ -22,6 +22,7 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     me.visible = false;
     
     me.valueTrackers = [];
+    me.charts = [];
     
     //
     // PUBLIC
@@ -44,10 +45,13 @@ morpheus.components.server.monitor.base = (function($, undefined) {
                         me.basePage.setTemplateURL("components/morpheus.server.monitor/templates/index.tp");
 	                    
 	                    me.reload();
+                    } else {
+                    	me.runMonitors();
                     }
                 	
                 } else {
                     me.visible = false;
+                    me.haltMonitors();
                 }
             },
             
@@ -75,50 +79,67 @@ morpheus.components.server.monitor.base = (function($, undefined) {
             server : me.server
         });
         
-        me.destroyValueTrackers();
+        me.destroyMonitors();
         
         if( me.server ) {
         	
         	me.server.startMonitoring();
         	
-        	me.loadValueTrackers(me.server);
+        	me.loadMonitors(me.server);
         	$("#mor_monitor_lifecycle").empty();
         	$("#mor_monitor_lifecycle").append( morpheus.components.Lifecycle(me.server).render() );
         }
         
     };
     
-    me.destroyValueTrackers = function() {
-    	for( var i = 0, l = me.valueTrackers.length; i < l ; i++ ) {
-    		if(typeof(me.valueTrackers[i].stopPolling) === "function") {
-    			me.valueTrackers[i].stopPolling();
-    		} else {
-    			me.valueTrackers[i].stopDrawing();
-    		}
-    	}
+    me.destroyMonitors= function() {
+    	me.haltMonitors();
+    	
     	me.valueTrackers = [];
+    	me.charts = [];
     };
     
-    me.loadValueTrackers = function(server) {
+    me.haltMonitors = function() {
+    	for( var i = 0, l = me.charts.length; i < l ; i++ ) {
+			me.charts[i].stopDrawing();
+    	}
+    	
+    	for( var i = 0, l = me.valueTrackers.length; i < l ; i++ ) {
+			me.valueTrackers[i].stopPolling();
+    	}
+    };
+    
+    me.runMonitors = function() {
+    	for( var i = 0, l = me.charts.length; i < l ; i++ ) {
+			me.charts[i].startDrawing();
+    	}
+    	
+    	for( var i = 0, l = me.valueTrackers.length; i < l ; i++ ) {
+			me.valueTrackers[i].startPolling();
+    	}
+    };
+    
+    me.loadMonitors = function(server) {
     	var box = $("#mor_monitor_valuetrackers");
     	
     	var primitiveTracker = morpheus.components.server.monitor.PrimitiveCountWidget(server);
     	var diskTracker      = morpheus.components.server.monitor.DiskUsageWidget(server);
     	var cacheTracker      = morpheus.components.server.monitor.CacheWidget(server);
     	
-    	//var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
+    	var monitorChart = morpheus.components.server.monitor.MonitorChart(server);
     	
     	me.valueTrackers.push(primitiveTracker);
     	me.valueTrackers.push(diskTracker);
     	me.valueTrackers.push(cacheTracker);
-    	//me.valueTrackers.push(monitorChart);
     	
+    	me.charts.push(monitorChart);
+
+    	box.append(monitorChart.render());
     	box.append(primitiveTracker.render());
     	box.append(diskTracker.render());
     	box.append(cacheTracker.render());
-    	//box.append(monitorChart.render());
     	
-    	//monitorChart.startDrawing();
+    	monitorChart.startDrawing();
     };
     
     //
