@@ -33,6 +33,8 @@ public class RrdManager
     public static final String RELATIONSHIP_COUNT = "relationship_count";
     public static final String PROPERTY_COUNT = "property_count";
 
+    public static final String MEMORY_PERCENT = "memory_usage_percent";
+
     /**
      * Singleton instance of central round robin database.
      */
@@ -62,6 +64,9 @@ public class RrdManager
                         0, Long.MAX_VALUE );
 
                 rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE, 3000, 0,
+                        Long.MAX_VALUE );
+
+                rrdDef.addDatasource( MEMORY_PERCENT, DsType.GAUGE, 3000, 0,
                         Long.MAX_VALUE );
 
                 // DEFINE ARCHIVES

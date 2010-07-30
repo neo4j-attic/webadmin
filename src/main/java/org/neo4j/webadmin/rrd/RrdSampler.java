@@ -6,12 +6,14 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
-import javax.management.MBeanInfo;
+import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.management.openmbean.CompositeDataSupport;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
@@ -49,6 +51,12 @@ public class RrdSampler
     private static final String JMX_NEO4J_CONFIGURATION = "Configuration";
     private static final String JMX_NEO4J_XA_RESOURCES = "XA Resources";
 
+    // JMX Attribute names
+    private static final String JMX_ATTR_NODE_COUNT = "NumberOfNodeIdsInUse";
+    private static final String JMX_ATTR_RELATIONSHIP_COUNT = "NumberOfRelationshipIdsInUse";
+    private static final String JMX_ATTR_PROPERTY_COUNT = "NumberOfPropertyIdsInUse";
+    private static final String JMX_ATTR_HEAP_MEMORY = "HeapMemoryUsage";
+
     // DATA SOURCE HANDLES
 
     /**
@@ -81,15 +89,17 @@ public class RrdSampler
 
     private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
-    private MBeanInfo primitivesMBean;
-    private MBeanInfo storeSizesMBean;
-    private MBeanInfo transactionsMBean;
-    private MBeanInfo memoryMappingMBean;
-    private MBeanInfo kernelMBean;
-    private MBeanInfo lockingMBean;
-    private MBeanInfo cacheMBean;
-    private MBeanInfo configurationMBean;
-    private MBeanInfo xaResourcesMBean;
+    private ObjectName memoryName;
+
+    private ObjectName primitivesName = null;
+    private ObjectName storeSizesName = null;
+    private ObjectName transactionsName = null;
+    private ObjectName memoryMappingName = null;
+    private ObjectName kernelName = null;
+    private ObjectName lockingName = null;
+    private ObjectName cacheName = null;
+    private ObjectName configurationName = null;
+    private ObjectName xaResourcesName = null;
 
     /**
      * Keep track of whether to run the update task or not.
@@ -100,50 +110,18 @@ public class RrdSampler
     // CONSTRUCTOR
     //
 
-    @SuppressWarnings( { "restriction" } )
     protected RrdSampler()
     {
         try
         {
-            // Grab relevant jmx management beans
-
-            ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
-
-            for ( ObjectName objectName : server.queryNames( neoQuery, null ) )
-            {
-                if ( objectName.getKeyProperty( "name" ).equals(
-                        JMX_NEO4J_PRIMITIVE_COUNT ) )
-                {
-                    primitivesMBean = server.getMBeanInfo( objectName );
-                }
-                else if ( objectName.getKeyProperty( "name" ).equals(
-                        JMX_NEO4J_STORE_FILE_SIZES ) )
-                {
-                    storeSizesMBean = server.getMBeanInfo( objectName );
-                }
-                
-                transactionsMBean;
-                private MBeanInfo memoryMappingMBean;
-                private MBeanInfo kernelMBean;
-                private MBeanInfo lockingMBean;
-                private MBeanInfo cacheMBean;
-                private MBeanInfo configurationMBean;
-                private MBeanInfo xaResourcesMBean;
-            }
+            memoryName = new ObjectName( "java.lang:type=Memory" );
         }
-        catch ( IntrospectionException e )
+        catch ( MalformedObjectNameException e )
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        catch ( InstanceNotFoundException e )
+        catch ( NullPointerException e )
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch ( ReflectionException e )
-        {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -190,27 +168,79 @@ public class RrdSampler
     //
 
     /**
+     * This will update the ObjectName attributes in the class. This is done
+     * like this because the name of the neo4j mbeans will change each time the
+     * neo4j kernel is restarted.
+     */
+    protected void reloadMBeanNames()
+    {
+        try
+        {
+            // Grab relevant jmx management beans
+            ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
+            String instance = neoQuery.getKeyProperty( "instance" );
+            String baseName = neoQuery.getDomain() + ":instance=" + instance
+                              + ",name=";
+
+            primitivesName = new ObjectName( baseName
+                                             + JMX_NEO4J_PRIMITIVE_COUNT );
+            storeSizesName = new ObjectName( baseName
+                                             + JMX_NEO4J_STORE_FILE_SIZES );
+            transactionsName = new ObjectName( baseName
+                                               + JMX_NEO4J_TRANSACTIONS );
+            memoryMappingName = new ObjectName( baseName
+                                                + JMX_NEO4J_MEMORY_MAPPING );
+            kernelName = new ObjectName( baseName + JMX_NEO4J_KERNEL );
+            lockingName = new ObjectName( baseName + JMX_NEO4J_LOCKING );
+            cacheName = new ObjectName( baseName + JMX_NEO4J_CACHE );
+            configurationName = new ObjectName( baseName
+                                                + JMX_NEO4J_CONFIGURATION );
+            xaResourcesName = new ObjectName( baseName + JMX_NEO4J_XA_RESOURCES );
+
+        }
+        catch ( MalformedObjectNameException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( NullPointerException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * This method is called each time we want a snapshot of the current system
      * state. Data sources to work with are defined in
      * {@link RrdManager#getRrdDB()}
      */
     private void updateSample( Sample sample )
     {
+        reloadMBeanNames();
+
         try
         {
             sample.setTime( new Date().getTime() );
 
-            sample.setValue( RrdManager.NODE_CACHE_SIZE,
-                    cacheBean.getNodeCacheSize() );
+            sample.setValue( RrdManager.NODE_CACHE_SIZE, 0d );;
 
-            sample.setValue( RrdManager.NODE_COUNT,
-                    primitivesBean.getNumberOfNodeIdsInUse() );
+            sample.setValue( RrdManager.NODE_COUNT, (Long) server.getAttribute(
+                    primitivesName, JMX_ATTR_NODE_COUNT ) );
 
             sample.setValue( RrdManager.RELATIONSHIP_COUNT,
-                    primitivesBean.getNumberOfRelationshipIdsInUse() );
+                    (Long) server.getAttribute( primitivesName,
+                            JMX_ATTR_RELATIONSHIP_COUNT ) );
 
             sample.setValue( RrdManager.PROPERTY_COUNT,
-                    primitivesBean.getNumberOfPropertyIdsInUse() );
+                    (Long) server.getAttribute( primitivesName,
+                            JMX_ATTR_PROPERTY_COUNT ) );
+
+            sample.setValue(
+                    RrdManager.MEMORY_PERCENT,
+                    ( ( (Long) ( (CompositeDataSupport) server.getAttribute(
+                            memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "used" ) + 0.0d ) / (Long) ( (CompositeDataSupport) server.getAttribute(
+                            memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "max" ) ) * 100 );
 
             sample.update();
         }
@@ -219,6 +249,26 @@ public class RrdSampler
             throw new RuntimeException(
                     "IO Error trying to access round robin database path. See nested exception.",
                     e );
+        }
+        catch ( AttributeNotFoundException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( InstanceNotFoundException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( MBeanException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( ReflectionException e )
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

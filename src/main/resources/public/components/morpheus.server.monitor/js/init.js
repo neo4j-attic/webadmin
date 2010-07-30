@@ -141,18 +141,32 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     		}
     	});
     	
+    	var memoryChart = morpheus.components.server.monitor.MonitorChart(server, {
+    		label : 'Heap memory usage',
+    		data : {
+    			memory_usage_percent : {
+				    label : 'Heap memory usage'
+				}
+    		}
+    	});
+    	
+    	
+    	
     	me.valueTrackers.push(primitiveTracker);
     	me.valueTrackers.push(diskTracker);
     	me.valueTrackers.push(cacheTracker);
     	
     	me.charts.push(primitivesChart);
+    	me.charts.push(memoryChart);
 
     	box.append(primitivesChart.render());
+    	box.append(memoryChart.render());
     	box.append(primitiveTracker.render());
     	box.append(diskTracker.render());
     	box.append(cacheTracker.render());
     	
     	primitivesChart.startDrawing();
+    	memoryChart.startDrawing();
     };
     
     //
