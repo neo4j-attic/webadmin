@@ -14,7 +14,7 @@ Current features include:
     <li>Monitoring of memory usage, disk usage, cache status and database primitives</li>
     <li>JMX overview</li>
     <li>Data browsing</li>
-    <li>Advanced data manipulation via gremlin console</li>
+    <li>Advanced data manipulation via Gremlin console</li>
     <li>Server configuration</li>
     <li>Online backups</li>
 </ul>
