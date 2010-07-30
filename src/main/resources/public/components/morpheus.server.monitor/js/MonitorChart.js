@@ -39,8 +39,12 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	
 	// Default settings
 	me.settings = {
-		'label' : "",
-		'height' : 200,
+		label : "",
+		yMin : 0,
+		yMax : null,
+		xMin : null,
+		xMax : 0,
+		height : 200,
 		data : []
 	};
 	
@@ -90,10 +94,13 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		$.jqplot(me.containerId, me.parseData(data),
 				{ axes:{
 					yaxis:{
-						min : 0,
+						min : me.settings.yMin,
+						max : me.settings.yMax,
 						autoscale : true
 					},
 					xaxis:{
+						min : me.settings.xMin,
+						max : me.settings.xMax,
 						min:data.end_time - (1000 * 60),
 						max:data.end_time,
 						renderer:$.jqplot.DateAxisRenderer,
