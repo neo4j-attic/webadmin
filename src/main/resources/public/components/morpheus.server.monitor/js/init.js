@@ -146,9 +146,6 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     		data : {
     			memory_usage_percent : {
 				    label : 'Heap memory usage',
-				    fill: true,
-				    fillAndStroke : true,
-				    fillAlpha : 0.3
 				}
     		},
     		yMin : 0,

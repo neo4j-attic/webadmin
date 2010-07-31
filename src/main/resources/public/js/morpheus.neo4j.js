@@ -280,6 +280,8 @@ morpheus.neo4j = function( data )
 	    				}
 
 	    				me.monitorData.end_time = me.latestDataPointTime;
+
+	    				console.log(me.monitorData);
 	    				
 	    				// Let the world know
 	    				morpheus.event.trigger("morpheus.server.monitor.update", {

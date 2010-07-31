@@ -1,7 +1,6 @@
 morpheus.provide("morpheus.components.server.monitor.MonitorChart");
 
-$.require("js/vend/jquery.jqplot.js");
-$.require("js/vend/jqplot-plugins/jqplot.dateAxisRenderer.js");
+$.require("js/vend/jquery.flot.js");
 
 morpheus.components.server.monitor.monitorCharts = 0;
 
@@ -40,10 +39,16 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	// Default settings
 	me.settings = {
 		label : "",
-		yMin : 0,
-		yMax : null,
-		xMin : null,
-		xMax : 0,
+		xaxis : {
+			mode: "time",
+		    timeformat: "%H:%M:%S"
+
+//			tickFormatter: function (val, axis) {
+//			    var d = new Date(val);
+//			    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+//			}
+		},
+		yaxis : {},
 		height : 200,
 		data : []
 	};
@@ -64,6 +69,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	me.container = $("<div class='mor_module mor_span-5'><h2>" + me.settings.label + "</h2><div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>")
 	
 	me.drawing = false;
+	me.chart = false;
 	
 	me.public = {
 		
@@ -90,31 +96,10 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	//
 	
 	me.draw = function(data) {
-		$("#" + me.containerId).empty();
-		$.jqplot(me.containerId, me.parseData(data),
-				{ axes:{
-					yaxis:{
-						min : me.settings.yMin,
-						max : me.settings.yMax,
-						autoscale : true
-					},
-					xaxis:{
-						min : me.settings.xMin,
-						max : me.settings.xMax,
-						min:data.end_time - (1000 * 60),
-						max:data.end_time,
-						renderer:$.jqplot.DateAxisRenderer,
-						tickOptions : {
-							formatString : "%H:%M:%S"
-						},
-					}
-				  },
-				  legend : {
-					  show : true,
-					  location : 'nw'
-				  },
-				  series:me.series
-				});
+		me.chart = $.plot($("#" + me.containerId), me.parseData(data), {
+			xaxis : me.settings.xaxis,
+			yaxis : me.settings.yaxis
+		});
 	};
 	
 	me.parseData = function(data) {
@@ -123,13 +108,17 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		
 		// Initialize data arrays for all data series
 		for( var dataIndex = 0; dataIndex < numberOfDataSeries; dataIndex ++ ) {
-			output[dataIndex] = [];
+			output[dataIndex] = {
+				data : []
+			};
+			
+			$.extend( true, output[dataIndex], me.settings.data[me.series[dataIndex].key] );
 		}
 		
 		// Format data for jqChart
 		for( var i = 0, l = data.timestamps.length; i < l; i++ ) {
 			for( var dataIndex = 0; dataIndex < numberOfDataSeries; dataIndex ++ ) {
-				output[dataIndex].push( [ data.timestamps[i], data.data[ me.series[dataIndex].key ][i] ] );
+				output[dataIndex].data.push( [ data.timestamps[i], data.data[ me.series[dataIndex].key ][i] ] );
 			}
 		}
 		
