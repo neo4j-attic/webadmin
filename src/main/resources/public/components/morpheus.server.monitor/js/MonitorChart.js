@@ -65,19 +65,23 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	me.zoom = {
 		week : { 
 			id : me.containerId + "_zoom_1",
-			xSpan : 1000 * 60 * 60 * 24 * 7
+			xSpan : 1000 * 60 * 60 * 24 * 7,
+		    timeformat: "%d/%m"
 		},
 		day : { 
 			id : me.containerId + "_zoom_2",
-			xSpan : 1000 * 60 * 60 * 24
+			xSpan : 1000 * 60 * 60 * 24,
+		    timeformat: "%H:%M"
 		},
 		six_hours : { 
 			id : me.containerId + "_zoom_3",
-			xSpan : 1000 * 60 * 60 * 6
+			xSpan : 1000 * 60 * 60 * 6,
+		    timeformat: "%H:%M"
 		},
 		thirty_minutes : { 
 			id : me.containerId + "_zoom_4",
-			xSpan : 1000 * 60 * 30
+			xSpan : 1000 * 60 * 30,
+		    timeformat: "%H:%M:%S"
 		}
 	};
 	
@@ -117,11 +121,13 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		// Set zoom and tick label formatting
 		if( data.timestamps.length > 0 ) {
 			me.settings.xaxis.min = data.timestamps[ data.timestamps.length - 1 ] - me.zoom[me.currentZoom].xSpan;
+			me.settings.xaxis.timeformat = me.zoom[me.currentZoom].timeformat;
 		}
 		
 		$.plot($("#" + me.containerId), me.parseData(data), {
 			xaxis : me.settings.xaxis,
-			yaxis : me.settings.yaxis
+			yaxis : me.settings.yaxis,
+			grid: { hoverable: true }
 		});
 	};
 	
@@ -148,6 +154,20 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		return output;
 	};
 	
+	me.showTooltip = function (x, y, contents) {
+        $('<div id="mor_chart_tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(100);
+    };
+
+	
 	// 
 	// CONSTRUCT
 	//
@@ -173,6 +193,27 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		}
 		
 	});
+	
+	// Keep track of the mouse over the chart
+	me.previousHoverPoint = null;
+	$("#" + me.containerId).live("plothover", function (event, pos, item) {
+        if (item) {
+            if (me.previousHoverPoint != item.datapoint) {
+            	me.previousHoverPoint = item.datapoint;
+                
+                $("#mor_chart_tooltip").remove();
+                var x = new Date(item.datapoint[0]),
+                    y = item.datapoint[1];
+                
+                me.showTooltip(item.pageX, item.pageY, x.getDate() + "/" + x.getMonth() + " - " + x.getHours() + ":" + x.getMinutes() + ":" + x.getSeconds() + "<br />" + item.series.label + ": " + y);
+            }
+        }
+        else {
+            $("#mor_chart_tooltip").remove();
+            me.previousHoverPoint = null;            
+        }
+    });
+
 	
 	return me.public;
 };

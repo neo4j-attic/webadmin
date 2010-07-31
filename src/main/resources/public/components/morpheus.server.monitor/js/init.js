@@ -148,8 +148,10 @@ morpheus.components.server.monitor.base = (function($, undefined) {
 				    label : 'Heap memory usage',
 				}
     		},
-    		yMin : 0,
-    		yMax : 100
+    		yaxis : {
+    			min : 0,
+    			max : 100
+    		}
     	});
     	
     	
