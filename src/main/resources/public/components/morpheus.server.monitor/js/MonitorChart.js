@@ -42,11 +42,6 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		xaxis : {
 			mode: "time",
 		    timeformat: "%H:%M:%S"
-
-//			tickFormatter: function (val, axis) {
-//			    var d = new Date(val);
-//			    return d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-//			}
 		},
 		yaxis : {},
 		height : 200,
@@ -66,10 +61,32 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	
 	me.server = server;
 	me.containerId = "mor_monitor_chart_" + morpheus.components.server.monitor.monitorCharts++;
-	me.container = $("<div class='mor_module mor_span-5'><h2>" + me.settings.label + "</h2><div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>")
+	me.controlsClass = me.containerId + "_controls";
+	me.zoom = {
+		week : { 
+			id : me.containerId + "_zoom_1",
+			xSpan : 1000 * 60 * 60 * 24 * 7
+		},
+		day : { 
+			id : me.containerId + "_zoom_2",
+			xSpan : 1000 * 60 * 60 * 24
+		},
+		six_hours : { 
+			id : me.containerId + "_zoom_3",
+			xSpan : 1000 * 60 * 60 * 6
+		},
+		thirty_minutes : { 
+			id : me.containerId + "_zoom_4",
+			xSpan : 1000 * 60 * 30
+		}
+	};
+	
+	var controls = "<ul class='mor_module_actions'><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.week.id +"'>Week</a></li><li><a class='"+me.controlsClass+" current' href='#' id='"+me.zoom.day.id +"'>Day</a></li><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.six_hours.id +"'>6 hours</a><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.thirty_minutes.id +"'>30 minutes</a></li></li></ul><div class='break'></div>"
+	me.container = $("<div class='mor_module mor_span-5'><h2>" + me.settings.label + "</h2>" + controls + "<div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>")
 	
 	me.drawing = false;
-	me.chart = false;
+	me.currentZoom = "day";
+	me.currentData = [];
 	
 	me.public = {
 		
@@ -96,7 +113,13 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	//
 	
 	me.draw = function(data) {
-		me.chart = $.plot($("#" + me.containerId), me.parseData(data), {
+		
+		// Set zoom and tick label formatting
+		if( data.timestamps.length > 0 ) {
+			me.settings.xaxis.min = data.timestamps[ data.timestamps.length - 1 ] - me.zoom[me.currentZoom].xSpan;
+		}
+		
+		$.plot($("#" + me.containerId), me.parseData(data), {
 			xaxis : me.settings.xaxis,
 			yaxis : me.settings.yaxis
 		});
@@ -124,6 +147,24 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		
 		return output;
 	};
+	
+	// 
+	// CONSTRUCT
+	//
+	
+	for( var key in me.zoom ) {
+		$("#" + me.zoom[key].id).live('click', (function(zoomKey) {
+			return function(ev) {
+				ev.preventDefault();
+				me.currentZoom = zoomKey;
+				
+				$("." +me.controlsClass).removeClass("current");
+				$("#" + me.zoom[zoomKey].id).addClass("current");
+				
+				me.draw( me.server.getMonitorData() );
+			};
+		})(key));
+	}
 	
 	// Listen for data updates
 	morpheus.event.bind("morpheus.server.monitor.update", function(ev) {
