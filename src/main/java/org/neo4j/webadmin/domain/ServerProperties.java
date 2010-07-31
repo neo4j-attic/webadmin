@@ -77,6 +77,16 @@ public class ServerProperties implements Representation
                 "enable_remote_shell", "Enable remote shell", "false",
                 PropertyType.CONFIG_PROPERTY ) );
 
+        properties.add( new ServerPropertyRepresentation(
+                "rest_authentication", "Enable authentication", "false",
+                PropertyType.CONFIG_PROPERTY ) );
+
+        properties.add( new ServerPropertyRepresentation( "rest_username",
+                "Authentication username", "", PropertyType.CONFIG_PROPERTY ) );
+
+        properties.add( new ServerPropertyRepresentation( "rest_password",
+                "Authentication password", "", PropertyType.CONFIG_PROPERTY ) );
+
         // DB CREATION ARGS
 
         properties.add( new ServerPropertyRepresentation(
