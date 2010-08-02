@@ -1,5 +1,7 @@
 package org.neo4j.webadmin.task;
 
+import static org.neo4j.webadmin.utils.FileUtils.delTree;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -267,18 +269,6 @@ public class BackupFoundationTask implements Runnable
 
             in.close();
             out.close();
-        }
-    }
-
-    protected void delTree( File file )
-    {
-        for ( File childFile : file.listFiles() )
-        {
-            if ( childFile.isDirectory() )
-            {
-                delTree( childFile );
-            }
-            childFile.delete();
         }
     }
 }

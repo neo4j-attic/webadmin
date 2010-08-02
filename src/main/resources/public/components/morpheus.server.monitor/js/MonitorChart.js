@@ -127,7 +127,10 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		$.plot($("#" + me.containerId), me.parseData(data), {
 			xaxis : me.settings.xaxis,
 			yaxis : me.settings.yaxis,
-			grid: { hoverable: true }
+			grid: { hoverable: true },
+			legend: {
+				position : 'nw'
+			}
 		});
 	};
 	

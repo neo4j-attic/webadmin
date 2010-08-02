@@ -30,6 +30,8 @@ public class Main
         // 1. ARGUMENT HANDLING
         //
 
+        System.setProperty( "org.neo4j.webadmin.developmentmode",
+                args.get( "development", "false" ) );
         System.setProperty( "org.neo4j.graphdb.location",
                 args.get( "dbPath", "neo4j-rest-db" ) );
         System.setProperty( "org.neo4j.webadmin.rrdb.location",

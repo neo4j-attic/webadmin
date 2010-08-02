@@ -4,23 +4,32 @@
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
 	</div>
-	{#if $T.item && $T.item.relationships }
-	<div class="mor_module">
-		<h2>Fields to list</h2>
-		<p class="mor_info">Comma-separated list of fields to show when listing related nodes.</p>
-		
-		<form action="#">
-			<p class="mor_info">
-				<input type="text" value="{$T.item.relationships.fields.join(",")}" id="mor_data_listfields" />
-				<input type="submit" value="Set" id="mor_data_listfields_button" />
-			</p>
-		</form>
-	</div>
+	{#if $T.notFound }
+	
+	{#else }
+		{#if $T.item && $T.item.relationships }
+		<div class="mor_module">
+			<h2>Fields to list</h2>
+			<p class="mor_info">Comma-separated list of fields to show when listing related nodes.</p>
+			
+			<form action="#">
+				<p class="mor_info">
+					<input type="text" value="{$T.item.relationships.fields.join(",")}" id="mor_data_listfields" />
+					<input type="submit" value="Set" id="mor_data_listfields_button" />
+				</p>
+			</form>
+		</div>
+		{#/if}
 	{#/if}
 </div>
 
 <div class="mor_page_rightcol">
-
+{#if $T.notFound }
+	<div class="mor_module mor_span-3">
+		<h2>Not found</h2>
+		<p class="mor_info">The item you requested cannot be found, or an error occurred while trying to retrieve it.</p>
+	</div>
+{#else}
 	{#if $T.item.isNode }
 		<div class="mor_module mor_span-2">
 			<h2>Node</h2>
@@ -49,6 +58,7 @@
 			</div>
 		</div>
 	{#/if}
+{#/if}
 </div>
 {#/template MAIN}
 

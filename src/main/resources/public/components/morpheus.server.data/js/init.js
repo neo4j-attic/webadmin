@@ -103,6 +103,12 @@ morpheus.components.server.data.base = (function($, undefined) {
                     } else if (me.currentItem.isRelationship) {
                     	me.reloadRelationshipNodes();
                     }
+                }, function(request) {
+                	
+                	me.currentItem = false;
+                	me.notFound = true;
+                	me.render();
+                	
                 });
             } else {
             	me.public.setDataUrl("node/0");
@@ -191,7 +197,8 @@ morpheus.components.server.data.base = (function($, undefined) {
     	me.basePage.processTemplate({
             server : me.server,
             dataUrl : me.dataUrl,
-            item : me.currentItem ? me.currentItem : {isNode:false,isRelationship:false}
+            item : me.currentItem ? me.currentItem : {isNode:false,isRelationship:false},
+            notFound : me.notFound === true ? true : false
         });
     };
     
