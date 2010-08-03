@@ -77,15 +77,20 @@ public class ServerProperties implements Representation
                 "enable_remote_shell", "Enable remote shell", "false",
                 PropertyType.CONFIG_PROPERTY ) );
 
-        properties.add( new ServerPropertyRepresentation(
-                "rest_authentication", "Enable authentication", "false",
-                PropertyType.CONFIG_PROPERTY ) );
+        // This is commented out, because HTTP Basic authentication does not
+        // work in firefox when using it's cross domain request functionality.
+        // Will be put back into place when authentication has been switched to
+        // OAuth.
 
-        properties.add( new ServerPropertyRepresentation( "rest_username",
-                "Authentication username", "", PropertyType.CONFIG_PROPERTY ) );
-
-        properties.add( new ServerPropertyRepresentation( "rest_password",
-                "Authentication password", "", PropertyType.CONFIG_PROPERTY ) );
+        // properties.add( new ServerPropertyRepresentation(
+        // "rest_enable_authentication", "Enable authentication", "false",
+        // PropertyType.CONFIG_PROPERTY ) );
+        //
+        // properties.add( new ServerPropertyRepresentation( "rest_username",
+        // "Authentication username", "", PropertyType.CONFIG_PROPERTY ) );
+        //
+        // properties.add( new ServerPropertyRepresentation( "rest_password",
+        // "Authentication password", "", PropertyType.CONFIG_PROPERTY ) );
 
         // DB CREATION ARGS
 

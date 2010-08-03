@@ -209,14 +209,38 @@ morpheus.components.server.config = (function($, undefined) {
             // Disable controls while saving
             $("input",me.basePage).attr('disabled', 'disabled');
             
+            // Check if username or password has changed
+            var authChanged = false;
+            for( var item in changed ) {
+            	
+            	if(item.key === "rest_username") {
+            		me.server.setUsername(item.value);
+            		authChanged = true;
+            	}
+            	
+            	if(item.key === "rest_password") {
+            		me.server.setPassword(item.value);
+            		authChanged = true;
+            	}
+            }
+            
+            if ( authChanged ) {
+            	me.server.save();
+            }
+            
+            // Commit changes to server
             me.server.admin.post("config",changed,function(data){
+            	
                 me.allChangesCommitted({excludeType:"DB_CREATION_PROPERTY"});
                 
                 $("input",me.basePage).removeAttr('disabled');
                 me.updateSaveButtonState();
+                
             }, function(ev){
+            	
                 $("input",me.basePage).removeAttr('disabled');
                 me.updateSaveButtonState();
+                
             });
         }
     });

@@ -49,8 +49,8 @@ var morpheus = ( function( $, undefined )
     };
 
     /**
-     * Load components listed in components.js
-     */
+	 * Load components listed in components.js
+	 */
     me.loadComponents = function( cb )
     {
         me.pendingComponents = me.api.componentList.length;
@@ -81,17 +81,17 @@ var morpheus = ( function( $, undefined )
     };
 
     /**
-     * Triggered for each component that is loaded.
-     */
+	 * Triggered for each component that is loaded.
+	 */
     me.componentLoaded = function( componentName )
     {
         me.components[componentName].loaded = true;
     };
 
     /**
-     * Check if components have been loaded at given intervals, trigger full
-     * application start once all components are loaded.
-     */
+	 * Check if components have been loaded at given intervals, trigger full
+	 * application start once all components are loaded.
+	 */
     me.checkComponentsLoaded = function()
     {
         for ( var key in me.components )
@@ -149,31 +149,34 @@ var morpheus = ( function( $, undefined )
 
     // AJAX WRAPPERS
     
-    me.get = function(url, data, success, failure) {
-        return me.ajax("GET", url, data, success, failure);
+    me.get = function(url, data, success, failure, settings) {
+        return me.ajax("GET", url, data, success, failure, settings);
     };
     
-    me.post = function(url, data, success, failure) {
-        return me.ajax("POST", url, data, success, failure);
+    me.post = function(url, data, success, failure, settings) {
+        return me.ajax("POST", url, data, success, failure, settings);
     };
     
-    me.put = function(url, data, success, failure) {
-        return me.ajax("PUT", url, data, success, failure);
+    me.put = function(url, data, success, failure, settings) {
+        return me.ajax("PUT", url, data, success, failure, settings);
     };
     
-    me.del = function(url, data, success, failure) {
-        return me.ajax("DELETE", url, data, success, failure);
+    me.del = function(url, data, success, failure, settings) {
+        return me.ajax("DELETE", url, data, success, failure, settings);
     };
     
-    me.ajax = function(method, url, data, success, failure) {
+    me.ajax = function(method, url, data, success, failure, settings) {
     	
     	if(typeof(data) === "function") {
             failure = success;
             success = data;
             data = null;
         }
+    	
+    	var settings = settings || {};
         
-        setTimeout((function(method, url, data, success, failure){
+        setTimeout((function(method, url, data, success, failure, settings){
+        	
         	if( typeof(data) === "object") {
         		data = JSON.stringify(data);
         	}
@@ -192,19 +195,42 @@ var morpheus = ( function( $, undefined )
                     success : success,
                     contentType: "application/json",
                     error : function(req) {
-                        if( req.status === 200 ) {
-                            // This happens when the server returns an empty response.
-                            success(null);
-                        } else {
-                        	if( typeof(failure) === "function") {
-                        		failure(req);
-                        	}
-                        }
+                		try {
+	                        if( req.status === 200 ) {
+	                           // This happens when the server returns an empty
+								// response.
+	                           return success(null);
+	                        }
+                		} catch(e) {
+                			// We end up here if there is no status to read
+                		} 
+                		
+                		if( typeof(failure) === "function") {
+                    		failure(req);
+                    	}
                     },
-                    dataType : "json"
+                    dataType : "json",
+                    beforeSend : function(xhr) {
+                    	// TODO: Add OAuth authentication here.
+                    	return xhr;
+                    },
+                    xhr: function(){
+                    	
+                    	// If this is a cross domain request, and we are living
+						// in IE8, fall back to their implementation of cross
+						// domain ajax.
+                    	
+                    	if( me.api.isCrossDomain(url) && window.XDomainRequest ) {
+                			return new XDomainRequest();
+                		} else {
+	            			return window.ActiveXObject ?
+	            				new ActiveXObject("Microsoft.XMLHTTP") :
+	            				new XMLHttpRequest();
+                		}
+                    }
                 });
             };
-        })(method, url, data, success, failure), 0);
+        })(method, url, data, success, failure, settings), 0);
     };
     
     //
@@ -216,32 +242,44 @@ var morpheus = ( function( $, undefined )
         init : me.init,
 
         /**
-         * Persistent backend key-value store for simple properties.
-         * 
-         * morpheus.prop("myProperty","a value", function() { alert("Value
-         * set!"); });
-         * 
-         * morpheus.prop("myProperty", function(key, value) { alert(key + " is " +
-         * value); });
-         * 
-         * @param {String}
-         *            key is a unique property key
-         * @param [obj]
-         *            defines a value to set the property to. If omitted, this
-         *            method will instead fetch the value and call the callback
-         *            with it.
-         * @param {Function}
-         *            cb is a callback that will be called with key, value if no
-         *            value was passed (used to get a parameter value), or with
-         *            only the key if a value was passed and successfully set.
-         */
+		 * Persistent backend key-value store for simple properties.
+		 * 
+		 * morpheus.prop("myProperty","a value", function() { alert("Value
+		 * set!"); });
+		 * 
+		 * morpheus.prop("myProperty", function(key, value) { alert(key + " is " +
+		 * value); });
+		 * 
+		 * @param {String}
+		 *            key is a unique property key
+		 * @param [obj]
+		 *            defines a value to set the property to. If omitted, this
+		 *            method will instead fetch the value and call the callback
+		 *            with it.
+		 * @param {Function}
+		 *            cb is a callback that will be called with key, value if no
+		 *            value was passed (used to get a parameter value), or with
+		 *            only the key if a value was passed and successfully set.
+		 */
         prop : me.property,
         
         get : me.get,
         put : me.put,
         post : me.post,
         del : me.del,
-        ajax : me.ajax
+        ajax : me.ajax,
+        
+        /**
+         * Naive implementation to check if a url is cross-domain.
+         */
+        isCrossDomain : function(url) {
+    		var httpIndex = url.indexOf("://");
+    		if( httpIndex === -1 || httpIndex > 7) {
+    			return false;
+    		} else {
+    			return url.substring(httpIndex + 3).split("/",1)[0] !== window.location.host;
+    		}
+    	}
     };
 
     return me.api;

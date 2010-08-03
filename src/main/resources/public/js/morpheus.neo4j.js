@@ -13,6 +13,9 @@ morpheus.neo4j = function( data )
     me.monitorInterval = 3000;
     me.latestDataPointTime = (new Date()).getTime() - 1000 * 60 * 60;
     
+    me.password = data.username || "";
+    me.username = data.password || "";
+    
     me.kernelQueryQueue = [];
     me.kernelQueryRunning = false;
     
@@ -29,7 +32,7 @@ morpheus.neo4j = function( data )
 
     me.public = {
             toJSON : function() {
-                return {urls:me.urls, domain:me.domain};
+                return {urls:me.urls, domain:me.domain, password:me.password,username:me.username};
             },
             
             urls : {
@@ -61,17 +64,31 @@ morpheus.neo4j = function( data )
             domain : data.domain || "unknown",
             
             admin : {
-                get  : function(resource, data, success, failure) { return morpheus.get(  me.public.urls.admin + resource, data, success, failure ); },
-                post : function(resource, data, success, failure) { return morpheus.post( me.public.urls.admin + resource, data, success, failure ); },
-                put  : function(resource, data, success, failure) { return morpheus.put(  me.public.urls.admin + resource, data, success, failure ); },
-                del  : function(resource, data, success, failure) { return morpheus.del(  me.public.urls.admin + resource, data, success, failure ); }
+                get  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'get'); },
+                post : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'post');},
+                put  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'put'); },
+                del  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'del'); },
+                
+                ajax : function( resource, data, success, failure, method ) {
+                	return morpheus[method]( me.public.urls.admin + resource, data, success, failure, {
+                		username : me.username,
+                		password : me.password
+                	});
+                }
             },
             
             rest : {
-                get  : function(resource, data, success, failure) { return morpheus.get(  me.public.urls.rest + resource, data, success, failure ); },
-                post : function(resource, data, success, failure) { return morpheus.post( me.public.urls.rest + resource, data, success, failure ); },
-                put  : function(resource, data, success, failure) { return morpheus.put(  me.public.urls.rest + resource, data, success, failure ); },
-                del  : function(resource, data, success, failure) { return morpheus.del(  me.public.urls.rest + resource, data, success, failure ); }
+            	get  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'get'); },
+                post : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'post');},
+                put  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'put'); },
+                del  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'del'); },
+                
+                ajax : function( resource, data, success, failure, method ) {
+                	return morpheus[method]( me.public.urls.rest + resource, data, success, failure, {
+                		username : me.username,
+                		password : me.password
+                	});
+                }
             },
             
             /**
@@ -216,6 +233,21 @@ morpheus.neo4j = function( data )
             
             getMonitorData : function() {
             	return me.monitorData;
+            },
+            
+            setUsername : function(username) {
+            	me.username = username;
+            },
+            
+            setPassword : function(password) {
+            	me.password = password;
+            },
+            
+            /**
+             * Persist any changes made to this server to the backend.
+             */
+            save : function() {
+            	morpheus.neo4jHandler.save();
             }
     };
     
@@ -389,7 +421,7 @@ morpheus.neo4jHandler = (function(undefined) {
             for(var i = 0, l = servers.length; i < l ; i++) {
                 
                 // If no REST-url is specified, use default
-                if( ! servers[i].urls.rest ) {
+                if( servers[i].urls.rest.length === 0 ) {
                 	servers[i].urls.rest = me.DEFAULT_REST_URL;
                 }
 
@@ -463,7 +495,14 @@ morpheus.neo4jHandler = (function(undefined) {
             init: me.morpheusInit,
             
             loaded  : function() { return (me.servers === false); },
-            servers : function() { return me.servers; }
+            servers : function() { return me.servers; },
+            
+            /**
+             * Save the current server state to the backend.
+             */
+            save : function() {
+                morpheus.prop("neo4j-servers",me.servers);
+            }
     };
 
     return me.api;
