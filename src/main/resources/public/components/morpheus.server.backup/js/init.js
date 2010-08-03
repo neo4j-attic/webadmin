@@ -199,7 +199,7 @@ morpheus.components.server.backup.init = (function($, undefined) {
     // CONSTRUCT
     //
     
-    $('input.mor_backup_path').live('change',function(ev) {
+    $('input.mor_backup_path').live('keyup',function(ev) {
     	 var el = $(ev.target);
     	 if( el.val().trim() === me.currentBackupPath ) {
     		 $('button.mor_backup_setpathbutton').attr('disabled', 'disabled');

@@ -178,7 +178,7 @@ morpheus.components.server.config = (function($, undefined) {
     /**
      * Hook event listeners to the UI.
      */
-    $('.mor_config_value').live('change',function(ev){
+    $('.mor_config_value').live('keyup',function(ev){
         var el = $(ev.target);
         var value = el.val().trim();
         var key   = el.attr('name');
