@@ -14,7 +14,7 @@ morpheus.components.server.backup.StatusTracker = function(server, cb, interval)
 	
 	me.max_polling_interval = 15000;
 	
-	me.polling_interval = interval || 1000;
+	me.polling_interval = interval || 500;
 
 	/**
 	 * This is the actual current polling interval beeing used.

@@ -186,49 +186,43 @@ var morpheus = ( function( $, undefined )
         	}
         	
             return function() {
-                $.ajax(
-                {
-                    url : url,
-                    type : method,
-                    data : data,
-                    processData: false,
-                    success : success,
-                    contentType: "application/json",
-                    error : function(req) {
-                		try {
-	                        if( req.status === 200 ) {
-	                           // This happens when the server returns an empty
-								// response.
-	                           return success(null);
-	                        }
-                		} catch(e) {
-                			// We end up here if there is no status to read
-                		} 
-                		
-                		if( typeof(failure) === "function") {
-                    		failure(req);
-                    	}
-                    },
-                    dataType : "json",
-                    beforeSend : function(xhr) {
-                    	// TODO: Add OAuth authentication here.
-                    	return xhr;
-                    },
-                    xhr: function(){
-                    	
-                    	// If this is a cross domain request, and we are living
-						// in IE8, fall back to their implementation of cross
-						// domain ajax.
-                    	
-                    	if( me.api.isCrossDomain(url) && window.XDomainRequest ) {
-                			return new XDomainRequest();
-                		} else {
-	            			return window.ActiveXObject ?
-	            				new ActiveXObject("Microsoft.XMLHTTP") :
-	            				new XMLHttpRequest();
-                		}
-                    }
-                });
+        		if( me.api.isCrossDomain(url) && window.XDomainRequest) {
+        			// IE8 Cross domain
+        			// TODO
+        			if( typeof(failure) === "function") {
+		        		failure(null);
+		        	}
+        		} else {	 
+	                $.ajax(
+	                {
+	                    url : url,
+	                    type : method,
+	                    data : data,
+	                    processData: false,
+	                    success : success,
+	                    contentType: "application/json",
+	                    error : function(req) {
+	                		try {
+		                        if( req.status === 200 ) {
+		                           // This happens when the server returns an empty
+									// response.
+		                           return success(null);
+		                        }
+	                		} catch(e) {
+	                			// We end up here if there is no status to read
+	                		}
+	                		
+	                		if( typeof(failure) === "function") {
+	                    		failure(req);
+	                    	}
+	                    },
+	                    dataType : "json",
+	                    beforeSend : function(xhr) {
+	                    	// TODO: Add OAuth authentication here.
+	                    	return xhr;
+	                    }
+	                });
+        		}
             };
         })(method, url, data, success, failure, settings), 0);
     };

@@ -1,0 +1,4 @@
+Neo4j Web Administration (Morpheus)
+
+    Morpheus is a web-based adminstrative interface for Neo4j. It currently only ships as a stand
+    alone component, providing a Neo4j REST database together with its administrative interface.
