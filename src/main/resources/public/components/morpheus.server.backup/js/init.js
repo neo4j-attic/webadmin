@@ -175,7 +175,7 @@ morpheus.components.server.backup.init = (function($, undefined) {
 			return function() {
 				statusTracker.run();
 			};
-		})(statusTracker),50);
+		})(statusTracker),10);
     };
     
     /**

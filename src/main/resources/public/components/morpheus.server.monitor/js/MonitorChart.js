@@ -104,6 +104,8 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 				me.drawing = true;
 				
 			}
+			
+			me.draw(me.server.getMonitorData());
 		},
 		
 		stopDrawing : function() {
