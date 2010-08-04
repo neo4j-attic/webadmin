@@ -20,7 +20,7 @@
             <item name="Wiki" href="http://wiki.neo4j.org/content/${project.artifactId}" />
             <item name="API Documentation" href="apidoc/index.html" />
             <item name="Browse Source"
-                href="https://trac.neo4j.org/browser/components/${project.artifactId}/trunk/" />
+                href="http://github.com/neo4j/webadmin" />
         </menu>
         <menu ref="reports" />
     </body>

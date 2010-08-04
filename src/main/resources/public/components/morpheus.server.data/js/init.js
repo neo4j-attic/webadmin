@@ -265,6 +265,12 @@ morpheus.components.server.data.base = (function($, undefined) {
     	me.public.setDataUrl($(ev.target).attr('href'));
     });
     
+    $("a.mor_data_refresh_button").live("click", function(ev){
+    	ev.preventDefault();
+    	
+    	me.reload();
+    });
+    
     return me.public;
     
 })(jQuery);

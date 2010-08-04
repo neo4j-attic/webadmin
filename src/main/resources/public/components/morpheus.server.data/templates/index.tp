@@ -3,6 +3,7 @@
 	<h1>Data browser</h1>
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
+		<p class="mor_info"><a href="#" class="mor_data_refresh_button">Refresh current view</a></p>
 	</div>
 	{#if $T.notFound }
 	

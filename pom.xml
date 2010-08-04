@@ -120,6 +120,30 @@
 		</plugins>
 	</build>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>gr.abiss.mvn.plugins</groupId>  
+				<artifactId>maven-jstools-plugin</artifactId>
+				<version>0.7</version>
+				<configuration>
+					<jsDir>src/main/resources</jsDir>
+					<excludes>**/*-compressed.js</excludes>
+					<includePrivate>true</includePrivate>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<!-- include the desired reports -->
+							<report>jslint</report>
+							<report>jsdoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
 	<dependencies>
 
 		<dependency>
