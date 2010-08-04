@@ -11,12 +11,15 @@ Current features include:
 
 <ul>
     <li>Lifecycle management</li>
+    <li>Server configuration</li>
     <li>Monitoring of memory usage, disk usage, cache status and database primitives</li>
+    <li>Historic data archiving and charting via built - in Round Robin Database</li>
     <li>JMX overview</li>
     <li>Data browsing</li>
-    <li>Advanced data manipulation via Gremlin console</li>
+    <li>Advanced data manipulation and exploration via Gremlin console</li>
     <li>Server configuration</li>
     <li>Online backups</li>
+    <li>Charting of relevant data</li>
 </ul>
 
 Quickstart
