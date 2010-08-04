@@ -2,7 +2,6 @@ package org.neo4j.webadmin.gremlin;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -83,8 +82,8 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
-                    scriptEngine.getContext().setWriter( scriptOutput );
-                    scriptEngine.getContext().setErrorWriter( scriptOutput );
+                    // scriptEngine.getContext().setWriter( scriptOutput );
+                    // scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
 
                 job = jobQueue.take();
@@ -170,9 +169,11 @@ public class GremlinSession implements Runnable
             List<Object> resultLines = (List<Object>) scriptEngine.eval( line );
 
             // Handle output data
-            List<String> outputLines = Arrays.asList( scriptOutput.toString().split(
-                    "\n" ) );
-            scriptOutput.flush();
+            List<String> outputLines = new ArrayList<String>();
+            // List<String> outputLines = Arrays.asList(
+            // scriptOutput.toString().split(
+            // "\n" ) );
+            // scriptOutput.flush();
 
             // Handle eval() result
             if ( resultLines == null )

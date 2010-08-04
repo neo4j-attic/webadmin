@@ -216,6 +216,8 @@ var morpheus = ( function( $, undefined )
 	                		
 	                		if( typeof(failure) === "function") {
 	                    		failure(req);
+	                    	} else {
+	                    		morpheus.showError("Connection error, please ensure your internet connection is working.")
 	                    	}
 	                    },
 	                    dataType : "json",
@@ -280,10 +282,10 @@ var morpheus = ( function( $, undefined )
     	/**
     	 * Display an error message until timout time passes.
     	 * @param error is the error string
-    	 * @param timeout is the time in milliseconds to show the error, default is 2000
+    	 * @param timeout is the time in milliseconds to show the error, default is 5000
     	 */
     	showError : function(error, timeout) {
-    		var timeout = timeout || 2000;
+    		var timeout = timeout || 5000;
     		
     		if( typeof(me.displayedErrors[error]) !== "undefined" ) {
     			var errObj = me.displayedErrors[error];

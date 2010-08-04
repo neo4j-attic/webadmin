@@ -70,7 +70,14 @@ morpheus.neo4j = function( data )
                 del  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'del'); },
                 
                 ajax : function( resource, data, success, failure, method ) {
-                	return morpheus[method]( me.public.urls.admin + resource, data, success, failure, {
+                	
+                	if(typeof(data) === "function") {
+                        failure = success;
+                        success = data;
+                        data = null;
+                    }
+                	
+                	return morpheus[method]( me.public.urls.admin + resource, data, success, me.wrapFailureCallback(failure), {
                 		username : me.username,
                 		password : me.password
                 	});
@@ -84,7 +91,14 @@ morpheus.neo4j = function( data )
                 del  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'del'); },
                 
                 ajax : function( resource, data, success, failure, method ) {
-                	return morpheus[method]( me.public.urls.rest + resource, data, success, failure, {
+                	
+                	if(typeof(data) === "function") {
+                        failure = success;
+                        success = data;
+                        data = null;
+                    }
+                	
+                	return morpheus[method]( me.public.urls.rest + resource, data, success, me.wrapFailureCallback(failure), {
                 		username : me.username,
                 		password : me.password
                 	});
@@ -346,6 +360,7 @@ morpheus.neo4j = function( data )
     me.wrapFailureCallback = function(cb) {
     	
     	return function(req) {
+    		
     		if( typeof(cb) === "function" ) {
     			cb(req);
     		} else {

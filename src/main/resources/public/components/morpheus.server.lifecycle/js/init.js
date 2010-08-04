@@ -94,10 +94,6 @@ morpheus.components.Lifecycle = function( server, template )
                     function( data ) {
                         me.watingForResponse = false;
                         me.setStatus( data.current_status );
-                    }, 
-                    function() {
-                        me.watingForResponse = false;
-                        me.setStatus( "Connection error" );
                     });
         }
     };
