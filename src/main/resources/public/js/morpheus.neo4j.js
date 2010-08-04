@@ -339,6 +339,22 @@ morpheus.neo4j = function( data )
     	}
     };
     
+    /**
+     * Wrap an AJAX failure callback in some common boilerplate that handles
+     * unresponsive servers etc.
+     */
+    me.wrapFailureCallback = function(cb) {
+    	
+    	return function(req) {
+    		if( typeof(cb) === "function" ) {
+    			cb(req);
+    		} else {
+    			morpheus.showError("Unable to reach server, please ensure your internet connection is working.")
+    		}
+    	};
+    	
+    };
+    
     //
     // CONSTRUCT
     //

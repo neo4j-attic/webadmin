@@ -1,6 +1,8 @@
 package org.neo4j.webadmin.gremlin;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -19,6 +21,7 @@ import com.tinkerpop.gremlin.statements.SyntaxException;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
+@SuppressWarnings( "restriction" )
 public class GremlinSession implements Runnable
 {
 
@@ -33,6 +36,12 @@ public class GremlinSession implements Runnable
      * The gremlin evaluator instance beeing wrapped.
      */
     protected ScriptEngine scriptEngine;
+
+    /**
+     * The scriptengine error and out streams are directed into this string
+     * writer.
+     */
+    protected StringWriter scriptOutput = new StringWriter();
 
     /**
      * Commands waiting to be executed. Number of waiting commands is capped at
@@ -74,6 +83,8 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
+                    scriptEngine.getContext().setWriter( scriptOutput );
+                    scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
 
                 job = jobQueue.take();
@@ -158,7 +169,12 @@ public class GremlinSession implements Runnable
 
             List<Object> resultLines = (List<Object>) scriptEngine.eval( line );
 
-            List<String> outputLines = new ArrayList<String>();
+            // Handle output data
+            List<String> outputLines = Arrays.asList( scriptOutput.toString().split(
+                    "\n" ) );
+            scriptOutput.flush();
+
+            // Handle eval() result
             if ( resultLines == null )
             {
                 outputLines.add( "null" );

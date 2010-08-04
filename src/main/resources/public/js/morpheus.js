@@ -38,6 +38,8 @@ var morpheus = ( function( $, undefined )
 
     me.components = {};
     me.propertyCache = {};
+    
+    me.displayedErrors = {};
 
     me.init = function()
     {
@@ -272,6 +274,42 @@ var morpheus = ( function( $, undefined )
     			return false;
     		} else {
     			return url.substring(httpIndex + 3).split("/",1)[0] !== window.location.host;
+    		}
+    	},
+    	
+    	/**
+    	 * Display an error message until timout time passes.
+    	 * @param error is the error string
+    	 * @param timeout is the time in milliseconds to show the error, default is 2000
+    	 */
+    	showError : function(error, timeout) {
+    		var timeout = timeout || 2000;
+    		
+    		if( typeof(me.displayedErrors[error]) !== "undefined" ) {
+    			var errObj = me.displayedErrors[error];
+    			clearTimeout(errObj.timeout);
+    			
+    			$('.mor_error_count', errObj.elem).html("(" + (++errObj.count) + ")");
+    			$('.mor_error_count', errObj.elem).show();
+    			
+    			errObj.timeout = setTimeout( (function(error) { return function() {me.api.hideError(error);};})(error), timeout );
+    			
+    		} else {
+    			me.displayedErrors[error] = {
+    					msg : error,
+    					count : 1,
+    					elem : $("<li>"+ error +"<span class='mor_error_count' style='display:none;'>(1)</span></li>"),
+    					timeout : setTimeout( (function(error) { return function() {me.api.hideError(error);};})(error), timeout )
+    			};
+    			
+    			$("#mor_errors").append(me.displayedErrors[error].elem);
+    		}
+    	},
+    	
+    	hideError : function(error) {
+    		if( typeof(me.displayedErrors[error]) !== "undefined" ) {
+    			me.displayedErrors[error].elem.remove()
+    			delete(me.displayedErrors[error]);
     		}
     	}
     };

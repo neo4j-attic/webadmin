@@ -5,6 +5,11 @@
 		<p class="mor_info">Browse the data in your neo4j server.</p>
 		<p class="mor_info"><a href="#" class="mor_data_refresh_button">Refresh current view</a></p>
 	</div>
+	<div class="mor_module">
+		<h2>Get by id</h2>
+		<p class="mor_info"><input type="text" id="mor_data_get_id_input" /></p>
+		<p class="mor_info"><input type="button" class="mor_data_get_node_button" value="Get node" /><input type="button" class="mor_data_get_relationship_button" value="Get relationship" /></p>
+	</div>
 	{#if $T.notFound }
 	
 	{#else }

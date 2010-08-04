@@ -271,6 +271,18 @@ morpheus.components.server.data.base = (function($, undefined) {
     	me.reload();
     });
     
+    $("input.mor_data_get_node_button").live("click", function(ev) {
+    	ev.preventDefault();
+    	
+    	me.public.setDataUrl("node/" + $("#mor_data_get_id_input").val() );
+    });
+    
+    $("input.mor_data_get_relationship_button").live("click", function(ev) {
+    	ev.preventDefault();
+    	
+    	me.public.setDataUrl("relationship/" + $("#mor_data_get_id_input").val() );
+    });
+    
     return me.public;
     
 })(jQuery);

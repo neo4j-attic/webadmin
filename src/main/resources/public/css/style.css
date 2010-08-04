@@ -124,6 +124,12 @@ table:first-child thead th, table.data-table thead th { border-top:medium none; 
 /* Charts */
 .mor_chart_container { padding: 5px 20px 5px 10px; }
 
+/* Errors */
+#mor_errors { position:absolute; top: 0; right:0; }
+.mor_error_list { padding:0; margin:0; list-style:none; }
+.mor_error_list li { background:#EB7775; border:1px solid #d5d5d5; padding: 4px 5px; color: #45030B; }
+.mor_error_list li .mor_error_count { padding: 0 4px; font-size:90%; color: #555; }
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
