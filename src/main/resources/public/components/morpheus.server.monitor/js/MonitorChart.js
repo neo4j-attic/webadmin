@@ -45,7 +45,11 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		},
 		yaxis : {},
 		height : 200,
-		data : []
+		data : [],
+		series : {
+			
+		},
+		colors : ["#326a75","#4f848f","#a0c2c8","#00191e"]
 	};
 	
 	// Override defaults with user settings
@@ -132,7 +136,9 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 			grid: { hoverable: true },
 			legend: {
 				position : 'nw'
-			}
+			},
+			series : me.settings.series,
+			colors : me.settings.colors
 		});
 	};
 	
@@ -165,9 +171,9 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
             display: 'none',
             top: y + 5,
             left: x + 5,
-            border: '1px solid #fdd',
+            border: '1px solid #a1a8a9',
             padding: '2px',
-            'background-color': '#fee',
+            'background-color': '#f6f6f6',
             opacity: 0.80
         }).appendTo("body").fadeIn(100);
     };

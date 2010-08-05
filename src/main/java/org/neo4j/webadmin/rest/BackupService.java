@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.BackupStatusRepresentation;
+import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.task.BackupFoundationTask;
 import org.neo4j.webadmin.task.BackupTask;
@@ -73,6 +74,10 @@ public class BackupService
             {
                 /* NOP */
             }
+            catch ( NoBackupPathException e )
+            {
+                /* NOP */
+            }
 
             try
             {
@@ -90,6 +95,10 @@ public class BackupService
 
             }
             catch ( IllegalStateException e )
+            {
+                /* NOP */
+            }
+            catch ( NoBackupPathException e )
             {
                 /* NOP */
             }

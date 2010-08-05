@@ -151,6 +151,9 @@ morpheus.components.server.monitor.base = (function($, undefined) {
     		yaxis : {
     			min : 0,
     			max : 100
+    		},
+    		series : {
+    			lines: { show: true, fill: true, fillColor: "#4f848f" }
     		}
     	});
     	
