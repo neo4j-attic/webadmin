@@ -29,7 +29,18 @@ To try the admin interface out:
 	git clone http://github.com/neo4j/webadmin.git
 	cd webadmin
 	./start
-	
+
+To run the production version:
+
+Download the latest distribution as a <a href="http://m2.neo4j.org/org/neo4j/neo4j-webadmin/0.0.1-SNAPSHOT/neo4j-webadmin-0.0.1-SNAPSHOT.zip">zip</a> or as a <a href="http://m2.neo4j.org/org/neo4j/neo4j-webadmin/0.0.1-SNAPSHOT/neo4j-webadmin-0.0.1-SNAPSHOT.tar.gz">tarball</a>.
+
+Unpack in your favourite folder and start by running:
+
+    *nix:
+    ./bin/neo4j-webadmin start
+    
+    Windows:
+    bin\neo4j-webadmin.bat start
 
 Build production version
 ------------------------
