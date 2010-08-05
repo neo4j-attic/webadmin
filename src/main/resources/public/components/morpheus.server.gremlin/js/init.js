@@ -39,6 +39,8 @@ morpheus.components.server.gremlin = (function($, undefined) {
                         me.render();
                     }
                     
+                    me.focusOnInputElement();
+                    
                 } else {
                     me.visible = false;
                 }
@@ -123,6 +125,10 @@ morpheus.components.server.gremlin = (function($, undefined) {
         
     };
     
+    me.focusOnInputElement = function() {
+    	$("#mor_gremlin_console_input").focus();
+    };
+    
     /**
      * Default callback for evaluated gremlin statements. Prints the result to
      * the ui console.
@@ -165,6 +171,12 @@ morpheus.components.server.gremlin = (function($, undefined) {
         } else if (ev.keyCode === 40) { // DOWN
             me.consoleInput.val(me.public.nextHistory());
         }
+    });
+    
+    $("#mor_gremlin_console").live("click", function(ev) {
+    	if(ev.target.id === "mor_gremlin_console") {
+    		me.focusOnInputElement();
+    	}
     });
     
     return me.public;
