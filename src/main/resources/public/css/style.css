@@ -24,6 +24,8 @@ h6 { font-size:0.7em; }
 .small { font-size:.8em; font-weight:light; color: #444; } 
 .coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
 
+.error { background: #F5C4CA; }
+
 .warning { padding: 0; background:#EB7775; border:1px solid #d5d5d5; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
 .info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
@@ -130,17 +132,46 @@ table:first-child thead th, table.data-table thead th { border-top:medium none; 
 .mor_error_list li { background:#EB7775; border:1px solid #d5d5d5; padding: 4px 5px; color: #45030B; }
 .mor_error_list li .mor_error_count { padding: 0 4px; font-size:90%; color: #555; }
 
+/* Dialog */
+#mor_dialog_content, #mor_dialog_data {display:none;}
+
+/* Overlay */
+#mor_dialog_overlay {background-color:#000; cursor:wait;}
+
+/* Container */
+#mor_dialog_container {background-color:#eee; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:600px; -moz-border-radius-bottomleft:6px; -webkit-border-bottom-left-radius:6px; -moz-border-radius-bottomright:6px; -webkit-border-bottom-right-radius:6px; border-radius:0 0 6px 6px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
+#mor_dialog_container a {color:#ddd;}
+#mor_dialog_container #mor_dialog_title {color:#000; background-color:#ddd; border-bottom:1px solid #ccc; font-weight:bold; padding:6px 8px; text-shadow:0 1px 0 #f4f4f4;}
+#mor_dialog_container .close {display:none; position:absolute; right:0; top:0;}
+#mor_dialog_container .close a {display:block; color:#777; font-weight:bold; padding:6px 12px 0; text-decoration:none; text-shadow:0 1px 0 #f4f4f4;}
+#mor_dialog_container .close a:hover {color:#000;}
+#mor_dialog_container #mor_dialog_data {font-size:12px; padding:6px 12px;}
+#mor_dialog_container h2 {margin:10px 0 6px;}
+#mor_dialog_container p {margin-bottom:10px;}
+#mor_dialog_container span {color:#777;}
+
 /* UI ROOT */
 
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
 #mor_header_icon { float:left; margin: 4px 30px 0 10px; }
 
-#mor_pages { padding: 5px 10px 10px; }
+#mor_servers { position:absolute; width: 20px; padding:0; margin:0; top: 100px; left:0px; }
+#mor_servers ul { padding:0; margin:0; list-style:none; }
+#mor_servers ul li { z-index:100; margin: 4px 0; height: 30px; }
+#mor_servers ul li a { display:block; overflow:hidden; margin:0; padding: 4px 3px; border: 2px solid #0a4d60; border-left:none; background: #0b566b; text-decoration:none; font-weight:bold; color:#efefef;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-bottomright: 3px; -webkit-border-bottom-right-radius: 3px;  }
+#mor_servers ul li a:hover { display: inline-block; }
+#mor_servers ul li a.current {  background:#107f9e;border-color:#0f7794; }
+
+#mor_servers ul li.mor_servers_add { margin: 15px 0; }
+#mor_servers ul li.mor_servers_add a { display:block; background:#8f9b9e;border-color:#668087; }
+#mor_servers ul li.mor_servers_add a:hover { display:block; }
+
+#mor_pages { padding: 5px 10px 10px 30px; }
 
 #mor_footer { width:100%; height:31px; background:url(../img/footer_bg.png) repeat-x;  }
 
 #mor_mainmenu { margin:0; list-style:none; padding: 24px 0 0 0; }
-#mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 4px 8px 2px; }
+#mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 4px 8px 2px;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-topleft: 3px; -webkit-border-top-left-radius: 3px; }
 #mor_mainmenu a { color:#ebebeb; text-decoration:none; }
 #mor_mainmenu li.current { background:#ebebeb; }
 #mor_mainmenu li.current a { color:#474f52; font-weight:bold; }

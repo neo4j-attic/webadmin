@@ -13,6 +13,9 @@ morpheus.neo4j = function( data )
     me.monitorInterval = 3000;
     me.latestDataPointTime = (new Date()).getTime() - 1000 * 60 * 60;
     
+
+    me.domain = me.name = data.domain || data.name || "unknown";
+    
     me.password = data.username || "";
     me.username = data.password || "";
     
@@ -31,13 +34,14 @@ morpheus.neo4j = function( data )
     //
 
     me.public = {
+    		
             toJSON : function() {
-                return {urls:me.urls, domain:me.domain, password:me.password,username:me.username};
+                return {adminUrl:me.public.urls.admin, restUrl:me.public.urls.rest, domain:me.domain, name:me.name, password:me.password,username:me.username};
             },
             
             urls : {
-                admin : data.urls.admin || "",
-                rest  : data.urls.rest  || "",
+                admin : data.adminUrl || "",
+                rest  : data.restUrl  || "",
                 
                 /**
 				 * Takes a url. If the host in the url matches the REST base
@@ -60,8 +64,6 @@ morpheus.neo4j = function( data )
             		}
             	}
             },
-            
-            domain : data.domain || "unknown",
             
             admin : {
                 get  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'get'); },
@@ -244,9 +246,23 @@ morpheus.neo4j = function( data )
             stopMonitoring : function() {
             	me.monitoring = false;
             },
+    		
+    		domain : me.domain,
+    		
+    		getDomain : function() {
+    			return me.domain;
+    		},
+    		
+    		getName : function() {
+    			return me.name;
+    		},
             
             getMonitorData : function() {
             	return me.monitorData;
+            },
+            
+            setName : function(name) {
+            	me.name = name;
             },
             
             setUsername : function(username) {
@@ -429,7 +445,7 @@ morpheus.neo4jHandler = (function(undefined) {
                 url : me.DEFAULT_ADMIN_URL + "status",
                 success : function() {
                     // There is a local server running, start chatting
-                    var serv = morpheus.neo4j( { urls: {admin : me.DEFAULT_ADMIN_URL, rest : me.DEFAULT_REST_URL }, domain:document.domain } )
+                    var serv = morpheus.neo4j( { adminUrl : me.DEFAULT_ADMIN_URL, restUrl : me.DEFAULT_REST_URL, name:document.domain } )
                 
                     var servers = [serv];
                     
@@ -452,8 +468,12 @@ morpheus.neo4jHandler = (function(undefined) {
             for(var i = 0, l = servers.length; i < l ; i++) {
                 
                 // If no REST-url is specified, use default
-                if( servers[i].urls.rest.length === 0 ) {
-                	servers[i].urls.rest = me.DEFAULT_REST_URL;
+                if( servers[i].restUrl == undefined || servers[i].restUrl.length === 0 ) {
+                	servers[i].restUrl = me.DEFAULT_REST_URL;
+                }
+                
+                if( servers[i].adminUrl == undefined || servers[i].adminUrl.length === 0 ) {
+                	servers[i].adminUrl = me.DEFAULT_ADMIN_URL;
                 }
 
                 me.servers.push( morpheus.neo4j(servers[i]) );
@@ -497,7 +517,7 @@ morpheus.neo4jHandler = (function(undefined) {
 	 */
     me.getServer = function(serverName) {
         for( var key in me.servers ) {
-            if( me.servers[key].domain === serverName ) {
+            if( me.servers[key].getName() === serverName ) {
                 return me.servers[key];
             }
         }
@@ -527,6 +547,19 @@ morpheus.neo4jHandler = (function(undefined) {
             
             loaded  : function() { return (me.servers === false); },
             servers : function() { return me.servers; },
+            
+            currentServer : function(server) {
+            	if( server !== undefined) {
+            		$.bbq.pushState( {s:server} );
+            	} else {
+            		return me.currentServer;
+            	}
+            },
+            
+            addServer : function(name, url) {
+            	me.servers.push(morpheus.neo4j( { adminUrl : url, restUrl : url, name:name }));
+            	morpheus.event.trigger("morpheus.servers.changed", { servers : me.servers } );
+            },
             
             /**
              * Save the current server state to the backend.

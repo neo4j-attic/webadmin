@@ -4,6 +4,7 @@
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
 		<p class="mor_info"><a href="#" class="mor_data_refresh_button">Refresh current view</a></p>
+		<p class="mor_info"><a href="#" class="mor_data_reference_node_button">Go to reference node</a></p>
 	</div>
 	<div class="mor_module">
 		<h2>Get by id</h2>

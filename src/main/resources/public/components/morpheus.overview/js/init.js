@@ -93,15 +93,15 @@ morpheus.components.overview = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.overview",morpheus.components.overview);
-morpheus.ui.mainmenu.add("Servers","morpheus.overview");
+//morpheus.ui.mainmenu.add("Servers","morpheus.overview");
 
 morpheus.event.bind("morpheus.init", morpheus.components.overview.init );
 morpheus.event.bind("morpheus.ui.page.changed", function(ev) {
     // Remove the current server from state if the overview page is shown (since
     // it shows several servers at a time).
-    if(ev.data === "morpheus.overview") {
-        $.bbq.removeState("s");
-        morpheus.components.overview.pageShown();
-    }
+//    if(ev.data === "morpheus.overview") {
+//        $.bbq.removeState("s");
+//        morpheus.components.overview.pageShown();
+//    }
 } );
 

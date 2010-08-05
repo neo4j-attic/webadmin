@@ -89,6 +89,8 @@ morpheus.components.server.data.base = (function($, undefined) {
                 	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
                 	me.currentItem.isRelationship = me.dataUrl.indexOf("relationship") == 0 ? true : false;
                     
+                	me.notFound = false;
+                	
                 	if( me.currentItem.isNode ) {
                 		me.currentItem.relationships = {
                 			fields : me.manager.getListFields(),
@@ -281,6 +283,12 @@ morpheus.components.server.data.base = (function($, undefined) {
     	ev.preventDefault();
     	
     	me.public.setDataUrl("relationship/" + $("#mor_data_get_id_input").val() );
+    });
+    
+    $("a.mor_data_reference_node_button").live("click", function(ev) {
+    	ev.preventDefault();
+    	
+    	me.public.setDataUrl("node/0" );
     });
     
     return me.public;

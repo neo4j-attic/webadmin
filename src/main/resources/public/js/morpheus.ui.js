@@ -1,5 +1,7 @@
 morpheus.provide( "morpheus.ui" );
 
+$.require( "js/vend/jquery.simplemodal.js" );
+
 /**
  * Morpheus user interface. Builds the base ui, keeps track of registered
  * components and provides an API to inject new UI parts.
@@ -13,7 +15,7 @@ morpheus.ui = ( function( $ )
     // PRIVATE
     //
 
-    me.DEFAULT_PAGE = "morpheus.overview";
+    me.DEFAULT_PAGE = "morpheus.server.monitor";
 
     me.pages = {};
     me.currentPage = null;
@@ -310,3 +312,82 @@ morpheus.ui.mainmenu = ( function( $, undefined )
     return me.api;
 
 } )( jQuery );
+
+//
+// DIALOG
+//
+
+morpheus.ui.dialog = (function($){
+	var me = {};
+	
+	me.container = null;
+	
+	me.public = {
+		show : function(title, body) {
+			$("#mor_dialog_title").html(title);
+			$("#mor_dialog_data").html(body);
+			me.showImpl();
+		},
+		
+		showUsingTemplate : function( title, templateUrl, templateContext ) {
+			$("#mor_dialog_title").html(title);
+			$("#mor_dialog_data").setTemplateURL(templateUrl);
+			$("#mor_dialog_data").processTemplate(templateContext || {});
+			me.showImpl();
+		},
+		
+		close : function() {
+			$.modal.close();
+		}
+	};
+	
+	me.showImpl = function() {
+		$("#mor_dialog_content").modal({
+			overlayId: 'mor_dialog_overlay',
+			containerId: 'mor_dialog_container',
+			closeHTML: null,
+			minHeight: 80,
+			opacity: 65, 
+			position: ['0',],
+			overlayClose: true,
+			onOpen: me.open,
+			onClose: me.close
+		});
+	};
+	
+	me.open = function (d) {
+		me.container = d.container[0];
+		d.overlay.fadeIn('slow', function () {
+			$("#mor_dialog_content", me.container).show();
+			var title = $("#mor_dialog_title", me.container);
+			title.show();
+			d.container.slideDown('slow', function () {
+				setTimeout(function () {
+					var h = $("#mor_dialog_data", me.container).height()
+						+ title.height()
+						+ 20; // padding
+					d.container.animate(
+						{height: h}, 
+						200,
+						function () {
+							$("div.close", me.container).show();
+							$("#mor_dialog_data", me.container).show();
+						}
+					);
+				}, 300);
+			});
+		})
+	};
+	
+	me.close = function (d) {
+		d.container.animate(
+			{top:"-" + (d.container.height() + 20)},
+			500,
+			function () {
+				$.modal.close();
+			}
+		);
+	};
+	
+	return me.public;
+})(jQuery);

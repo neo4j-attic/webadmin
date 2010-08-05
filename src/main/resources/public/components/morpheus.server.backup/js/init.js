@@ -230,10 +230,8 @@ morpheus.components.server.backup.init = (function($, undefined) {
     
     $('button.mor_backup_triggerbutton').live('click', function(ev) {
     	
-    	$('div.mor_backup_foundationbox').hide();
-    	
     	me.server.admin.post("backup/trigger", function(data) {
-    		$('p.mor_backup_status').html("Checking status..");
+    		me.showStatus("Checking status..");
     		
     		me.trackStatus();
     	});
@@ -243,11 +241,9 @@ morpheus.components.server.backup.init = (function($, undefined) {
     $('button.mor_backup_foundation_triggerbutton').live('click', function(ev) {
     	
     	if( confirm("This will DESTROY any files in '" + me.currentBackupPath + "', are you sure?") ) {
-    	
-	    	$('div.mor_backup_foundationbox').hide();
 	    	
 	    	me.server.admin.post("backup/triggerfoundation", function(data) {
-	    		$('p.mor_backup_status').html("Checking status..");
+	    		me.showStatus("Checking status..");
 	    		
 	    		me.trackStatus();
 	    	});

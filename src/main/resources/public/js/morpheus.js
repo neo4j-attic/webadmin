@@ -14,6 +14,7 @@ $.require( "js/vend/jquery.bbq.js" );
 $.require( "js/morpheus.ui.js" );
 $.require( "js/morpheus.event.js" );
 $.require( "js/morpheus.neo4j.js" );
+$.require( "js/morpheus.servermanager.js" );
 
 $.require( "components.js" );
 
@@ -135,7 +136,12 @@ var morpheus = ( function( $, undefined )
         }
         else
         {
-            $.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
+        	if( typeof( value ) !== "string") {
+        		value = JSON.stringify(value);
+        		alert(value);
+        	}
+        	
+            me.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
             {
                 return function()
                 {
