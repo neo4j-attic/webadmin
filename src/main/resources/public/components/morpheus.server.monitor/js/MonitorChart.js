@@ -67,29 +67,48 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 	me.containerId = "mor_monitor_chart_" + morpheus.components.server.monitor.monitorCharts++;
 	me.controlsClass = me.containerId + "_controls";
 	me.zoom = {
-		week : { 
+		year : { 
+			id : me.containerId + "_zoom_0",
+			xSpan : 1000 * 60 * 60 * 24 * 365,
+		    timeformat: "%d/%m %y"
+		},
+		month : { 
 			id : me.containerId + "_zoom_1",
+			xSpan : 1000 * 60 * 60 * 24 * 30,
+		    timeformat: "%d/%m"
+		},
+		week : { 
+			id : me.containerId + "_zoom_2",
 			xSpan : 1000 * 60 * 60 * 24 * 7,
 		    timeformat: "%d/%m"
 		},
 		day : { 
-			id : me.containerId + "_zoom_2",
+			id : me.containerId + "_zoom_3",
 			xSpan : 1000 * 60 * 60 * 24,
 		    timeformat: "%H:%M"
 		},
 		six_hours : { 
-			id : me.containerId + "_zoom_3",
+			id : me.containerId + "_zoom_4",
 			xSpan : 1000 * 60 * 60 * 6,
 		    timeformat: "%H:%M"
 		},
 		thirty_minutes : { 
-			id : me.containerId + "_zoom_4",
+			id : me.containerId + "_zoom_5",
 			xSpan : 1000 * 60 * 30,
 		    timeformat: "%H:%M:%S"
 		}
 	};
 	
-	var controls = "<ul class='mor_module_actions'><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.week.id +"'>Week</a></li><li><a class='"+me.controlsClass+" current' href='#' id='"+me.zoom.day.id +"'>Day</a></li><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.six_hours.id +"'>6 hours</a><li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.thirty_minutes.id +"'>30 minutes</a></li></li></ul><div class='break'></div>"
+	// TODO: Move this into a template
+	var controls = "<ul class='mor_module_actions'>";
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.year.id +"'>Year</a></li>";
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.month.id +"'>Month</a></li>";
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.week.id +"'>Week</a></li>";
+	controls += "<li><a class='"+me.controlsClass+" current' href='#' id='"+me.zoom.day.id +"'>Day</a></li>"
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.six_hours.id +"'>6 hours</a></li>"
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.thirty_minutes.id +"'>30 minutes</a></li>";
+	controls += "</ul><div class='break'></div>"
+	
 	me.container = $("<div class='mor_module mor_span-5'><h2>" + me.settings.label + "</h2>" + controls + "<div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>")
 	
 	me.drawing = false;

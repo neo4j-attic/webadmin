@@ -71,8 +71,23 @@ public class RrdManager
 
                 // DEFINE ARCHIVES
 
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, 50 );
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10, 50 );
+                // Last 35 minutes
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, 750 );
+
+                // Last 6 hours
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10, 750 );
+
+                // Last day
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 50, 750 );
+
+                // Last week
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 300, 750 );
+
+                // Last month
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1300, 750 );
+
+                // Last year
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 15000, 750 );
 
                 // INSTANTIATE
 
