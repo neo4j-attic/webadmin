@@ -88,6 +88,8 @@ morpheus.components.Lifecycle = function( server, template )
             me.statusElement.html( message );
             me.watingForResponse = true;
 
+            $("ul.mor_lifecycle_actions a").addClass("disabled");
+            
             // Allow UI update
             var method = (type === "POST") ? me.server.admin.post : me.server.admin.get;
             method( resource,
@@ -109,14 +111,19 @@ morpheus.components.Lifecycle = function( server, template )
 
     me.statusActions =
     {
-        RUNNING : function()
+    	RUNNING : function()
         {
             me.statusElement.html( "Running" );
+            $("ul.mor_lifecycle_actions a").removeClass("disabled");
+            $("ul.mor_lifecycle_actions a.mor_lifecycle_start").addClass("disabled");
         },
 
         STOPPED : function()
         {
             me.statusElement.html( "Stopped" );
+            $("ul.mor_lifecycle_actions a").removeClass("disabled");
+            $("ul.mor_lifecycle_actions a.mor_lifecycle_stop").addClass("disabled");
+            $("ul.mor_lifecycle_actions a.mor_lifecycle_restart").addClass("disabled");
         }
     };
     

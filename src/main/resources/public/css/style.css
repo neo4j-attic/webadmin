@@ -228,4 +228,19 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_overview_server img { float:left; border:1px solid #d5d5d5; padding:3px; }
 
 .mor_overview_server_name a { color: #333; font-weight:bold; font-size:1.2em; text-decoration:none; }
-.mor_overview_server_info { float:left; padding: 0 0 0 10px; } 
+.mor_overview_server_info { float:left; padding: 0 0 0 10px; }
+
+/* Lifecycle Widget */
+.mor_lifecycle { padding-bottom: 4px; }
+.mor_lifecycle_actions { list-style:none; margin:0; padding: 2px 4px; font-size:10px; color:#555; }
+.mor_lifecycle_actions li { float:left; padding: 0 5px;}
+
+.mor_lifecycle_start { display:block; padding: 32px 0 0 0; background:url(/img/icons/32x32/actions/media-playback-start.png) no-repeat top center; }
+.mor_lifecycle_restart { display:block; padding: 32px 0 0 0; background:url(/img/icons/32x32/actions/reload.png) no-repeat top center; }
+.mor_lifecycle_stop { display:block; padding: 32px 0 0 0; background:url(/img/icons/32x32/actions/media-playback-stop.png) no-repeat top center; }
+
+.mor_lifecycle_start.disabled { background:url(/img/icons/32x32/actions/media-playback-start-disabled.png) no-repeat top center; }
+.mor_lifecycle_restart.disabled { background:url(/img/icons/32x32/actions/reload-disabled.png) no-repeat top center; }
+.mor_lifecycle_stop.disabled { background:url(/img/icons/32x32/actions/media-playback-stop-disabled.png) no-repeat top center; }
+
+.mor_lifecycle_status { float:left; font-weight:bold; padding: 10px 2px; text-align:center; }

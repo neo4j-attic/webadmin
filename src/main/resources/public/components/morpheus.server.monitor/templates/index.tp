@@ -2,7 +2,6 @@
 	<h1>Neo4j server monitor</h1>
 	<div class="mor_module">
 		<p class="mor_info">Get an overview on your neo4j server.</p>
-		<p class="mor_info"><a href="#" class="mor_monitor_showjmx">View raw JMX</a></p>
 	</div>
 	<div id="mor_monitor_lifecycle"></div>
 </div>
