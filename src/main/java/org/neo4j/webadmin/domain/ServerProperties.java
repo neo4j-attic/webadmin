@@ -58,15 +58,14 @@ public class ServerProperties implements Representation
 
         // JVM ARGS
 
-        properties.add( new ServerPropertyRepresentation(
-                "jvm.garbagecollector", "Garbage collector",
-                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT ) );
+        properties.add( new JvmArgumentRepresentation( "jvm.garbagecollector",
+                "Garbage collector", "+UseSerialGC", "-XX:" ) );
 
-        properties.add( new ServerPropertyRepresentation( "jvm.heapsize",
-                "Heap size", "-Xmx512m", PropertyType.JVM_ARGUMENT ) );
+        properties.add( new JvmArgumentRepresentation( "jvm.heapsize",
+                "Heap size", "512m", "-Xmx" ) );
 
-        properties.add( new ServerPropertyRepresentation( "web.root",
-                "Web root", "-DwebRoot=../public", PropertyType.JVM_ARGUMENT ) );
+        properties.add( new JvmArgumentRepresentation( "web.root", "Web root",
+                "../public", "-DwebRoot=" ) );
 
         // CONFIG FILE ARGS
 
@@ -77,10 +76,8 @@ public class ServerProperties implements Representation
                 "enable_remote_shell", "Enable remote shell", "false",
                 PropertyType.CONFIG_PROPERTY ) );
 
-        // This is commented out, because HTTP Basic authentication does not
-        // work in firefox when using it's cross domain request functionality.
-        // Will be put back into place when authentication has been switched to
-        // OAuth.
+        // This is commented out, waiting for authentication scheme to be
+        // switched over to OAuth.
 
         // properties.add( new ServerPropertyRepresentation(
         // "rest_enable_authentication", "Enable authentication", "false",
