@@ -16,8 +16,8 @@
 	{#else }
 		{#if $T.item && $T.item.relationships }
 		<div class="mor_module">
-			<h2>Fields to list</h2>
-			<p class="mor_info">Comma-separated list of fields to show when listing related nodes.</p>
+			<h2>Properties to list</h2>
+			<p class="mor_info">Comma-separated list of properties to show when listing related nodes.</p>
 			
 			<form action="#">
 				<p class="mor_info">
@@ -122,7 +122,8 @@
 		<table class="mor_fancy data-table" cell-spacing="0">
 			<thead>
 				<tr>
-					<th>Relation</th>
+					<th>Direction</th>
+					<th>Relationship</th>
 					<th>Node id</th>
 					{#foreach $T.fields as field}
 						<th>{$T.field}</th>	
@@ -133,6 +134,7 @@
 				{#foreach $T.data as item}
 					{#param name=relatedNode value=$T.nodes[$T.item.otherNode]}
 					<tr class="odd">
+						<td class="mor_data_relationship_direction">{#if $T.item.direction === "FROM"}<img src="img/icons/22x22/from.png" />{#else }<img src="img/icons/22x22/to.png" />{#/if}</td>
 						<td><a href="{ $T.item.self }" class="mor_data_url_button">{ $T.item.type }</a></td>
 						<td><a href="{ $T.item.otherNode }" class="mor_data_url_button">{ $T.item.otherNode }</a></td>
 						{#if $P.relatedNode}

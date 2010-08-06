@@ -123,6 +123,8 @@ table:first-child thead th, table.data-table thead th { border-top:medium none; 
 
 .data-table-body { border-bottom:1px solid #D4D4D4; border-top:1px solid #FFFFFF; }
 
+td.mor_data_relationship_direction { padding: 0 4px !important; text-align:center;}
+
 /* Charts */
 .mor_chart_container { padding: 5px 20px 5px 10px; }
 

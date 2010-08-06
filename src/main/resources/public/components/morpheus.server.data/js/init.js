@@ -133,7 +133,13 @@ morpheus.components.server.data.base = (function($, undefined) {
     		// For each relation, find out which node is the "other" node, in
 			// relation to the current node we're showing.
     		for( var i = 0, l = data.length; i < l; i ++) {
-    			data[i].otherNode = me.currentItem.self === data[i].start ? data[i].end : data[i].start;
+    			if( me.currentItem.self === data[i].start) {
+    				data[i].otherNode = data[i].end;
+    				data[i].direction = "FROM";
+    			} else {
+    				data[i].otherNode = data[i].start;
+    				data[i].direction = "TO";
+    			}
     		}
     		
     		me.currentItem.relationships.data = data;

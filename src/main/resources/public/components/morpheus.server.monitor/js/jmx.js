@@ -263,6 +263,7 @@ morpheus.components.server.monitor.jmx = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.monitor.jmx",morpheus.components.server.monitor.jmx);
+morpheus.ui.mainmenu.add("JMX","morpheus.server.monitor.jmx", null, "server",7);
 
 morpheus.event.bind("morpheus.init", morpheus.components.server.monitor.jmx.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.monitor.jmx.pageChanged);
