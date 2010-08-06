@@ -244,3 +244,6 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_lifecycle_stop.disabled { background:url(/img/icons/32x32/actions/media-playback-stop-disabled.png) no-repeat top center; }
 
 .mor_lifecycle_status { float:left; font-weight:bold; padding: 10px 2px; text-align:center; }
+
+.mor_lifecycle_running { background:#a9e271 !important; }
+.mor_lifecycle_stopped { background:#ef7878 !important; }

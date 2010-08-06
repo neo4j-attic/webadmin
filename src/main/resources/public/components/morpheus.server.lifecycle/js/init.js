@@ -114,6 +114,11 @@ morpheus.components.Lifecycle = function( server, template )
     	RUNNING : function()
         {
             me.statusElement.html( "Running" );
+            
+            var wrap = $("div.mor_lifecycle");
+            wrap.addClass("mor_lifecycle_running");
+            wrap.removeClass("mor_lifecycle_stopped");
+            
             $("ul.mor_lifecycle_actions a").removeClass("disabled");
             $("ul.mor_lifecycle_actions a.mor_lifecycle_start").addClass("disabled");
         },
@@ -121,6 +126,11 @@ morpheus.components.Lifecycle = function( server, template )
         STOPPED : function()
         {
             me.statusElement.html( "Stopped" );
+            
+            var wrap = $("div.mor_lifecycle");
+            wrap.addClass("mor_lifecycle_stopped");
+            wrap.removeClass("mor_lifecycle_running");
+            
             $("ul.mor_lifecycle_actions a").removeClass("disabled");
             $("ul.mor_lifecycle_actions a.mor_lifecycle_stop").addClass("disabled");
             $("ul.mor_lifecycle_actions a.mor_lifecycle_restart").addClass("disabled");
