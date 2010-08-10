@@ -15,7 +15,7 @@ import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
-import org.neo4j.webadmin.domain.ServerProperties;
+import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.rest.LifeCycleService;
 
 /**
@@ -60,7 +60,7 @@ public class BackupFoundationTask implements Runnable
 
         try
         {
-            String strPath = props.get( "general.backup.path" ).getValue();
+            String strPath = props.get( "general.backup.path" ).getFullValue();
             if ( strPath.length() > 0 )
             {
                 backupPath = new File( strPath );

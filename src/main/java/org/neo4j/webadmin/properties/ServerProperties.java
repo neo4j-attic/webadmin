@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.domain;
+package org.neo4j.webadmin.properties;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,9 +9,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.Representation;
+import org.neo4j.webadmin.domain.NoSuchPropertyException;
+import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
 
 /**
@@ -58,23 +61,47 @@ public class ServerProperties implements Representation
 
         // JVM ARGS
 
-        properties.add( new JvmArgumentRepresentation( "jvm.garbagecollector",
-                "Garbage collector", "+UseSerialGC", "-XX:" ) );
+        TreeMap<String, String> gcs = new TreeMap<String, String>();
+        gcs.put( "Serial GC", "-XX:+UseSerialGC" );
+        gcs.put( "Throughput GC", "-XX:+UseParallelGC" );
+        gcs.put( "Concurrent Low Pause GC", "-XX:+UseConcMarkSweepGC" );
+        gcs.put( "Incremental Low Pause GC", "-Xincgc" );
 
-        properties.add( new JvmArgumentRepresentation( "jvm.heapsize",
-                "Heap size", "512m", "-Xmx" ) );
+        properties.add( new ServerPropertyRepresentation(
+                "jvm.garbagecollector", "Garbage collector",
+                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "", "", gcs ) ) );
 
-        properties.add( new JvmArgumentRepresentation( "web.root", "Web root",
-                "../public", "-DwebRoot=" ) );
+        properties.add( new ServerPropertyRepresentation( "jvm.min_heap_size",
+                "Min heap size", "512m", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "-Xms", "" ) ) );
+
+        properties.add( new ServerPropertyRepresentation( "jvm.max_heap_size",
+                "Max heap size", "512m", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "-Xmx", "" ) ) );
+
+        properties.add( new ServerPropertyRepresentation( "jvm.64",
+                "64bit JVM (-64)", "", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "", "", "-64" ) ) );
+
+        properties.add( new ServerPropertyRepresentation( "jvm.server",
+                "JVM server mode", "", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "", "", "-server" ) ) );
+
+        properties.add( new ServerPropertyRepresentation( "web.root",
+                "Web root", "../public", PropertyType.JVM_ARGUMENT,
+                new ValueDefinition( "-DwebRoot=", "" ) ) );
 
         // CONFIG FILE ARGS
 
         properties.add( new ServerPropertyRepresentation( "keep_logical_logs",
-                "Enable logical logs", "false", PropertyType.CONFIG_PROPERTY ) );
+                "Enable logical logs", "false", PropertyType.CONFIG_PROPERTY,
+                new ValueDefinition( "", "", "true", "false" ) ) );
 
         properties.add( new ServerPropertyRepresentation(
                 "enable_remote_shell", "Enable remote shell", "false",
-                PropertyType.CONFIG_PROPERTY ) );
+                PropertyType.CONFIG_PROPERTY, new ValueDefinition( "", "",
+                        "true", "false" ) ) );
 
         // This is commented out, waiting for authentication scheme to be
         // switched over to OAuth.
@@ -257,12 +284,12 @@ public class ServerProperties implements Representation
             case CONFIG_PROPERTY:
                 if ( dbConfig.containsKey( prop.getKey() ) )
                 {
-                    prop.setValue( dbConfig.getProperty( prop.getKey() ) );
+                    prop.setFullValue( dbConfig.getProperty( prop.getKey() ) );
                 }
             default:
                 if ( generalConfig.containsKey( prop.getKey() ) )
                 {
-                    prop.setValue( generalConfig.getProperty( prop.getKey() ) );
+                    prop.setFullValue( generalConfig.getProperty( prop.getKey() ) );
                 }
             }
         }
@@ -309,11 +336,11 @@ public class ServerProperties implements Representation
         switch ( prop.getType() )
         {
         case CONFIG_PROPERTY:
-            dbConfig.put( key, value );
+            dbConfig.put( key, prop.getFullValue() );
             saveProperties( dbConfig, getDbConfigFile() );
             break;
         default:
-            generalConfig.put( key, value );
+            generalConfig.put( key, prop.getFullValue() );
             saveProperties( generalConfig, getGeneralConfigFile() );
             writeJvmArgs();
         }
@@ -330,7 +357,7 @@ public class ServerProperties implements Representation
     {
         for ( ServerPropertyRepresentation prop : properties )
         {
-            if ( prop.key.equals( key ) )
+            if ( prop.getKey().equals( key ) )
             {
                 return prop;
             }
@@ -373,15 +400,10 @@ public class ServerProperties implements Representation
             // b) config file is not a "normal" properties file, and escaping
             // special
             // chars etc. that is done by Properties will screw up running the
-            // service. So we have to do some manual labour here.
+            // service. So we have to do some manual labor here.
 
             // This will contain the end-result config file
             StringBuilder configFileBuilder = new StringBuilder();
-
-            // We need to keep track of heap settings, b/c they are for some
-            // reason not passed as pure command-line arguments in the config
-            // file
-            String maxHeap = null, minHeap = null;
 
             // Read the whole config file, discard any pre-existing JVM args
             FileReader in = new FileReader( serviceConfig );
@@ -391,21 +413,8 @@ public class ServerProperties implements Representation
             {
                 if ( !line.startsWith( "wrapper.java.additional" ) )
                 {
-
-                    if ( line.startsWith( "wrapper.java.maxmemory" ) )
-                    {
-                        maxHeap = line.substring( 23 );
-                    }
-                    else if ( line.startsWith( "wrapper.java.initmemory" ) )
-                    {
-                        minHeap = line.substring( 23 );
-                    }
-                    else
-                    {
-
-                        configFileBuilder.append( line );
-                        configFileBuilder.append( "\n" );
-                    }
+                    configFileBuilder.append( line );
+                    configFileBuilder.append( "\n" );
                 }
             }
 
@@ -417,36 +426,14 @@ public class ServerProperties implements Representation
             {
                 if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
                 {
-                    // Heap memory size is a special case parameter in the
-                    // service config file.
-                    if ( prop.getValue().toLowerCase().startsWith( "-xmx" ) )
-                    {
-                        maxHeap = prop.getValue().substring( 4 );
-                    }
-                    else if ( prop.getValue().toLowerCase().startsWith( "-xms" ) )
-                    {
-                        minHeap = prop.getValue().substring( 4 );
-                    }
-                    else
-                    {
-                        // Write normal JVM arg
-                        configFileBuilder.append( "wrapper.java.additional." );
-                        configFileBuilder.append( ( argNo++ ) );
-                        configFileBuilder.append( "=" );
-                        configFileBuilder.append( prop.getValue() );
-                        configFileBuilder.append( "\n" );
-                    }
+                    // Write normal JVM arg
+                    configFileBuilder.append( "wrapper.java.additional." );
+                    configFileBuilder.append( ( argNo++ ) );
+                    configFileBuilder.append( "=" );
+                    configFileBuilder.append( prop.getFullValue() );
+                    configFileBuilder.append( "\n" );
                 }
             }
-
-            // Handle heap special cases
-            maxHeap = ( maxHeap == null ) ? FALLBACK_MAX_HEAP : maxHeap;
-            minHeap = ( minHeap == null ) ? FALLBACK_MIN_HEAP : minHeap;
-
-            configFileBuilder.append( "wrapper.java.maxmemory=" + maxHeap
-                                      + "\n" );
-            configFileBuilder.append( "wrapper.java.initmemory=" + minHeap
-                                      + "\n" );
 
             // Write changes to file.
             FileOutputStream out = new FileOutputStream( serviceConfig );
@@ -464,7 +451,7 @@ public class ServerProperties implements Representation
             {
                 if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
                 {
-                    args.append( prop.getValue() );
+                    args.append( prop.getFullValue() );
                     args.append( " " );
                 }
             }

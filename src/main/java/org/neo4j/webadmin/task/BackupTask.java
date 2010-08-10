@@ -15,7 +15,7 @@ import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
-import org.neo4j.webadmin.domain.ServerProperties;
+import org.neo4j.webadmin.properties.ServerProperties;
 
 /**
  * Performs a backup of a running neo4j database.

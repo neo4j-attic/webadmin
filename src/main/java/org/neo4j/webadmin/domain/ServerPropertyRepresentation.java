@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.rest.domain.Representation;
+import org.neo4j.webadmin.properties.ValueDefinition;
 
 /**
  * Represents a server configuration setting. This is an abstraction of the
@@ -51,6 +52,7 @@ public class ServerPropertyRepresentation implements Representation
     protected String key;
     protected String displayName;
     protected PropertyType type;
+    protected ValueDefinition valueDefinition;
     protected String value;
 
     //
@@ -66,10 +68,17 @@ public class ServerPropertyRepresentation implements Representation
     public ServerPropertyRepresentation( String key, String displayName,
             String value, PropertyType type )
     {
+        this( key, displayName, value, type, new ValueDefinition() );
+    }
+
+    public ServerPropertyRepresentation( String key, String displayName,
+            String value, PropertyType type, ValueDefinition valueDefinition )
+    {
         this.key = key;
         this.displayName = displayName;
         this.value = value;
         this.type = type;
+        this.valueDefinition = valueDefinition;
     }
 
     //
@@ -83,6 +92,7 @@ public class ServerPropertyRepresentation implements Representation
         map.put( "display_name", this.displayName );
         map.put( "type", this.type );
         map.put( "value", this.value );
+        map.put( "definition", this.valueDefinition.serialize() );
         return map;
     }
 
@@ -114,6 +124,19 @@ public class ServerPropertyRepresentation implements Representation
         return value;
     }
 
+    /**
+     * Get the value of this property, including any prepend/append strings that
+     * we normally don't want the user to see.
+     * 
+     * This is used when writing the value to configuration files.
+     * 
+     * @return
+     */
+    public String getFullValue()
+    {
+        return this.valueDefinition.toFullValue( this.value );
+    }
+
     //
     // SETTERS
     //
@@ -121,6 +144,21 @@ public class ServerPropertyRepresentation implements Representation
     public void setValue( String value )
     {
         this.value = value;
+    }
+
+    /**
+     * Set the full value of this property representation, including anything
+     * that would normally be prepended or appended. This will strip off any
+     * prepend/append stuff before setting the actual value internally.
+     * 
+     * It is meant to be used when setting a value that has been loaded directly
+     * from a config file.
+     * 
+     * @param value
+     */
+    public void setFullValue( String value )
+    {
+        this.value = this.valueDefinition.fromFullValue( value );
     }
 
     public void setDisplayName( String name )

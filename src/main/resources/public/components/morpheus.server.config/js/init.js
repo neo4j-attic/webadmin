@@ -171,19 +171,31 @@ morpheus.components.server.config = (function($, undefined) {
     	}
     };
     
-    //
-    // CONSTRUCT
-    //
-    
-    /**
-     * Hook event listeners to the UI.
-     */
-    $('.mor_config_value').live('keyup',function(ev){
+    me.configValueChanged = function(ev){
         var el = $(ev.target);
-        var value = el.val().trim();
-        var key   = el.attr('name');
         
+        var key = el.attr('name');
+
         if( me.config[key] !== undefined ) {
+        	
+        	// Handle checkboxes
+	        if( el.attr("type") === "checkbox" ) {
+	        	if(el.attr('checked')) {
+	        		var value = me.config[key].definition.values[0].value;
+	        	} else {
+	        		if(me.config[key].definition.values.length > 1) {
+		        		// Toggle between two values
+	        			var value = me.config[key].definition.values[1].value;
+	        		} else {
+	        			// Toggle between some value and no value at all
+	        			var value = "";
+	        		}
+	        	}
+	        } else {
+	        	var value = el.val().trim();
+	        }
+        
+	        // Handle everything else
             if( value !== me.config[key].value ) {
                 me.config[key].newValue = value;
                 el.addClass("uncommitted");
@@ -194,7 +206,17 @@ morpheus.components.server.config = (function($, undefined) {
             
             me.updateSaveButtonState();
         }
-    });
+    };
+    
+    //
+    // CONSTRUCT
+    //
+    
+    /**
+     * Hook event listeners to the UI.
+     */
+    $('.mor_config_value').live('keyup',me.configValueChanged);
+    $('.mor_config_value').live('change',me.configValueChanged);
     
     /**
      * Saving changes to normal config settings.

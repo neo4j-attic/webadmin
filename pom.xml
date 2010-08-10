@@ -44,11 +44,11 @@
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
 
 					<defaultJvmSettings>
-						<initialMemorySize>512M</initialMemorySize>
-						<maxMemorySize>512M</maxMemorySize>
 
 						<extraArguments>
 							<extraArgument>-DwebRoot=../public</extraArgument>
+				            <extraArgument>-Xms512m</extraArgument>
+				            <extraArgument>-Xmx512m</extraArgument>
 						</extraArguments>
 
 					</defaultJvmSettings>

@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.BackupStatusRepresentation;
 import org.neo4j.webadmin.domain.NoBackupPathException;
-import org.neo4j.webadmin.domain.ServerProperties;
+import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.task.BackupFoundationTask;
 import org.neo4j.webadmin.task.BackupTask;
 import org.neo4j.webadmin.task.DeferredTask;

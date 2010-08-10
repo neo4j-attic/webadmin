@@ -30,7 +30,7 @@ h6 { font-size:0.7em; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
 .info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
 
-.uncommitted { background:#A1D46A; }
+input.uncommitted { background:#A1D46A; }
 
 .small { font-size:90%; color:#555; }
 

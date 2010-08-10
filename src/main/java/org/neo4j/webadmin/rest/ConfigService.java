@@ -31,9 +31,9 @@ import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
-import org.neo4j.webadmin.domain.ServerProperties;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.gremlin.GremlinSessions;
+import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
 
