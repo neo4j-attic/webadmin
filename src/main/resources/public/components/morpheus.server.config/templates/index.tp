@@ -3,8 +3,29 @@
 		<h1>Server configuration</h1>
 		<div class="mor_module">
 			<p class="mor_info">Changing settings will always require a restart of the neo4j server, some settings, like changing JVM memory, also requires a JVM restart.</p>
-			<p class="mor_info">Work is beeing done on making these settings "smarter", so that you don't have to enter raw string values. Until that is done though, be careful and make sure to enter valid values.</p>
-			<p class="mor_info">Refer to <a href="http://wiki.neo4j.org/content/Configuration_Settings" target="_BLANK">the wiki</a> for info on various settings.</p>
+			
+			<div class="mor_module_foldout">
+				<h2><a href="#" class="mor_module_foldout_trigger">More about database settings</a></h2>
+				<div class="mor_module_foldout_content">	
+					<h2>Database settings</h2>
+					<p>The database settings configure various attributes of the underlying neo4j database instance.</p>
+					<p>Refer to <a href="http://wiki.neo4j.org/content/Configuration_Settings" target="_BLANK">the wiki</a> for info on various settings.</p>
+					<p>It is possible to manually alter the configuration file, if there is some setting you wish to change that is not yet available here.</p>
+					<p>Locate the neo4j-rest-db folder, and edit (create if necessary) the file neo4j.properties to your liking.</p>
+				</div>
+			</div>
+			
+			<div class="mor_module_foldout">
+				<h2><a href="#" class="mor_module_foldout_trigger">More about JVM arguments</a></h2>
+				<div class="mor_module_foldout_content">	
+					<h2>JVM arguments</h2>
+					<p>Modifying underlying JVM settings, such as memory usage or garbage collector configuration, is an excellent way to fine-tune the database for your server environment.</p>
+					<p>When you change and save a JVM setting, the server will turn off both the administration and REST web servers.</p>
+					<p>It will then start a new JVM with the new settings, and exit the initial JVM. This will usually take around 30 seconds or so. Wait for a while and refresh this page until the server starts responding again.</p>
+					<p>If several minutes pass, and the server does not start responding, it is possible the changes made made the JVM unable to start.</p>
+					<p>To fix this, you have to manually revert the erreneous changes in the [SERVICE_DIR]/conf/wrapper.conf file.</p>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="mor_page_rightcol">

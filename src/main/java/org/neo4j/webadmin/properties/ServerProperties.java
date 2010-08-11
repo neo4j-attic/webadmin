@@ -80,9 +80,9 @@ public class ServerProperties implements Representation
                 "Max heap size", "512m", PropertyType.JVM_ARGUMENT,
                 new ValueDefinition( "-Xmx", "" ) ) );
 
-        properties.add( new ServerPropertyRepresentation( "jvm.64",
-                "64bit JVM (-64)", "", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "", "", "-64" ) ) );
+        // properties.add( new ServerPropertyRepresentation( "jvm.64",
+        // "64bit JVM (-64)", "", PropertyType.JVM_ARGUMENT,
+        // new ValueDefinition( "", "", "-64" ) ) );
 
         properties.add( new ServerPropertyRepresentation( "jvm.server",
                 "JVM server mode", "", PropertyType.JVM_ARGUMENT,

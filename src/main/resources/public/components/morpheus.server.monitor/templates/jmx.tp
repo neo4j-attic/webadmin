@@ -48,7 +48,7 @@
 	{#else}
 		<tr>
 			<td class="mor_jmx_table_name" style="padding-left:{$P.depth * 8}px;">
-				<h3>{#if $T.name}{$T.name}{#else}{$T.type}{#/if}</h3>
+				<h3>{#if $T.name}{$T.name}{#elseif $T.type}{$T.type}{#/if}</h3>
 				<p class="description">{$T.description}</p>
 			</td>
 			<td style="padding-left:{$P.depth * 4}px;">
@@ -61,9 +61,9 @@
 			</td>
 		</tr>
 		{#if typeof($T.value) === "object" }
-		{#param name=depth value=$P.depth+1}
-		{#include attribute root=$T.value}
-		{#param name=depth value=$P.depth-1}
+			{#param name=depth value=$P.depth+1}
+			{#include attribute root=$T.value}
+			{#param name=depth value=$P.depth-1}
 		{#/if}
 	{#/if}
 {#/template attribute}
