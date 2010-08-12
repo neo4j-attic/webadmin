@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
@@ -64,7 +64,7 @@ public class LifeCycleService
 
         if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
         {
-            WebServer.INSTANCE.startServer( Main.restPort );
+            WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
             GremlinSessions.destroyAllSessions();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.RUNNING,
@@ -94,7 +94,7 @@ public class LifeCycleService
 
         if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
         {
-            WebServer.INSTANCE.stopServer();
+            WebServerFactory.getDefaultWebServer().stopServer();
             shutdownLocalDatabase();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.STOPPED,
@@ -120,9 +120,9 @@ public class LifeCycleService
     public synchronized Response restart()
     {
 
-        WebServer.INSTANCE.stopServer();
+        WebServerFactory.getDefaultWebServer().stopServer();
         shutdownLocalDatabase();
-        WebServer.INSTANCE.startServer( Main.restPort );
+        WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
         GremlinSessions.destroyAllSessions();
 
         LifecycleRepresentation status = new LifecycleRepresentation(

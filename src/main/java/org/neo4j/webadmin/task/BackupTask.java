@@ -9,7 +9,7 @@ import java.util.Date;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
 import org.neo4j.onlinebackup.Neo4jBackup;
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
@@ -119,7 +119,7 @@ public class BackupTask implements Runnable
 
             // Perform backup
             EmbeddedGraphDatabase db = (EmbeddedGraphDatabase) DatabaseLocator.getGraphDatabase( new URI(
-                    WebServer.getLocalhostBaseUri( Main.restPort ) ) );
+                    WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
 
             Backup backup = Neo4jBackup.allDataSources( db,
                     this.backupPath.getAbsolutePath() );

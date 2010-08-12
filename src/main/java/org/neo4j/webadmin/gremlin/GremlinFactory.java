@@ -8,7 +8,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.gremlin.tmpimpl.Neo4jGraphTemp;
@@ -37,7 +37,7 @@ public class GremlinFactory
 
             // Inject the local database
             GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase( new URI(
-                    WebServer.getLocalhostBaseUri( Main.restPort ) ) );
+                    WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
 
             engine.getBindings( ScriptContext.ENGINE_SCOPE ).put(
                     "$_g",

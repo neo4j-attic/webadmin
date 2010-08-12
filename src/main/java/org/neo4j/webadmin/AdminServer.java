@@ -52,21 +52,27 @@ public enum AdminServer
             jerseyAdapter.setServletInstance( new ServletContainer() );
 
             // Add adapters
-            server.addGrizzlyAdapter( jerseyAdapter );
+            server.addGrizzlyAdapter( jerseyAdapter, new String[] { "/admin" } );
 
             /*
-             * This is a bit of a hack. Grizzly comes with a built-in file-serving-adapter, serving files from the
-             * directory defined when instantiating GrizzlyWebServer above. However, this adapter is for some
-             * reason discarded when adding other adapters, like out REST adapter above. 
+             * This is an awful hack. If any adapters are added to grizzly, 
+             * it stops serving static files (makes sense, right?).
              * 
-             * Through devil magic, the problem is resolved by adding an empty adapter.
+             * Another thing that makes sense is that all GrizzlyAdapters are 
+             * static file serving adapters if you flip a flag. So to make 
+             * grizzly serve static files, we create an empty grizzly adapter, 
+             * tell it to serve static files and add it here. 
+             * 
+             * §%&"#"#" web server %¤#&!&"/#.
              */
-            server.addGrizzlyAdapter( new GrizzlyAdapter()
+            GrizzlyAdapter staticAdapter = new GrizzlyAdapter( absWebRoot )
             {
-                public void service( GrizzlyRequest arg0, GrizzlyResponse arg1 )
+                public void service( GrizzlyRequest req, GrizzlyResponse res )
                 {
                 }
-            } );
+            };
+            staticAdapter.setHandleStaticResources( true );
+            server.addGrizzlyAdapter( staticAdapter, new String[] { "" } );
 
             // Start server
             server.start();

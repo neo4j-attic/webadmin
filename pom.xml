@@ -150,7 +150,9 @@
 		</dependency>
 
 		<!-- Admin webserver deps -->
-		<dependency>
+		
+		<!-- TRANSITIVE DEPENDENCIES FROM neo4j-rest -->
+		<!-- dependency>
 			<groupId>com.sun.grizzly</groupId>
 			<artifactId>grizzly-servlet-webserver</artifactId>
 			<version>1.8.6</version>
@@ -171,7 +173,7 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.4.1</version>
-		</dependency>
+		</dependency -->
 
 		<dependency>
 			<groupId>tanukisoft</groupId>

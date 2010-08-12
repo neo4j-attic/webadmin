@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.jxpath.ExpressionContext;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.gremlin.tmpimpl.Neo4jGraphTemp;
@@ -34,7 +34,7 @@ public class LoadDbFunction implements Function
         try
         {
             dbInstance = DatabaseLocator.getGraphDatabase( new URI(
-                    WebServer.getLocalhostBaseUri( Main.restPort ) ) );
+                    WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
 
             return new Neo4jGraphTemp( dbInstance,
                     DatabaseLocator.getIndexService( dbInstance ) );

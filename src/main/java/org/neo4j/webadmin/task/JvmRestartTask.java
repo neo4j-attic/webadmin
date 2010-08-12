@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
@@ -36,9 +36,9 @@ public class JvmRestartTask implements Runnable
 
                 // Stop running servers
                 System.out.println( "JVM Reboot. Shutting down server." );
-                WebServer.INSTANCE.stopServer();
+                WebServerFactory.getDefaultWebServer().stopServer();
                 DatabaseLocator.shutdownGraphDatabase( new URI(
-                        WebServer.getLocalhostBaseUri( Main.restPort ) ) );
+                        WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
                 AdminServer.INSTANCE.stopServer();
 
                 if ( PlatformUtils.useBatScripts() )

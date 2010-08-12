@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
@@ -195,10 +195,11 @@ public class ConfigService
                 // restart.
                 if ( LifeCycleService.serverStatus == LifecycleRepresentation.Status.RUNNING )
                 {
-                    WebServer.INSTANCE.stopServer();
+                    WebServerFactory.getDefaultWebServer().stopServer();
                     DatabaseLocator.shutdownGraphDatabase( new URI(
                             AdminServer.INSTANCE.getBaseUri() ) );
-                    WebServer.INSTANCE.startServer( Main.restPort );
+                    WebServerFactory.getDefaultWebServer().startServer(
+                            Main.restPort );
                     GremlinSessions.destroyAllSessions();
                 }
             }

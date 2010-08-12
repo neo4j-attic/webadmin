@@ -3,7 +3,7 @@ package org.neo4j.webadmin;
 import java.io.IOException;
 
 import org.neo4j.helpers.Args;
-import org.neo4j.rest.WebServer;
+import org.neo4j.rest.WebServerFactory;
 import org.neo4j.webadmin.rrd.RrdManager;
 import org.neo4j.webadmin.rrd.RrdSampler;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
@@ -37,25 +37,23 @@ public class Main
         System.setProperty( "org.neo4j.webadmin.rrdb.location",
                 args.get( "rrdbPath", "neo4j-rrdb" ) );
 
-        restPort = args.getNumber( "restPort", WebServer.DEFAULT_PORT ).intValue();
+        restPort = args.getNumber( "restPort", WebServerFactory.DEFAULT_PORT ).intValue();
         adminPort = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
 
         String webRoot = args.get( "webRoot", AdminServer.DEFAULT_WEBROOT );
-
-        // We need this to close the graph db backend
-        final String restBaseUri = WebServer.getLocalhostBaseUri( restPort );
 
         //
         // 2. START SERVERS
         //
 
-        WebServer.INSTANCE.startServer( restPort );
+        WebServerFactory.getDefaultWebServer().startServer( restPort );
         AdminServer.INSTANCE.startServer( adminPort, webRoot );
 
         System.out.println( "Starting round-robin system state sampler.." );
         RrdSampler.INSTANCE.start();
 
-        System.out.println( String.format( "Running REST at [%s]", restBaseUri ) );
+        System.out.println( String.format( "Running REST at [%s]",
+                WebServerFactory.getLocalhostBaseUri( restPort ) ) );
         System.out.println( String.format( "Running admin interface at [%s]",
                 AdminServer.getLocalhostBaseUri( adminPort ) ) );
         System.out.println( "\nPress Ctrl-C to kill the server" );
@@ -85,7 +83,7 @@ public class Main
 
                 // Kill the REST-server
                 System.out.println( "Shutting down the REST server.." );
-                WebServer.INSTANCE.stopServer();
+                WebServerFactory.getDefaultWebServer().stopServer();
                 GraphDatabaseUtils.shutdownLocalDatabase();
 
                 // Kill the admin-server
@@ -97,5 +95,4 @@ public class Main
         } );
 
     }
-
 }
