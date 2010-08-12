@@ -111,6 +111,7 @@ var morpheus = ( function( $, undefined )
 
         // Trigger init event
         morpheus.event.trigger( "morpheus.init" );
+        
     };
 
     me.property = function( key, value, cb )
@@ -361,5 +362,6 @@ morpheus.provide = function( path )
 
 $( function()
 {
+	$.jTemplatesDebugMode(false);
     morpheus.init();
 } );

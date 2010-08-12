@@ -221,7 +221,6 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		if( me.drawing && ev.data.server === me.server ) {
 			me.draw( ev.data.allData );
 		}
-		
 	});
 	
 	// Keep track of the mouse over the chart

@@ -16,6 +16,7 @@ import org.neo4j.rest.domain.Representation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
+import org.neo4j.webadmin.utils.PlatformUtils;
 
 /**
  * Allows changing two out of the threee available types of properties that
@@ -59,8 +60,11 @@ public class ServerProperties implements Representation
     {
         ArrayList<ServerPropertyRepresentation> properties = new ArrayList<ServerPropertyRepresentation>();
 
+        //
         // JVM ARGS
+        //
 
+        // Garbage collector
         TreeMap<String, String> gcs = new TreeMap<String, String>();
         gcs.put( "Serial GC", "-XX:+UseSerialGC" );
         gcs.put( "Throughput GC", "-XX:+UseParallelGC" );
@@ -72,32 +76,39 @@ public class ServerProperties implements Representation
                 "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT,
                 new ValueDefinition( "", "", gcs ) ) );
 
+        // Min heap size
         properties.add( new ServerPropertyRepresentation( "jvm.min_heap_size",
                 "Min heap size", "512m", PropertyType.JVM_ARGUMENT,
                 new ValueDefinition( "-Xms", "" ) ) );
 
+        // Max heap size
         properties.add( new ServerPropertyRepresentation( "jvm.max_heap_size",
                 "Max heap size", "512m", PropertyType.JVM_ARGUMENT,
                 new ValueDefinition( "-Xmx", "" ) ) );
 
-        // properties.add( new ServerPropertyRepresentation( "jvm.64",
-        // "64bit JVM (-64)", "", PropertyType.JVM_ARGUMENT,
-        // new ValueDefinition( "", "", "-64" ) ) );
+        // JVM server mode
+        if ( PlatformUtils.jvmServerModeIsAvailable() )
+        {
+            properties.add( new ServerPropertyRepresentation( "jvm.server",
+                    "JVM server mode", "", PropertyType.JVM_ARGUMENT,
+                    new ValueDefinition( "", "", "-server" ) ) );
+        }
 
-        properties.add( new ServerPropertyRepresentation( "jvm.server",
-                "JVM server mode", "", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "", "", "-server" ) ) );
-
+        // Static web content folder
         properties.add( new ServerPropertyRepresentation( "web.root",
                 "Web root", "../public", PropertyType.JVM_ARGUMENT,
                 new ValueDefinition( "-DwebRoot=", "" ) ) );
 
+        //
         // CONFIG FILE ARGS
+        //
 
+        // Logical logs
         properties.add( new ServerPropertyRepresentation( "keep_logical_logs",
                 "Enable logical logs", "false", PropertyType.CONFIG_PROPERTY,
                 new ValueDefinition( "", "", "true", "false" ) ) );
 
+        // Remote shell
         properties.add( new ServerPropertyRepresentation(
                 "enable_remote_shell", "Enable remote shell", "false",
                 PropertyType.CONFIG_PROPERTY, new ValueDefinition( "", "",
@@ -126,12 +137,16 @@ public class ServerProperties implements Representation
                 "create.string_block_size", "String block size", "133",
                 PropertyType.DB_CREATION_PROPERTY ) );
 
+        //
         // GENERAL SETTINGS
+        // Used directly by webadmin
 
+        // Backup path
         properties.add( new ServerPropertyRepresentation(
                 "general.backup.path", "Backup path", "",
                 PropertyType.GENERAL_PROPERTY ) );
 
+        // Properties to list in data browser
         properties.add( new ServerPropertyRepresentation(
                 "general.data.listfields", "Data browser list fields", "name",
                 PropertyType.GENERAL_PROPERTY ) );

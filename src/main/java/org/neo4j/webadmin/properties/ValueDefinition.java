@@ -49,7 +49,6 @@ public class ValueDefinition implements Representation
         ArrayList<HashMap<String, String>> listValues = new ArrayList<HashMap<String, String>>();
         for ( String key : values.keySet() )
         {
-            System.out.println( key );
             HashMap<String, String> value = new HashMap<String, String>();
             value.put( "name", key );
             value.put( "value", values.get( key ) );
@@ -71,7 +70,6 @@ public class ValueDefinition implements Representation
         ArrayList<HashMap<String, String>> listValues = new ArrayList<HashMap<String, String>>();
         for ( String value : values )
         {
-            System.out.println( value );
             HashMap<String, String> mapValue = new HashMap<String, String>();
             mapValue.put( "name", value );
             mapValue.put( "value", value );

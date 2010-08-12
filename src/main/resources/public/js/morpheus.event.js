@@ -51,6 +51,8 @@ morpheus.event = ( function()
             if ( typeof ( me.handlers[key] ) !== "undefined" )
             {
 
+    			
+    			
                 data = data || {};
 
                 var handlers = me.handlers[key];
@@ -66,7 +68,12 @@ morpheus.event = ( function()
                     {
                         return function()
                         {
-                            handler( event );
+                        	try {
+                        		handler( event );
+                        	} catch( e ) {
+                        		$("#mor_debug").append("<li>Event handler threw exception for event " + event.key + ".</li>");
+                        		$("#mor_debug").append("<li>" + e.message + "</li>");
+                        	}
                         }
                     } )( handlers[i] ), 0 );
                 }
