@@ -1,6 +1,6 @@
 morpheus.provide("morpheus.components.server.backup.init");
 
-$.require( "components/morpheus.server.backup/js/StatusTracker.js" );
+//$.require( "components/morpheus.server.backup/js/StatusTracker.js" );
 
 /**
  * A component that handles setting up and triggering online backups.

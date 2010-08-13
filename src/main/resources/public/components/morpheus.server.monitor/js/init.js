@@ -1,10 +1,10 @@
 morpheus.provide("morpheus.components.server.monitor.base");
 
-$.require( "components/morpheus.server.monitor/js/jmx.js" );
-$.require( "components/morpheus.server.monitor/js/PrimitiveCountWidget.js" );
-$.require( "components/morpheus.server.monitor/js/DiskUsageWidget.js" );
-$.require( "components/morpheus.server.monitor/js/CacheWidget.js" );
-$.require( "components/morpheus.server.monitor/js/MonitorChart.js" );
+//$.require( "components/morpheus.server.monitor/js/jmx.js" );
+//$.require( "components/morpheus.server.monitor/js/PrimitiveCountWidget.js" );
+//$.require( "components/morpheus.server.monitor/js/DiskUsageWidget.js" );
+//$.require( "components/morpheus.server.monitor/js/CacheWidget.js" );
+//$.require( "components/morpheus.server.monitor/js/MonitorChart.js" );
 
 /**
  * Base module for the monitor component.

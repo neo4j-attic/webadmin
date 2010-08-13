@@ -1,6 +1,6 @@
 morpheus.provide("morpheus.components.server.monitor.PrimitiveCountWidget");
 
-$.require("components/morpheus.server.monitor/js/JmxValueTracker.js");
+//$.require("components/morpheus.server.monitor/js/JmxValueTracker.js");
 
 /**
  * Used to keep track of the current status of a neo4j server.

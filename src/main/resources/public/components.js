@@ -4,8 +4,9 @@
 
 var morpheus = morpheus || {};
 if(jQuery.browser.msie ) {
-	morpheus.componentList = [ 
-	        //'morpheus.overview',
+	// Temporary hack, IE screws up the interaction between server.data and server.config somehow.
+	// Rather than fixing it, we wait for a planned refactoring to remove the interaction in the first place.
+	morpheus.componentList = [
 	        'morpheus.server.lifecycle',
 	        'morpheus.server.monitor',
 	        //'morpheus.server.data',
@@ -14,8 +15,7 @@ if(jQuery.browser.msie ) {
 	        'morpheus.server.backup'
 	];
 } else {
-	morpheus.componentList = [ 
-	        //'morpheus.overview',
+	morpheus.componentList = [
 	        'morpheus.server.lifecycle',
 	        'morpheus.server.monitor',
 	        'morpheus.server.data',

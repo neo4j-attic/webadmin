@@ -192,7 +192,7 @@ morpheus.components.server.config = (function($, undefined) {
 	        		}
 	        	}
 	        } else {
-	        	var value = el.val().trim();
+	        	var value = el.val();
 	        }
         
 	        // Handle everything else
@@ -217,6 +217,7 @@ morpheus.components.server.config = (function($, undefined) {
      */
     $('.mor_config_value').live('keyup',me.configValueChanged);
     $('.mor_config_value').live('change',me.configValueChanged);
+    $('.mor_config_value').live('click',me.configValueChanged);
     
     /**
      * Saving changes to normal config settings.

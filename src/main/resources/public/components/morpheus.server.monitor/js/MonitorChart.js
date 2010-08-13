@@ -1,6 +1,6 @@
 morpheus.provide("morpheus.components.server.monitor.MonitorChart");
 
-$.require("js/vend/jquery.flot.js");
+//$.require("js/vend/jquery.flot.js");
 
 morpheus.components.server.monitor.monitorCharts = 0;
 

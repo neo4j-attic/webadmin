@@ -1,6 +1,6 @@
 morpheus.provide( "morpheus.ui" );
 
-$.require( "js/vend/jquery.simplemodal.js" );
+//$.require( "js/vend/jquery.simplemodal.js" );
 
 /**
  * Morpheus user interface. Builds the base ui, keeps track of registered

@@ -7,16 +7,8 @@
 //
 // MORPHEUS CORE
 //
-$.require( "js/vend/json2.js" );
-$.require( "js/vend/jquery-jtemplates.js" );
-$.require( "js/vend/jquery.bbq.js" );
 
-$.require( "js/morpheus.ui.js" );
-$.require( "js/morpheus.event.js" );
-$.require( "js/morpheus.neo4j.js" );
-$.require( "js/morpheus.servermanager.js" );
-
-$.require( "components.js" );
+//$.re "components.js" );
 
 /**
  * Morpheus core
@@ -47,7 +39,12 @@ var morpheus = ( function( $, undefined )
         if ( me.initiated === false )
         {
             me.initiated = true;
-            me.loadComponents();
+            
+            // Load UI
+            morpheus.ui.init();
+
+            // Trigger init event
+            morpheus.event.trigger( "morpheus.init" );
         }
     };
 
@@ -56,31 +53,31 @@ var morpheus = ( function( $, undefined )
 	 */
     me.loadComponents = function( cb )
     {
-        me.pendingComponents = me.api.componentList.length;
-        
-        for ( var i = 0, l = me.api.componentList.length; i < l; i++ )
-        {
-
-            // Import the module init.js file
-
-            me.components[me.api.componentList[i]] =
-            {
-                name : me.api.componentList[i],
-                loaded : false
-            };
-
-            $.require( me.COMPONENT_PATH + me.api.componentList[i]
-                    + me.COMPONENT_INIT_FILE, ( function( componentName )
-            {
-                return function()
-                {
-                    me.componentLoaded( componentName );
-                };
-            } )( me.api.componentList[i] ) );
-
-        }
-
-        setTimeout( me.checkComponentsLoaded, 13 );
+//        me.pendingComponents = me.api.componentList.length;
+//        
+//        for ( var i = 0, l = me.api.componentList.length; i < l; i++ )
+//        {
+//
+//            // Import the module init.js file
+//
+//            me.components[me.api.componentList[i]] =
+//            {
+//                name : me.api.componentList[i],
+//                loaded : false
+//            };
+//
+//            $.require( me.COMPONENT_PATH + me.api.componentList[i]
+//                    + me.COMPONENT_INIT_FILE, ( function( componentName )
+//            {
+//                return function()
+//                {
+//                    me.componentLoaded( componentName );
+//                };
+//            } )( me.api.componentList[i] ) );
+//
+//        }
+//
+//        setTimeout( me.checkComponentsLoaded, 13 );
     };
 
     /**
@@ -124,7 +121,7 @@ var morpheus = ( function( $, undefined )
                 {
                     return function( data )
                     {
-                        var value = data === "undefined" ? undefined : JSON.parse(data);
+                        var value = data === "undefined" ? undefined : typeof(data) === "string" ? JSON.parse(data) : data;
                         me.propertyCache[key] = value;
                         cb( key, value );
                     };
