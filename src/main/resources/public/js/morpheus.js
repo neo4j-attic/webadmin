@@ -8,8 +8,6 @@
 // MORPHEUS CORE
 //
 
-//$.re "components.js" );
-
 /**
  * Morpheus core
  */

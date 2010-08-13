@@ -1,0 +1,33 @@
+# Vendor dependencies
+js/vend/jquery.1.4.2.js
+js/vend/json2.js
+js/vend/jquery-jtemplates.js
+js/vend/jquery.bbq.js
+js/vend/jquery.flot.js
+		
+# Core dependencies
+js/morpheus.js
+js/morpheus.ui.js
+js/vend/jquery.simplemodal.js
+js/morpheus.event.js
+js/morpheus.neo4j.js
+js/morpheus.servermanager.js
+		
+# Component dependencies
+components/morpheus.server.lifecycle/js/init.js
+		
+components/morpheus.server.monitor/js/init.js
+components/morpheus.server.monitor/js/jmx.js
+components/morpheus.server.monitor/js/PrimitiveCountWidget.js
+components/morpheus.server.monitor/js/JmxValueTracker.js
+components/morpheus.server.monitor/js/DiskUsageWidget.js
+components/morpheus.server.monitor/js/CacheWidget.js
+components/morpheus.server.monitor/js/CacheWidget.js
+components/morpheus.server.monitor/js/MonitorChart.js
+
+components/morpheus.server.gremlin/js/init.js
+components/morpheus.server.config/js/init.js
+		
+components/morpheus.server.backup/js/StatusTracker.js
+components/morpheus.server.backup/js/init.js
+

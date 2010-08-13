@@ -22,6 +22,8 @@ public class Main
     public static int restPort;
     public static int adminPort;
 
+    private static String webRoot;
+
     public static void main( String[] strArgs ) throws Exception
     {
         Args args = new Args( strArgs );
@@ -40,7 +42,7 @@ public class Main
         restPort = args.getNumber( "restPort", WebServerFactory.DEFAULT_PORT ).intValue();
         adminPort = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
 
-        String webRoot = args.get( "webRoot", AdminServer.DEFAULT_WEBROOT );
+        webRoot = args.get( "webRoot", AdminServer.DEFAULT_WEBROOT );
 
         //
         // 2. START SERVERS
@@ -94,5 +96,10 @@ public class Main
             }
         } );
 
+    }
+
+    public static String getWebRoot()
+    {
+        return webRoot;
     }
 }
