@@ -261,7 +261,7 @@ morpheus.components.server.backup.init = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.backup",morpheus.components.server.backup.init);
-morpheus.ui.mainmenu.add("Backup","morpheus.server.backup", null, "server");
+morpheus.ui.mainmenu.add("Backup","morpheus.server.backup", null, "server", 4);
 
 morpheus.event.bind("morpheus.init", morpheus.components.server.backup.init.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.backup.init.pageChanged);

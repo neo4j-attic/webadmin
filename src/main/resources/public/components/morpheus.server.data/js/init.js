@@ -1,6 +1,6 @@
 morpheus.provide("morpheus.components.server.data.base");
 
-$.require( "components/morpheus.server.data/js/manager.js" );
+//$.require( "components/morpheus.server.data/js/manager.js" );
 
 /**
  * Data browser.
@@ -306,7 +306,7 @@ morpheus.components.server.data.base = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.data",morpheus.components.server.data.base);
-morpheus.ui.mainmenu.add("Data","morpheus.server.data", null, "server");
+morpheus.ui.mainmenu.add("Data","morpheus.server.data", null, "server",1);
 
 morpheus.event.bind("morpheus.init", morpheus.components.server.data.base.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.data.base.pageChanged);

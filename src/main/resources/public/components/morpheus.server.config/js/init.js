@@ -332,7 +332,7 @@ morpheus.components.server.config = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.config",morpheus.components.server.config);
-morpheus.ui.mainmenu.add("Configuration","morpheus.server.config", null, "server");
+morpheus.ui.mainmenu.add("Configuration","morpheus.server.config", null, "server",3);
 
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.config.pageChanged);
 morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.config.serverChanged);

@@ -172,7 +172,7 @@ morpheus.ui.mainmenu = ( function( $, undefined )
     /**
      * Add a new menu item
      */
-    me.addItem = function( name, page, data, set, urlExtra, index )
+    me.addItem = function( name, page, data, set, index )
     {
         var data = data || {};
         var set = set || "root";
@@ -184,7 +184,10 @@ morpheus.ui.mainmenu = ( function( $, undefined )
         
         // Find the index where we should insert the new item
         var countdown = me.menuItems.length;
-        while(me.menuItems[countdown - 1] != undefined && me.menuItems[--countdown].index > index) {}
+        
+        while(me.menuItems[countdown - 1] != undefined && me.menuItems[countdown - 1].index > index) {
+        	countdown--;
+        }
         
         // Insert the new item
         me.menuItems.splice(countdown, 0,

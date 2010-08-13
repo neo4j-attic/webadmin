@@ -32,7 +32,7 @@ morpheus.components.server.data.manager = (function($, undefined) {
 		me.listFields = [];
 		var fields = fieldString.split(",");
 		for(var i=0,l=fields.length; i<l; i++) {
-			me.listFields.push(fields[i].trim());
+			me.listFields.push($.trim(fields[i]));
 		}
 		
 		morpheus.event.trigger("morpheus.data.listnames.changed", key);

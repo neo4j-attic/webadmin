@@ -188,7 +188,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
 //
 
 morpheus.ui.addPage("morpheus.server.gremlin",morpheus.components.server.gremlin);
-morpheus.ui.mainmenu.add("Gremlin","morpheus.server.gremlin", null, "server");
+morpheus.ui.mainmenu.add("Gremlin","morpheus.server.gremlin", null, "server",2);
 
 morpheus.event.bind("morpheus.init", morpheus.components.server.gremlin.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.gremlin.pageChanged);
