@@ -29,6 +29,8 @@ To try the admin interface out:
 	git clone http://github.com/neo4j/webadmin.git
 	cd webadmin
 	./start
+	
+The administration pages will be available at <a href="http://localhost:9988/">http://localhost:9988/</a> and a neo4j REST server connected to it will be available at <a href="http://localhost:9999/">http://localhost:9999/</a>.
 
 Run production version
 --------------------------
@@ -42,6 +44,8 @@ Unpack in your favourite folder and start by running:
     
     Windows:
     bin\neo4j-webadmin.bat start
+    
+The administration pages will be available at <a href="http://localhost:9988/">http://localhost:9988/</a> and a neo4j REST server connected to it will be available at <a href="http://localhost:9999/">http://localhost:9999/</a>.
 
 Build production version
 ------------------------
