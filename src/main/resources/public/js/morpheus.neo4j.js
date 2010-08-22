@@ -433,13 +433,15 @@ morpheus.neo4jHandler = (function(undefined) {
     };
     
     me.serversLoaded = function(key, servers) {
-        
-        if( servers === undefined || (servers.length === 0 && me.triedLocal === false)) {
+    	
+        if( servers === null || servers === undefined || (servers.length === 0 && me.triedLocal === false)) {
 
             // There are no servers defined.
             // Check if there is a local server running
             
             me.triedLocal = true;
+            
+            // TODO: Switch to morpheus.ajax
             
             $.ajax({
                 url : me.DEFAULT_ADMIN_URL + "status",

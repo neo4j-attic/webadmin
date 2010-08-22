@@ -115,7 +115,7 @@ var morpheus = ( function( $, undefined )
         {
             if ( typeof ( me.propertyCache[key] ) === "undefined" )
             {
-                $.get( me.PROPERTIES_URL + key, ( function( key, cb )
+                me.get( me.PROPERTIES_URL + key, ( function( key, cb )
                 {
                     return function( data )
                     {
@@ -134,7 +134,6 @@ var morpheus = ( function( $, undefined )
         {
         	if( typeof( value ) !== "string") {
         		value = JSON.stringify(value);
-        		alert(value);
         	}
         	
             me.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
