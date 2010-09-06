@@ -74,6 +74,7 @@ public class GremlinSession implements Runnable
 
     public void run()
     {
+
         GremlinEvaluationJob job;
         try
         {
@@ -82,6 +83,7 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
+                    System.out.println( "Created script engine" );
                     // scriptEngine.getContext().setWriter( scriptOutput );
                     // scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
@@ -113,6 +115,7 @@ public class GremlinSession implements Runnable
         try
         {
             GremlinEvaluationJob job = new GremlinEvaluationJob( script );
+
             jobQueue.add( job );
 
             while ( !job.isComplete() )
@@ -170,13 +173,11 @@ public class GremlinSession implements Runnable
 
             // Handle output data
             List<String> outputLines = new ArrayList<String>();
-            // List<String> outputLines = Arrays.asList(
-            // scriptOutput.toString().split(
-            // "\n" ) );
-            // scriptOutput.flush();
 
             // Handle eval() result
-            if ( resultLines == null )
+            if ( resultLines == null
+                 || resultLines.size() == 0
+                 || ( resultLines.size() == 1 && resultLines.get( 0 ).toString().length() == 0 ) )
             {
                 outputLines.add( "null" );
             }

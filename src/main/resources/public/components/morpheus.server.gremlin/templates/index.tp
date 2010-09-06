@@ -3,7 +3,8 @@
         <h1>Gremlin</h1>
         <div class="mor_module">
             
-            <p>Gremlin is a programming language specifically developed to work with graphs. You can access the underlying database and perform powerful data manipulations with the console to the right.</p>
+            <p>Gremlin is a programming language for working with graphs. It uses XPath expressions as a base for a full Turing-complete language.</p> 
+            <p>Using gremlin, you can access the underlying database and perform powerful data manipulations.</p>
             
 			<div class="mor_module_foldout">
 				<h2><a href="#" class="mor_module_foldout_trigger">Cheat sheet</a></h2>
@@ -11,48 +12,48 @@
 					<ul class="mor_info_list">
 		                <li>
 		                    <h3>Local graph</h3>
-		                    <p class="mor_info_list_info">$_g</p>
+		                    <p class="mor_info_list_info">&gt; $_g</p>
 		                </li>
 		                <li>
 		                    <h3>Root list</h3>
-		                    <p class="mor_info_list_info">$_ (same as ".", but "." can't be set)</p>
+		                    <p class="mor_info_list_info">&gt; $_ (same as ".", but "." can't be set)</p>
 		                </li>
 		                <li>
 		                    <h3>Set variable</h3>
-		                    <p class="mor_info_list_info">$myVar := "My Value"</p>
+		                    <p class="mor_info_list_info">&gt; $myVar := "My Value"</p>
 		                </li>
 		                <li>
 		                    <h3>Get node by id</h3>
-		                    <p class="mor_info_list_info">$myNode := g:id(1)</p>
+		                    <p class="mor_info_list_info">&gt; $myNode := g:id(0)</p>
 		                </li>
 		                <li>
 		                    <h3>Create node</h3>
-		                    <p class="mor_info_list_info">$myNode := g:add-v()</p>
+		                    <p class="mor_info_list_info">&gt; $myNode := g:add-v()</p>
 		                </li>
 		                <li>
 		                    <h3>Create relation</h3>
-		                    <p class="mor_info_list_info">$myRelation := g:add-e($myFirstNode, "relation type", $myOtherNode)</p>
+		                    <p class="mor_info_list_info">&gt; $myRelation := g:add-e($myFirstNode, "relation type", $myOtherNode)</p>
 		                </li>
 		                <li>
 		                    <h3>Remove node or relation</h3>
-		                    <p class="mor_info_list_info">g:remove-ve($myNodeOrRelation)</p>
+		                    <p class="mor_info_list_info">&gt; g:remove-ve($myNodeOrRelation)</p>
 		                </li>
 		                <li>
 		                    <h3>Set attribute</h3>
-		                    <p class="mor_info_list_info">$myNodeOrRelation/@attributeName := "My Value"</p>
+		                    <p class="mor_info_list_info">&gt; $myNodeOrRelation/@attributeName := "My Value"</p>
 		                </li>
 		                <li>
 		                    <h3>Get attribute</h3>
-		                    <p class="mor_info_list_info">$myNodeOrRelation/@attributeName</p>
+		                    <p class="mor_info_list_info">&gt; $myNodeOrRelation/@attributeName</p>
 		                </li>
 		                <li>
 		                    <h3>List relations of node</h3>
 		                    <p class="mor_info_list_info">
 		                            <ul>
-		                                <li>$myNode/bothE</li>
-		                                <li>$myNode/inE</li>
-		                                <li>$myNode/outE</li>
-		                                <li>$myNode/bothE[@label="relation type"]</li>
+		                                <li>&gt; $myNode/bothE</li>
+		                                <li>&gt; $myNode/inE</li>
+		                                <li>&gt; $myNode/outE</li>
+		                                <li>&gt; $myNode/bothE[@label="relation type"]</li>
 		                            </ul>
 		                        </p>
 		                </li>
@@ -60,18 +61,18 @@
 		                    <h3>List nodes of relation</h3>
 		                    <p class="mor_info_list_info">
 		                            <ul>
-		                                <li>$myRelation/bothV</li>
-		                                <li>$myRelation/inV</li>
-		                                <li>$myRelation/outV</li>
+		                                <li>&gt; $myRelation/bothV</li>
+		                                <li>&gt; $myRelation/inV</li>
+		                                <li>&gt; $myRelation/outV</li>
 		                            </ul>
 		                        </p>
 		                </li>
 		                <li>
 		                    <h3>Looping and branching</h3>
-		                    $_ := ./bothE/inV<br/>
-		                    foreach $v in $_<br/>
-		                    <div style="width:10px;float:left;">&nbsp;</div>g:print('vertex ', $v)<br/>
-		                    end   
+		                    &gt; $_ := ./bothE/inV<br/>
+		                    &gt; foreach $v in $_<br/>
+		                    <div style="width:20px;float:left;">&gt; </div>g:print('vertex ', $v)<br/>
+		                    &gt; end   
 		                                    </p>
 		                </li>
 		            </ul>
@@ -91,7 +92,7 @@
             <h2>Gremlin console</h2>
             <div class="mor_gremlin_console_wrap">
                 <div id="mor_gremlin_console" class="mor_gremlin_console">
-                    <p id="mor_gremlin_console_input_wrap"><span style="float:left;"> &gt; </span> <input type="text" id="mor_gremlin_console_input" value=" " /></p>
+                    <p id="mor_gremlin_console_input_wrap"><span style="float:left;width:13px;"> &gt; </span> <input type="text" id="mor_gremlin_console_input" value="" /></p>
                 </div>
                 <div class="break"></div>
             </div>

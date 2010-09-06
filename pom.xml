@@ -181,40 +181,7 @@
 			<groupId>com.tinkerpop</groupId>
 			<artifactId>gremlin</artifactId>
 			<version>0.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>sesame-sail-memory</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame-sail-nativerdf</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame-repository-sail</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame-queryparser-sparql</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame-sail</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>sesame-rio-ntriples</artifactId>
-					<groupId>org.openrdf.sesame</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>linked-data-sail</artifactId>
-					<groupId>net.fortytwo</groupId>
-				</exclusion>
-			</exclusions>
+			
 		</dependency>
 
 		<dependency>

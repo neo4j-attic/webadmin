@@ -165,7 +165,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
                 me.public.pushHistory(me.consoleInput.val());
             } 
              
-            me.consoleInput.val(" ");
+            me.consoleInput.val("");
         } else if (ev.keyCode === 38) { // UP
             me.consoleInput.val(me.public.prevHistory());
         } else if (ev.keyCode === 40) { // DOWN
