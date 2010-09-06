@@ -83,8 +83,6 @@ public class RrdSampler
         }
     };
 
-    private EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
-
     // MANAGEMENT BEANS
 
     private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
@@ -176,6 +174,8 @@ public class RrdSampler
     {
         try
         {
+            EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
+
             // Grab relevant jmx management beans
             ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
             String instance = neoQuery.getKeyProperty( "instance" );
@@ -217,10 +217,11 @@ public class RrdSampler
      */
     private void updateSample( Sample sample )
     {
-        reloadMBeanNames();
 
         try
         {
+            reloadMBeanNames();
+
             sample.setTime( new Date().getTime() );
 
             sample.setValue( RrdManager.NODE_CACHE_SIZE, 0d );;
@@ -252,22 +253,22 @@ public class RrdSampler
         }
         catch ( AttributeNotFoundException e )
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch ( InstanceNotFoundException e )
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch ( MBeanException e )
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         catch ( ReflectionException e )
         {
-            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch ( Exception e )
+        {
             e.printStackTrace();
         }
     }
