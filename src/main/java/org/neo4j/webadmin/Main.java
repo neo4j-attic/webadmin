@@ -53,7 +53,7 @@ public class Main
 
         System.out.println( "Starting round-robin system state sampler.." );
         RrdSampler.INSTANCE.start();
-        System.out.println( String.format( "Running REST db at [%s]",
+        System.out.println( String.format( "Running database at [%s]",
                 System.getProperty( "org.neo4j.graphdb.location" ) ) );
 
         System.out.println( String.format( "Running REST at [%s]",
