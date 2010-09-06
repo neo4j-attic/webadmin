@@ -41,7 +41,7 @@ public class JvmRestartTask implements Runnable
                         WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
                 AdminServer.INSTANCE.stopServer();
 
-                if ( PlatformUtils.useBatScripts() )
+                if ( PlatformUtils.isWindows() )
                 {
                     Runtime.getRuntime().exec( "start.bat" );
                 }

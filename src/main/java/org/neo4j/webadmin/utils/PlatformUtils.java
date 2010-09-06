@@ -31,7 +31,7 @@ public class PlatformUtils
      * 
      * @return
      */
-    public static boolean useBatScripts()
+    public static boolean isWindows()
     {
         return System.getProperty( "os.name" ).toLowerCase().startsWith(
                 "windows" );

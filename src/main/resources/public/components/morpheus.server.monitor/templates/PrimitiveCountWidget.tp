@@ -15,7 +15,7 @@
 		</tr>
 		<tr>
 			<th>Relationship types</th>
-			<td>{$T.data.NumberOfRelationshipIdsInUse.value}</td>
+			<td>{$T.data.NumberOfRelationshipTypeIdsInUse.value}</td>
 		</tr>
 	</tbody>
 </table>

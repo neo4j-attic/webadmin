@@ -69,7 +69,6 @@ public class StaticResourceHandler
      */
     private TimerTask dirtyCheckTask = new TimerTask()
     {
-        @SuppressWarnings( "unchecked" )
         public void run()
         {
             if ( !running )
