@@ -83,7 +83,6 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
-                    System.out.println( "Created script engine" );
                     // scriptEngine.getContext().setWriter( scriptOutput );
                     // scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
@@ -211,11 +210,6 @@ public class GremlinSession implements Runnable
         ArrayList<String> resultList = new ArrayList<String>();
 
         resultList.add( e.getMessage() );
-
-        for ( StackTraceElement stackTraceElement : e.getStackTrace() )
-        {
-            resultList.add( stackTraceElement.toString() );
-        }
 
         return resultList;
     }
