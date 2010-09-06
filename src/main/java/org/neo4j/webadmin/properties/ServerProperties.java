@@ -13,35 +13,53 @@ import java.util.TreeMap;
 
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.Representation;
+import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
 import org.neo4j.webadmin.utils.PlatformUtils;
 
 /**
- * Allows changing two out of the threee available types of properties that
- * affects a neo4j instance. Ie. the properties file and the JVM arguments. This
- * may allow for changing db creation settings in the future, but currently
- * throws operationnotsupportedexception if you try.
+ * Definition of properties that affect the neo4j server. This contains both the
+ * definition and the load/save code.
  * 
  * This class also contains a hard-coded definition of what settings are to be
  * available to the client, and how to handle them.
+ * 
+ * TODO: This has far outgrown its initial purpose and is in need of
+ * refactoring.
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
 public class ServerProperties implements Representation
 {
-    public static final String SERVICE_CONFIG_PATH = "./conf/wrapper.conf";
+
     public static final String FALLBACK_MAX_HEAP = "512M";
     public static final String FALLBACK_MIN_HEAP = "512M";
+
+    /**
+     * This is the properties file that is read and used by the underlying neo4j
+     * instance.
+     */
+    protected static volatile Properties dbConfig;
+
+    /**
+     * This property file stores configuration used when launching the JVM and
+     * when creating a new database.
+     */
+    protected static volatile Properties generalConfig;
+
+    protected static ServerProperties INSTANCE;
+
+    protected ArrayList<ServerPropertyRepresentation> properties = createProperties();
 
     /**
      * This is the hard-coded settings that will be exposed to the user.
      * 
      * Each property should have a unique key, for neo4j config file and server
      * creation properties this should be the property name. For JVM args it is
-     * irrellevant, but it is recommended to name them something like
+     * irrelevant, but it is recommended to name them something like
      * "jvm.myproperty".
      * 
      * A note on how values are fetched:
@@ -50,10 +68,10 @@ public class ServerProperties implements Representation
      * config file. If no property with a matching key is found, the default
      * value you speciSizefy will be used.
      * 
-     * For JVM_ARGUMENT and DB_CREATION_PROPERTY the value will be fetched from
-     * a separate config file, startup.properties in the neo4j database folder.
-     * If no property with a matching key is found, the default value you
-     * specify will be used.
+     * For JVM_ARGUMENT, APP_ARGUMENT and DB_CREATION_PROPERTY the value will be
+     * fetched from a separate config file, startup.properties in the neo4j
+     * database folder. If no property with a matching key is found, the default
+     * value you specify will be used.
      * 
      */
     protected static ArrayList<ServerPropertyRepresentation> createProperties()
@@ -94,10 +112,19 @@ public class ServerProperties implements Representation
                     new ValueDefinition( "", "", "-server" ) ) );
         }
 
+        //
+        // APP ARGS
+        //
+
         // Static web content folder
         properties.add( new ServerPropertyRepresentation( "web.root",
-                "Web root", "../public", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "-DwebRoot=", "" ) ) );
+                "Web root", Main.getWebRoot(), PropertyType.APP_ARGUMENT,
+                new ValueDefinition( "-webRoot=", "" ) ) );
+
+        // Database folder
+        properties.add( new ServerPropertyRepresentation( "db.root",
+                "Neo4j path", DatabaseLocator.DB_PATH,
+                PropertyType.APP_ARGUMENT, new ValueDefinition( "-dbPath=", "" ) ) );
 
         //
         // CONFIG FILE ARGS
@@ -156,88 +183,6 @@ public class ServerProperties implements Representation
     }
 
     /**
-     * Get database config file, creating one if it does not exist.
-     * 
-     * @return
-     * @throws IOException
-     */
-    public static File getDbConfigFile() throws IOException
-    {
-        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
-                "neo4j.properties" );
-
-        if ( !configFile.exists() && !configFile.createNewFile() )
-        {
-            throw new IllegalStateException( configFile.toString() );
-        }
-
-        return configFile;
-    }
-
-    /**
-     * Get startup config file, creating one if it does not exist.
-     * 
-     * @return
-     * @throws IOException
-     */
-    public static File getGeneralConfigFile() throws IOException
-    {
-
-        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
-                "startup.properties" );
-
-        if ( !configFile.exists() && !configFile.createNewFile() )
-        {
-            throw new IllegalStateException( configFile.toString() );
-        }
-
-        return configFile;
-    }
-
-    /**
-     * Get file that stores JVM startup arguments during development.
-     * 
-     * @return
-     * @throws IOException
-     */
-    public static File getDevelopmentJvmArgsFile() throws IOException
-    {
-
-        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
-                "jvmargs" );
-
-        if ( !configFile.exists() && !configFile.createNewFile() )
-        {
-            throw new IllegalStateException( configFile.toString() );
-        }
-
-        return configFile;
-    }
-
-    /**
-     * Get the service configuration file, this is where JVM args are changed
-     * when running in production. This method is slightly different from the
-     * above, it does not try to create a file if one does not exist. It assumes
-     * that if there is no service config file, the environment we're running in
-     * is not the production service env.
-     * 
-     * @return the service file or null if no file exists.
-     * @throws IOException
-     */
-    public static File getServiceConfigFile() throws IOException
-    {
-
-        File configFile = new File( SERVICE_CONFIG_PATH );
-
-        if ( !configFile.exists() )
-        {
-            return null;
-        }
-
-        return configFile;
-    }
-
-    /**
      * Somewhat cumbersome singleton implementation to allow IOException to
      * bubble up nicely.
      * 
@@ -253,22 +198,6 @@ public class ServerProperties implements Representation
         return INSTANCE;
     }
 
-    /**
-     * This is the properties file that is read and used by the underlying neo4j
-     * instance.
-     */
-    protected static volatile Properties dbConfig;
-
-    /**
-     * This property file stores configuration used when launching the JVM and
-     * when creating a new database.
-     */
-    protected static volatile Properties generalConfig;
-
-    protected static ServerProperties INSTANCE;
-
-    protected ArrayList<ServerPropertyRepresentation> properties = createProperties();
-
     //
     // CONSTRUCT
     //
@@ -278,7 +207,8 @@ public class ServerProperties implements Representation
         if ( dbConfig == null )
         {
             dbConfig = new Properties();
-            FileInputStream in = new FileInputStream( getDbConfigFile() );
+            FileInputStream in = new FileInputStream(
+                    ConfigFileFactory.getDbConfigFile() );
             dbConfig.load( in );
             in.close();
         }
@@ -286,7 +216,8 @@ public class ServerProperties implements Representation
         if ( generalConfig == null )
         {
             generalConfig = new Properties();
-            FileInputStream in = new FileInputStream( getGeneralConfigFile() );
+            FileInputStream in = new FileInputStream(
+                    ConfigFileFactory.getGeneralConfigFile() );
             generalConfig.load( in );
             in.close();
         }
@@ -352,12 +283,13 @@ public class ServerProperties implements Representation
         {
         case CONFIG_PROPERTY:
             dbConfig.put( key, prop.getFullValue() );
-            saveProperties( dbConfig, getDbConfigFile() );
+            saveProperties( dbConfig, ConfigFileFactory.getDbConfigFile() );
             break;
         default:
             generalConfig.put( key, prop.getFullValue() );
-            saveProperties( generalConfig, getGeneralConfigFile() );
-            writeJvmArgs();
+            saveProperties( generalConfig,
+                    ConfigFileFactory.getGeneralConfigFile() );
+            writeJvmAndAppArgs();
         }
     }
 
@@ -395,16 +327,16 @@ public class ServerProperties implements Representation
     }
 
     /**
-     * Update the file with extra args passed to the JVM to match the currently
-     * set startup args.
+     * Update the file with extra args passed to the JVM and to the application
+     * itself to match the currently set startup args.
      * 
      * @throws IOException
      * @throws FileNotFoundException
      */
-    protected synchronized void writeJvmArgs() throws FileNotFoundException,
-            IOException
+    protected synchronized void writeJvmAndAppArgs()
+            throws FileNotFoundException, IOException
     {
-        File serviceConfig = getServiceConfigFile();
+        File serviceConfig = ConfigFileFactory.getServiceConfigFile();
 
         if ( serviceConfig != null )
         {
@@ -435,20 +367,15 @@ public class ServerProperties implements Representation
 
             in.close();
 
-            // Add admin-defined jvm arguments
-            int argNo = 1;
-            for ( ServerPropertyRepresentation prop : properties )
-            {
-                if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
-                {
-                    // Write normal JVM arg
-                    configFileBuilder.append( "wrapper.java.additional." );
-                    configFileBuilder.append( ( argNo++ ) );
-                    configFileBuilder.append( "=" );
-                    configFileBuilder.append( prop.getFullValue() );
-                    configFileBuilder.append( "\n" );
-                }
-            }
+            // JVM Args
+            configFileBuilder.append( propertiesToJSWConfigString(
+                    "wrapper.java.additional.",
+                    ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT ) );
+
+            // App args
+            configFileBuilder.append( propertiesToJSWConfigString(
+                    "wrapper.app.parameter.",
+                    ServerPropertyRepresentation.PropertyType.APP_ARGUMENT ) );
 
             // Write changes to file.
             FileOutputStream out = new FileOutputStream( serviceConfig );
@@ -458,21 +385,68 @@ public class ServerProperties implements Representation
         else
         {
             // DEVELOPMENT MODE
-            FileOutputStream out = new FileOutputStream(
-                    getDevelopmentJvmArgsFile() );
-            StringBuilder args = new StringBuilder();
 
-            for ( ServerPropertyRepresentation prop : properties )
-            {
-                if ( prop.getType() == ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT )
-                {
-                    args.append( prop.getFullValue() );
-                    args.append( " " );
-                }
-            }
+            // Write jvm args
 
-            out.write( args.toString().getBytes() );
-            out.close();
+            FileOutputStream jvmArgs = new FileOutputStream(
+                    ConfigFileFactory.getDevelopmentJvmArgsFile() );
+            jvmArgs.write( propertiesToSpaceSeparatedString(
+                    ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT ).getBytes() );
+            jvmArgs.close();
+
+            // Write app args
+
+            FileOutputStream appArgs = new FileOutputStream(
+                    ConfigFileFactory.getDevelopmentAppArgsFile() );
+            appArgs.write( propertiesToSpaceSeparatedString(
+                    ServerPropertyRepresentation.PropertyType.APP_ARGUMENT ).getBytes() );
+            appArgs.close();
+
         }
+    }
+
+    /**
+     * Write a string with space-separated properties of a given type.
+     * 
+     * @param type
+     * @return
+     */
+    private String propertiesToSpaceSeparatedString(
+            ServerPropertyRepresentation.PropertyType type )
+    {
+        StringBuilder args = new StringBuilder();
+
+        for ( ServerPropertyRepresentation prop : properties )
+        {
+            if ( prop.getType() == type )
+            {
+                args.append( prop.getFullValue() );
+                args.append( " " );
+            }
+        }
+
+        String out = args.toString();
+        return out.substring( 0, out.length() - 1 );
+    }
+
+    private String propertiesToJSWConfigString( String prepend,
+            ServerPropertyRepresentation.PropertyType type )
+    {
+        StringBuilder builder = new StringBuilder();
+
+        int argNo = 1;
+        for ( ServerPropertyRepresentation prop : properties )
+        {
+            if ( prop.getType() == type )
+            {
+                builder.append( prepend );
+                builder.append( ( argNo++ ) );
+                builder.append( "=" );
+                builder.append( prop.getFullValue() );
+                builder.append( "\n" );
+            }
+        }
+
+        return builder.toString();
     }
 }

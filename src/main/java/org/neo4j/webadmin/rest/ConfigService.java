@@ -158,6 +158,7 @@ public class ConfigService
                 // Keep track of what type of changes we are making
                 switch ( currentPropObj.getType() )
                 {
+                case APP_ARGUMENT:
                 case JVM_ARGUMENT:
                     hasJvmChanges = true;
                     break;

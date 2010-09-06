@@ -45,6 +45,7 @@ public class ServerPropertyRepresentation implements Representation
     {
         CONFIG_PROPERTY,
         JVM_ARGUMENT,
+        APP_ARGUMENT,
         DB_CREATION_PROPERTY,
         GENERAL_PROPERTY
     }
