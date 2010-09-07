@@ -166,12 +166,19 @@ morpheus.neo4j = function( data )
             			// Find out what instance name the local kernel has
             			me.public.kernelInstanceName((function(cb, name) {
             				return function(instanceName) {
-            					var query = escape(instanceName + ",name=" + name);
-            					me.public.admin.get("jmx/org.neo4j/" + query, (function(cb) {
-        		                    return function(data) {
-        		                        cb(data);
-        		                    };
-        		                })(cb));
+            					
+            					if( instanceName ) {
+	            					var query = escape(instanceName + ",name=" + name);
+	            					me.public.admin.get("jmx/org.neo4j/" + query, (function(cb) {
+	        		                    return function(data) {
+	        		                        cb(data);
+	        		                    };
+	        		                })(cb));
+            					} else {
+            						// No local kernel available, usually due to network problems
+            						cb(null);
+            					}
+            					
             				};
             			})(cb,beanName.name));
             			
@@ -199,9 +206,10 @@ morpheus.neo4j = function( data )
             		me.kernelQueryRunning = true;
 	            	me.public.admin.get("jmx/kernelquery",  
 	            		function(data) {
+	            		
 	            			// Data looks like : org.neo4j:instance=kernel#0,name=*
 	            			// Split it to be: instance=kernel#0
-	            			var result = data.split(":")[1].split(",")[0];
+	            			var result = data ? data.split(":")[1].split(",")[0] : null;
 	            			var callbacks = me.kernelQueryQueue;
 	            			
 	            			me.kernelQueryQueue = [];
@@ -298,10 +306,12 @@ morpheus.neo4j = function( data )
     		
     		me.public.admin.get("monitor/" + me.latestDataPointTime, function(data) {
 				
-				// Find a data point list to check
-				var key;
-				for (key in data.data ) { break; }
-				
+    			if( data ) {
+	    			// Find a data point list to check
+					var key;
+					for (key in data.data ) { break; }
+    			}
+    			
 				// If there is any data sources
     			if( key ) {
     				// Find the last timestamp that has any data associated with
@@ -365,6 +375,9 @@ morpheus.neo4j = function( data )
     			// Trigger a new poll
     			setTimeout( me.pollMonitor, me.monitorInterval);
     			
+    		}, function(error) {
+    			// Trigger a new poll
+    			setTimeout( me.pollMonitor, me.monitorInterval);
     		});
     	}
     };

@@ -46,69 +46,6 @@ var morpheus = ( function( $, undefined )
         }
     };
 
-    /**
-	 * Load components listed in components.js
-	 */
-    me.loadComponents = function( cb )
-    {
-//        me.pendingComponents = me.api.componentList.length;
-//        
-//        for ( var i = 0, l = me.api.componentList.length; i < l; i++ )
-//        {
-//
-//            // Import the module init.js file
-//
-//            me.components[me.api.componentList[i]] =
-//            {
-//                name : me.api.componentList[i],
-//                loaded : false
-//            };
-//
-//            $.require( me.COMPONENT_PATH + me.api.componentList[i]
-//                    + me.COMPONENT_INIT_FILE, ( function( componentName )
-//            {
-//                return function()
-//                {
-//                    me.componentLoaded( componentName );
-//                };
-//            } )( me.api.componentList[i] ) );
-//
-//        }
-//
-//        setTimeout( me.checkComponentsLoaded, 13 );
-    };
-
-    /**
-	 * Triggered for each component that is loaded.
-	 */
-    me.componentLoaded = function( componentName )
-    {
-        me.components[componentName].loaded = true;
-    };
-
-    /**
-	 * Check if components have been loaded at given intervals, trigger full
-	 * application start once all components are loaded.
-	 */
-    me.checkComponentsLoaded = function()
-    {
-        for ( var key in me.components )
-        {
-            if ( me.components[key].loaded === false )
-            {
-                setTimeout( me.checkComponentsLoaded, 13 );
-                return;
-            }
-        }
-
-        // All components loaded, load UI
-        morpheus.ui.init();
-
-        // Trigger init event
-        morpheus.event.trigger( "morpheus.init" );
-        
-    };
-
     me.property = function( key, value, cb )
     {
         if ( typeof ( value ) === "function" )
@@ -208,7 +145,7 @@ var morpheus = ( function( $, undefined )
 	                		try {
 		                        if( req.status === 200 ) {
 		                           // This happens when the server returns an empty
-									// response.
+								   // response.
 		                           return success(null);
 		                        }
 	                		} catch(e) {
@@ -313,6 +250,13 @@ var morpheus = ( function( $, undefined )
     		if( typeof(me.displayedErrors[error]) !== "undefined" ) {
     			me.displayedErrors[error].elem.remove()
     			delete(me.displayedErrors[error]);
+    		}
+    	},
+    	
+    	log : function(msg) {
+    		// KISS debug implementation
+    		if( console && typeof(console.log) === "function" ) {
+    			console.log(msg);
     		}
     	}
     };

@@ -50,24 +50,26 @@ morpheus.components.server.monitor.JmxValueTracker = function(server, beanName, 
 	
 	me.poll = function() {
 		me.server.jmx(beanName, function(beans) {
-			var value = me.extractor(beans[0]);
-			if ( value !== me.prevValue ) {
-				me.prevValue = value;
-				var keepPolling = me.callback({ value:value, bean:beans[0], beanName:me.beanName });
-				
-				if( keepPolling ){
+			if( beans ) {
+				var value = me.extractor(beans[0]);
+				if ( value !== me.prevValue ) {
+					me.prevValue = value;
+					var keepPolling = me.callback({ value:value, bean:beans[0], beanName:me.beanName });
 					
-					// Reset the polling interval
-					me.actual_polling_interval = me.polling_interval;
-					
+					if( keepPolling ){
+						
+						// Reset the polling interval
+						me.actual_polling_interval = me.polling_interval;
+						
+					} else {
+						return;
+					}
 				} else {
-					return;
-				}
-			} else {
-				if( me.actual_polling_interval >= me.max_polling_interval ) {
-					me.actual_polling_interval = me.max_polling_interval;
-				} else {
-					me.actual_polling_interval *= 2;
+					if( me.actual_polling_interval >= me.max_polling_interval ) {
+						me.actual_polling_interval = me.max_polling_interval;
+					} else {
+						me.actual_polling_interval *= 2;
+					}
 				}
 			}
 			

@@ -29,15 +29,9 @@ public class StaticResourceHandler
     protected StaticResourceCompiler compiler;
 
     /**
-     * Tells the compiler that some files have changed and need to be
-     * recompiled.
-     */
-    protected boolean dirty = true;
-
-    /**
      * How often, in milliseconds, we should check if any files have changed.
      */
-    protected long dirtyCheckInterval = 1000;
+    protected long compileCheckInterval = 1000;
 
     /**
      * A list of all files that are to be included in the compiled file, in the
@@ -63,11 +57,13 @@ public class StaticResourceHandler
      */
     private boolean running = true;
 
+    private boolean isCompiling = false;
+
     /**
      * This is triggered to check if files on disk have changed, and thus our
      * end-file needs to be recompiled.
      */
-    private TimerTask dirtyCheckTask = new TimerTask()
+    private TimerTask compileTriggerTask = new TimerTask()
     {
         public void run()
         {
@@ -83,6 +79,7 @@ public class StaticResourceHandler
                     resouresFileLastModified = resourcesFile.lastModified();
                 }
 
+                boolean dirty = false;
                 for ( File resource : resources )
                 {
                     long lastModified = resource.lastModified();
@@ -92,6 +89,11 @@ public class StaticResourceHandler
                         resourceLastModifiedMap.put( resource, lastModified );
                         dirty = true;
                     }
+                }
+
+                if ( !isCompiling && dirty )
+                {
+                    compile();
                 }
             }
         }
@@ -127,28 +129,19 @@ public class StaticResourceHandler
 
         reloadResourceList();
 
-        Timer timer = new Timer( "resourcesDirtyCheck" );
-        timer.scheduleAtFixedRate( dirtyCheckTask, 0, dirtyCheckInterval );
+        Timer timer = new Timer( "resourcesCompileCheck" );
+        timer.scheduleAtFixedRate( compileTriggerTask, 0, compileCheckInterval );
     }
 
     //
     // PUBLIC
     //
 
-    public synchronized String getCompiled()
+    public String getCompiled()
     {
-        if ( dirty )
+        if ( isCompiling )
         {
-            compiledString = null;
-            StringBuilder builder = new StringBuilder();
-            for ( File file : resources )
-            {
-                compiler.addFile( builder, file );
-            }
-            compiledString = builder.toString();
-
-            builder = null;
-            dirty = false;
+            waitForCompile();
         }
 
         return compiledString;
@@ -159,7 +152,7 @@ public class StaticResourceHandler
     {
         running = true;
         Timer timer = new Timer( "resourcesDirtyCheck" );
-        timer.scheduleAtFixedRate( dirtyCheckTask, 0, dirtyCheckInterval );
+        timer.scheduleAtFixedRate( compileTriggerTask, 0, compileCheckInterval );
     }
 
     public void stop()
@@ -175,6 +168,42 @@ public class StaticResourceHandler
     //
     // INTERNALS
     //
+
+    private synchronized void compile()
+    {
+        try
+        {
+            isCompiling = true;
+            compiledString = null;
+            StringBuilder builder = new StringBuilder();
+            for ( File file : resources )
+            {
+                compiler.addFile( builder, file );
+            }
+            compiledString = builder.toString();
+
+            builder = null;
+        }
+        finally
+        {
+            isCompiling = false;
+        }
+    }
+
+    private void waitForCompile()
+    {
+        try
+        {
+            while ( isCompiling )
+            {
+                Thread.sleep( 6 );
+            }
+        }
+        catch ( InterruptedException e )
+        {
+            // Nop
+        }
+    }
 
     protected void reloadResourceList()
     {

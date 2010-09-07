@@ -25,7 +25,7 @@ morpheus.event = ( function()
     // PUBLIC INTERFACE
     //
 
-    me.api =
+    me.public =
     {
 
         /**
@@ -61,7 +61,7 @@ morpheus.event = ( function()
                     key : key,
                     data : data
                 };
-
+ 
                 for ( var i = 0, o = handlers.length; i < o; i++ )
                 {
                     setTimeout( ( function( handler )
@@ -71,8 +71,8 @@ morpheus.event = ( function()
                         	try {
                         		handler( event );
                         	} catch( e ) {
-                        		$("#mor_debug").append("<li>Event handler threw exception for event " + event.key + ".</li>");
-                        		$("#mor_debug").append("<li>" + e.message + "</li>");
+                        		morpheus.log("Event handler threw exception: " + e.message + ".");
+                        		morpueus.log("Event: " + key);
                         	}
                         }
                     } )( handlers[i] ), 0 );
@@ -82,6 +82,6 @@ morpheus.event = ( function()
 
     };
 
-    return me.api;
+    return me.public;
 
 } )();
