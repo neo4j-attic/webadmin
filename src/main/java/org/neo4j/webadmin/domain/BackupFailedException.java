@@ -1,6 +1,6 @@
 package org.neo4j.webadmin.domain;
 
-public class BackupFailedException extends RuntimeException
+public class BackupFailedException extends Exception
 {
     /**
      * Serial #

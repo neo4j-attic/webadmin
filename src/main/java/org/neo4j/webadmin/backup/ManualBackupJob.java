@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.task;
+package org.neo4j.webadmin.backup;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +23,9 @@ import org.neo4j.webadmin.properties.ServerProperties;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-public class BackupTask implements Runnable
+public class ManualBackupJob implements Runnable
 {
-    protected static BackupTask INSTANCE;
+    protected static ManualBackupJob INSTANCE;
 
     protected Date started;
     protected Date eta;
@@ -37,15 +37,14 @@ public class BackupTask implements Runnable
 
     /**
      * This is set to true if an attempt to perform a backup fails due to
-     * logical logs not beeing turned on or if the backup folder is not
+     * logical logs not being turned on or if the backup folder is not
      * initialized.
      * 
      * It essentially means that you have to run a BackupFoundationTask.
      */
     protected boolean needFoundation = false;
 
-    public static BackupTask getInstance() throws URISyntaxException,
-            IOException
+    public static ManualBackupJob getInstance() throws IOException
     {
 
         ServerProperties props = ServerProperties.getInstance();
@@ -73,7 +72,7 @@ public class BackupTask implements Runnable
 
         if ( INSTANCE == null || !INSTANCE.backupPath.equals( backupPath ) )
         {
-            INSTANCE = new BackupTask( backupPath );
+            INSTANCE = new ManualBackupJob( backupPath );
         }
 
         return INSTANCE;
@@ -83,7 +82,7 @@ public class BackupTask implements Runnable
     // CONSTRUCT
     //
 
-    public BackupTask( File backupPath )
+    public ManualBackupJob( File backupPath )
     {
         this.backupPath = backupPath;
     }
@@ -141,7 +140,6 @@ public class BackupTask implements Runnable
         {
             this.running = false;
             this.needFoundation = true;
-            System.out.println( "Backup failed, backup folder is not initialized, or logical logs are not turned on." );
         }
     }
 

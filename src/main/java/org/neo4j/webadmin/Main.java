@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.neo4j.helpers.Args;
 import org.neo4j.rest.WebServerFactory;
+import org.neo4j.webadmin.backup.BackupManager;
 import org.neo4j.webadmin.rrd.RrdManager;
 import org.neo4j.webadmin.rrd.RrdSampler;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
@@ -48,8 +49,14 @@ public class Main
         // 2. START SERVERS
         //
 
+        System.out.println( "Starting web servers.." );
+
         WebServerFactory.getDefaultWebServer().startServer( restPort );
         AdminServer.INSTANCE.startServer( adminPort, webRoot );
+
+        System.out.println( "Starting backup scheduler.." );
+
+        BackupManager.INSTANCE.start();
 
         System.out.println( "Starting round-robin system state sampler.." );
         RrdSampler.INSTANCE.start();

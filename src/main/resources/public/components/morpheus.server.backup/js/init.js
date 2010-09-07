@@ -62,6 +62,11 @@ morpheus.components.server.backup.init = (function($, undefined) {
                 me.server = ev.data.server;
                 me.currentBackupPath = "";
                 
+
+            	me.server.admin.get("backup/job", function(data) {
+            		morpheus.log(data);
+            	});
+                
                 if( me.visible === true ) {
 
                 	// Load current backup path
@@ -95,10 +100,11 @@ morpheus.components.server.backup.init = (function($, undefined) {
     };
     
     me.loadBackupPath = function() {
+    	
     	morpheus.components.server.config.get("general.backup.path", function(data) {
     		me.currentBackupPath = data.value;
     		me.updateUiBackupPath();
-    	}); 
+    	});
     };
     
     me.updateUiBackupPath = function() {

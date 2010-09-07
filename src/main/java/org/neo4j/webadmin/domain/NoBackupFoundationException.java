@@ -1,6 +1,6 @@
 package org.neo4j.webadmin.domain;
 
-public class NoBackupFoundationException extends RuntimeException
+public class NoBackupFoundationException extends Exception
 {
     /**
      * Serial #

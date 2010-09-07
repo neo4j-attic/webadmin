@@ -1,4 +1,4 @@
-Morpheus - keeping track of Neo4j
+Neo4j Monitoring and Management Tool
 =================================
 
 This is a stand-alone, 
@@ -24,7 +24,7 @@ Current features include:
 
 Quickstart
 ------------
-To try the admin interface out:
+To try it out:
 
 	git clone http://github.com/neo4j/webadmin.git
 	cd webadmin
@@ -49,7 +49,7 @@ The administration pages will be available at <a href="http://localhost:9988/">h
 
 Build production version
 ------------------------
-Morpheus is packaged as a java service. To trigger a production build, simply do:
+Neo4j Monitoring and Management Tool is packaged as a java service. To trigger a production build, simply do:
 
 	mvn package
 	

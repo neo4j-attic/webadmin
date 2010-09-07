@@ -1,25 +1,33 @@
 package org.neo4j.webadmin.rest;
 
+import static org.neo4j.rest.domain.JsonHelper.jsonToMap;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
 import java.io.IOException;
 import java.util.Date;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.domain.JsonRenderers;
+import org.neo4j.webadmin.backup.BackupJobDescription;
+import org.neo4j.webadmin.backup.BackupManager;
+import org.neo4j.webadmin.backup.ManualBackupFoundationJob;
+import org.neo4j.webadmin.backup.ManualBackupJob;
+import org.neo4j.webadmin.domain.BackupJobDescriptionRepresentation;
 import org.neo4j.webadmin.domain.BackupStatusRepresentation;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.properties.ServerProperties;
-import org.neo4j.webadmin.task.BackupFoundationTask;
-import org.neo4j.webadmin.task.BackupTask;
 import org.neo4j.webadmin.task.DeferredTask;
 
 /**
@@ -52,7 +60,6 @@ public class BackupService
 
         try
         {
-
             // Is there some sort of action running?
 
             BackupStatusRepresentation.CurrentAction currentAction = BackupStatusRepresentation.CurrentAction.IDLE;
@@ -62,11 +69,11 @@ public class BackupService
             try
             {
 
-                if ( BackupFoundationTask.getInstance().isRunning() )
+                if ( ManualBackupFoundationJob.getInstance().isRunning() )
                 {
                     currentAction = BackupStatusRepresentation.CurrentAction.CREATING_FOUNDATION;
-                    actionStarted = BackupFoundationTask.getInstance().getStarted();
-                    actionEta = BackupFoundationTask.getInstance().getEta();
+                    actionStarted = ManualBackupFoundationJob.getInstance().getStarted();
+                    actionEta = ManualBackupFoundationJob.getInstance().getEta();
                 }
 
             }
@@ -82,13 +89,13 @@ public class BackupService
             try
             {
 
-                if ( BackupTask.getInstance().isRunning() )
+                if ( ManualBackupJob.getInstance().isRunning() )
                 {
                     currentAction = BackupStatusRepresentation.CurrentAction.BACKING_UP;
-                    actionStarted = BackupTask.getInstance().getStarted();
-                    actionEta = BackupTask.getInstance().getEta();
+                    actionStarted = ManualBackupJob.getInstance().getStarted();
+                    actionEta = ManualBackupJob.getInstance().getEta();
                 }
-                else if ( BackupTask.getInstance().needsFoundation() )
+                else if ( ManualBackupJob.getInstance().needsFoundation() )
                 {
                     currentAction = BackupStatusRepresentation.CurrentAction.WAITING_FOR_FOUNDATION;
                 }
@@ -126,7 +133,7 @@ public class BackupService
         try
         {
 
-            DeferredTask.defer( BackupTask.getInstance() );
+            DeferredTask.defer( ManualBackupJob.getInstance() );
             return addHeaders( Response.ok() ).build();
 
         }
@@ -147,7 +154,76 @@ public class BackupService
         try
         {
 
-            DeferredTask.defer( BackupFoundationTask.getInstance() );
+            DeferredTask.defer( ManualBackupFoundationJob.getInstance() );
+            return addHeaders( Response.ok() ).build();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
+                    "An unexpected internal server error occurred.", e,
+                    JsonRenderers.DEFAULT );
+        }
+    }
+
+    @GET
+    @Path( "/job" )
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response listBackupJobs()
+    {
+        try
+        {
+            String entity = JsonRenderers.DEFAULT.render( BackupManager.INSTANCE.getConfig() );
+
+            return addHeaders(
+                    Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
+                    "An unexpected internal server error occurred.", e,
+                    JsonRenderers.DEFAULT );
+        }
+    }
+
+    @PUT
+    @Path( "/job" )
+    @Produces( MediaType.APPLICATION_JSON )
+    @Consumes( MediaType.APPLICATION_JSON )
+    public Response setBackupJob( String json )
+    {
+        try
+        {
+            BackupJobDescription jobDesc = BackupJobDescriptionRepresentation.deserialize( jsonToMap( json ) );
+
+            BackupManager.INSTANCE.getConfig().setJobDescription( jobDesc );
+            BackupManager.INSTANCE.restart();
+
+            return addHeaders( Response.ok() ).build();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
+                    "An unexpected internal server error occurred.", e,
+                    JsonRenderers.DEFAULT );
+        }
+    }
+
+    @DELETE
+    @Path( "/job/{name}" )
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response deleteBackupJob( @PathParam( "name" ) String name )
+    {
+        try
+        {
+            BackupManager.INSTANCE.getConfig().removeJobDescription( name );
+            BackupManager.INSTANCE.restart();
+
             return addHeaders( Response.ok() ).build();
 
         }
