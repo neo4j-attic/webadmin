@@ -11,7 +11,7 @@
 				<h2>Finding data</h2>
 				<p>You can enter the id of a node or a relationship below, to show it and its related nodes.</p>
 				<h2>Listing data</h2>
-				<p>Because each node can have any properties you want it too, the data browser allows you to select what properties it should list when listing related nodes.</p>
+				<p>Because each node can have any properties you want it to, the data browser allows you to select what properties it should list when listing related nodes.</p>
 				<p>Simply enter the properties you are interested in, separated by commas, in the "properties to list" box below.</p>  
 			</div>
 		</div>

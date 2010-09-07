@@ -45,6 +45,7 @@ public class GremlinFactory
                             DatabaseLocator.getIndexService( dbInstance ) ) );
 
             engine.eval( "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'" );
+            engine.eval( "$_ := g:id(0)" );
 
             return engine;
         }

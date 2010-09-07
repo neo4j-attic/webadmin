@@ -69,9 +69,18 @@ morpheus.components.server.gremlin = (function($, undefined) {
             evaluate : function(statement, cb) {
                 var cb = cb || me.evalCallback;
                 
+                me.writeConsoleLine(statement);
+                
+                if( statement.length > 0) {
+                    me.public.pushHistory(me.consoleInput.val());
+                }
+                
+                me.hideInput();
+                
                 me.server.admin.post("gremlin/", {command:statement}, (function(statement, cb) {
                     return function(data) {
                         cb(statement, data);
+                    	me.showInput();
                     };
                 })(statement, cb));
                 
@@ -125,6 +134,14 @@ morpheus.components.server.gremlin = (function($, undefined) {
         
     };
     
+    me.hideInput = function() {
+    	$("#mor_gremlin_console_input").hide();
+    };
+    
+    me.showInput = function() {
+    	$("#mor_gremlin_console_input").show();
+    };
+    
     me.focusOnInputElement = function() {
     	$("#mor_gremlin_console_input").focus();
     };
@@ -158,13 +175,6 @@ morpheus.components.server.gremlin = (function($, undefined) {
     $("#mor_gremlin_console_input").live("keyup", function(ev) {
         if( ev.keyCode === 13 ) { // ENTER
             me.public.evaluate(me.consoleInput.val());
-            
-            me.writeConsoleLine(me.consoleInput.val());
-            
-            if( me.consoleInput.val().length > 0) {
-                me.public.pushHistory(me.consoleInput.val());
-            } 
-             
             me.consoleInput.val("");
         } else if (ev.keyCode === 38) { // UP
             me.consoleInput.val(me.public.prevHistory());

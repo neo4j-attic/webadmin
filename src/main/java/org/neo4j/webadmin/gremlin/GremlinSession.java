@@ -178,7 +178,7 @@ public class GremlinSession implements Runnable
                  || resultLines.size() == 0
                  || ( resultLines.size() == 1 && resultLines.get( 0 ).toString().length() == 0 ) )
             {
-                outputLines.add( "null" );
+                outputLines.add( "" );
             }
             else
             {
