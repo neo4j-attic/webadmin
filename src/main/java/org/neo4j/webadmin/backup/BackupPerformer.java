@@ -16,7 +16,6 @@ import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.properties.ServerProperties;
-import org.neo4j.webadmin.rest.LifeCycleService;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 public class BackupPerformer
@@ -62,17 +61,23 @@ public class BackupPerformer
         {
             File mainDbPath = new File( DatabaseLocator.DB_PATH ).getAbsoluteFile();
 
-            LifeCycleService lifecycle = new LifeCycleService();
-
             setupBackupFolders( backupPath );
 
-            lifecycle.stop();
+            boolean wasRunning = GraphDatabaseUtils.isRunning();
+
+            if ( wasRunning )
+            {
+                GraphDatabaseUtils.shutdownAndBlock( "Performing backup foundation, please wait." );
+            }
 
             cpTree( mainDbPath, backupPath );
 
             ServerProperties.getInstance().set( "keep_logical_logs", "true" );
 
-            lifecycle.start();
+            if ( wasRunning )
+            {
+                GraphDatabaseUtils.unblock();
+            }
         }
         catch ( IOException e )
         {
