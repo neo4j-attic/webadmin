@@ -108,8 +108,8 @@ public enum BackupManager
             {
                 throw new BackupFailedException(
                         "Failed to initialize backup schedule for job '"
-                                + desc.getName()
-                                + "', the cron expression is invalid.", e );
+                                + desc.getName() + "', the cron expression '"
+                                + desc.getCronExpression() + "' is invalid.", e );
             }
 
             scheduler.scheduleJob( jobDetail, trigger );

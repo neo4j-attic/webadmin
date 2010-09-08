@@ -37,7 +37,9 @@ import org.neo4j.webadmin.gremlin.GremlinSessions;
 public class GremlinService
 {
 
-    protected static final String ROOT_PATH = "/server/gremlin";
+    public static final String ROOT_PATH = "/server/gremlin";
+
+    public static final String EXEC_PATH = "";
 
     //
     // PUBLIC

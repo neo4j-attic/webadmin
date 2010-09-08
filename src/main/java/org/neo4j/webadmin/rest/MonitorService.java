@@ -29,7 +29,10 @@ import org.rrd4j.core.FetchRequest;
 @Path( MonitorService.ROOT_PATH )
 public class MonitorService
 {
-    protected static final String ROOT_PATH = "/server/monitor";
+    public static final String ROOT_PATH = "/server/monitor";
+    public static final String DATA_PATH = "";
+    public static final String DATA_FROM_PATH = "/{start}";
+    public static final String DATA_SPAN_PATH = "/{start}/{stop}";
 
     public static final long MAX_TIMESPAN = 1000 * 60 * 60 * 24 * 14;
     public static final long DEFAULT_TIMESPAN = 1000 * 60 * 60 * 2;
@@ -44,7 +47,7 @@ public class MonitorService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/{start}" )
+    @Path( DATA_FROM_PATH )
     public Response getData( @PathParam( "start" ) long start )
     {
         return getData( start, new Date().getTime() );
@@ -52,7 +55,7 @@ public class MonitorService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/{start}/{stop}" )
+    @Path( DATA_SPAN_PATH )
     public Response getData( @PathParam( "start" ) long start,
             @PathParam( "stop" ) long stop )
     {

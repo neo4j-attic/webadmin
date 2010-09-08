@@ -34,7 +34,9 @@ import org.neo4j.rest.domain.JsonRenderers;
 public class AdminPropertiesService
 {
 
-    protected static final String ROOT_PATH = "/properties";
+    public static final String ROOT_PATH = "/properties";
+
+    public static final String PROPERTY_PATH = "/{key}";
 
     /**
      * Get settings file, creating one if it does not exist.
@@ -95,7 +97,7 @@ public class AdminPropertiesService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/{key}" )
+    @Path( PROPERTY_PATH )
     public Response getValue( @PathParam( "key" ) String key )
     {
         Object value = properties.get( key );
@@ -115,7 +117,7 @@ public class AdminPropertiesService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON )
-    @Path( "/{key}" )
+    @Path( PROPERTY_PATH )
     public Response jsonSetValue( @PathParam( "key" ) String key, String value )
     {
         return setValue( key, value );
@@ -124,7 +126,7 @@ public class AdminPropertiesService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    @Path( "/{key}" )
+    @Path( PROPERTY_PATH )
     public Response formSetValueJSON( @PathParam( "key" ) String key,
             @FormParam( "value" ) String value )
     {

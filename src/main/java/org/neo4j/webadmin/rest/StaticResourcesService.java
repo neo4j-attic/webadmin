@@ -21,7 +21,9 @@ import org.neo4j.webadmin.resources.StaticResourceHandler;
 public class StaticResourcesService
 {
 
-    protected static final String ROOT_PATH = "/static";
+    public static final String ROOT_PATH = "/static";
+    public static final String JS_PATH = "/app.js";
+    public static final String TEMPLATES_PATH = "/templates.html";
 
     protected static final String CSS_MEDIA_TYPE = "text/css";
     protected static final String JS_MEDIA_TYPE = "application/javascript";
@@ -41,7 +43,7 @@ public class StaticResourcesService
      * Get the application js code as a single file.
      */
     @GET
-    @Path( "/app.js" )
+    @Path( JS_PATH )
     @Produces( JS_MEDIA_TYPE )
     public synchronized Response getJavaScript()
     {
@@ -55,7 +57,7 @@ public class StaticResourcesService
      * Get the application templates as a single file.
      */
     @GET
-    @Path( "/templates.html" )
+    @Path( TEMPLATES_PATH )
     @Produces( TEMPLATE_MEDIA_TYPE )
     public synchronized Response getTemplates()
     {

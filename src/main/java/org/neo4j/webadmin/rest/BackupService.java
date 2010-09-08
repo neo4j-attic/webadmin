@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.neo4j.rest.domain.JsonParseRuntimeException;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.backup.BackupJobDescription;
 import org.neo4j.webadmin.backup.BackupManager;
@@ -40,7 +41,14 @@ import org.neo4j.webadmin.task.DeferredTask;
 @Path( BackupService.ROOT_PATH )
 public class BackupService
 {
-    protected static final String ROOT_PATH = "/server/backup";
+    public static final String ROOT_PATH = "/server/backup";
+
+    public static final String STATUS_PATH = "/status";
+    public static final String MANUAL_TRIGGER_PATH = "/trigger";
+    public static final String MANUAL_FOUNDATION_TRIGGER_PATH = "/triggerfoundation";
+    public static final String JOBS_PATH = "/job";
+    public static final String JOB_PATH = JOBS_PATH + "/{name}";
+
     protected ServerProperties properties;
 
     //
@@ -54,7 +62,7 @@ public class BackupService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/status" )
+    @Path( STATUS_PATH )
     public synchronized Response status()
     {
 
@@ -126,7 +134,7 @@ public class BackupService
     }
 
     @POST
-    @Path( "/trigger" )
+    @Path( MANUAL_TRIGGER_PATH )
     @Produces( MediaType.APPLICATION_JSON )
     public Response triggerBackup()
     {
@@ -147,7 +155,7 @@ public class BackupService
     }
 
     @POST
-    @Path( "/triggerfoundation" )
+    @Path( MANUAL_FOUNDATION_TRIGGER_PATH )
     @Produces( MediaType.APPLICATION_JSON )
     public Response triggerBackupFoundation()
     {
@@ -168,7 +176,7 @@ public class BackupService
     }
 
     @GET
-    @Path( "/job" )
+    @Path( JOBS_PATH )
     @Produces( MediaType.APPLICATION_JSON )
     public Response listBackupJobs()
     {
@@ -190,7 +198,7 @@ public class BackupService
     }
 
     @PUT
-    @Path( "/job" )
+    @Path( JOBS_PATH )
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON )
     public Response setBackupJob( String json )
@@ -203,7 +211,12 @@ public class BackupService
             BackupManager.INSTANCE.restart();
 
             return addHeaders( Response.ok() ).build();
-
+        }
+        catch ( JsonParseRuntimeException e )
+        {
+            return buildExceptionResponse( Status.BAD_REQUEST,
+                    "The json data you provided is invalid.", e,
+                    JsonRenderers.DEFAULT );
         }
         catch ( Exception e )
         {
@@ -215,7 +228,7 @@ public class BackupService
     }
 
     @DELETE
-    @Path( "/job/{name}" )
+    @Path( JOB_PATH )
     @Produces( MediaType.APPLICATION_JSON )
     public Response deleteBackupJob( @PathParam( "name" ) String name )
     {

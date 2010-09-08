@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
 import org.neo4j.onlinebackup.Neo4jBackup;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.properties.ServerProperties;
@@ -59,8 +60,7 @@ public class BackupPerformer
     {
         try
         {
-            File mainDbPath = new File(
-                    System.getProperty( "org.neo4j.graphdb.location" ) ).getAbsoluteFile();
+            File mainDbPath = new File( DatabaseLocator.DB_PATH ).getAbsoluteFile();
 
             LifeCycleService lifecycle = new LifeCycleService();
 

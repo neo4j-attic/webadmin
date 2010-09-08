@@ -44,7 +44,13 @@ import org.neo4j.webadmin.domain.JmxMBeanRepresentation;
 public class JmxService
 {
 
-    protected static final String ROOT_PATH = "/server/jmx";
+    public static final String ROOT_PATH = "/server/jmx";
+
+    public static final String DOMAINS_PATH = "";
+    public static final String DOMAIN_PATH = DOMAINS_PATH + "/{domain}";
+    public static final String BEAN_PATH = DOMAIN_PATH + "/{objectName}";
+    public static final String QUERY_PATH = "/query";
+    public static final String KERNEL_NAME_PATH = "/kernelquery";
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
@@ -62,7 +68,7 @@ public class JmxService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/{domain}" )
+    @Path( DOMAIN_PATH )
     public Response getDomain( @PathParam( "domain" ) String domainName )
             throws NullPointerException
     {
@@ -89,7 +95,7 @@ public class JmxService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/{domain}/{objectName}" )
+    @Path( BEAN_PATH )
     public Response getBean( @PathParam( "domain" ) String domainName,
             @PathParam( "objectName" ) String objectName )
     {
@@ -130,7 +136,7 @@ public class JmxService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON )
-    @Path( "/query" )
+    @Path( QUERY_PATH )
     @SuppressWarnings( "unchecked" )
     public Response queryBeans( String query )
     {
@@ -172,7 +178,7 @@ public class JmxService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    @Path( "/query" )
+    @Path( QUERY_PATH )
     public Response formQueryBeans( @FormParam( "value" ) String data )
     {
         return queryBeans( data );
@@ -186,7 +192,7 @@ public class JmxService
      */
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/kernelquery" )
+    @Path( KERNEL_NAME_PATH )
     public Response currentKernelInstance()
     {
         Kernel kernelBean = ( (EmbeddedGraphDatabase) getLocalDatabase() ).getManagementBean( Kernel.class );

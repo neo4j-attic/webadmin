@@ -63,7 +63,7 @@ public enum AdminServer
              * grizzly serve static files, we create an empty grizzly adapter, 
              * tell it to serve static files and add it here. 
              * 
-             * §%&"#"#" web server %¤#&!&"/#.
+             * §%&"#"#"%¤#&!&"/#.
              */
             GrizzlyAdapter staticAdapter = new GrizzlyAdapter( absWebRoot )
             {

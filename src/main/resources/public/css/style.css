@@ -194,7 +194,10 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
                  */
 
 /* Backup */
-
+.mor_backup_job_list { list-style:none; margin:0; padding:0; }
+.mor_backup_job_list li.mor_backup_job { border-bottom:1px solid #EFEFEF; padding: 5px 10px; }
+.mor_backup_job_left { float:left; width: 60%; }
+.mor_backup_job_right { float:left; width: 40%; }
 
 /* Gremlin */
 

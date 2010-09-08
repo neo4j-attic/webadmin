@@ -19,10 +19,6 @@ import org.neo4j.webadmin.gremlin.GremlinSessions;
 /**
  * REST service to start, stop and restart the neo4j backend.
  * 
- * TODO: This currently starts and stops the rest Grizzly server rather
- * directly, it might be more preferrable to move this functionality into the
- * actual REST interface.
- * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
@@ -30,7 +26,11 @@ import org.neo4j.webadmin.gremlin.GremlinSessions;
 public class LifeCycleService
 {
 
-    protected static final String ROOT_PATH = "/server";
+    public static final String ROOT_PATH = "/server";
+    public static final String STATUS_PATH = "/status";
+    public static final String START_PATH = "/start";
+    public static final String STOP_PATH = "/stop";
+    public static final String RESTART_PATH = "/restart";
 
     /**
      * TODO: This is a bad way of keeping track of the status of the neo4j
@@ -42,7 +42,7 @@ public class LifeCycleService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/status" )
+    @Path( STATUS_PATH )
     public synchronized Response status()
     {
 
@@ -57,7 +57,7 @@ public class LifeCycleService
 
     @POST
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/start" )
+    @Path( START_PATH )
     public synchronized Response start()
     {
         LifecycleRepresentation status;
@@ -87,14 +87,21 @@ public class LifeCycleService
 
     @POST
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/stop" )
+    @Path( STOP_PATH )
     public synchronized Response stop()
     {
         LifecycleRepresentation status;
 
         if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
         {
-            WebServerFactory.getDefaultWebServer().stopServer();
+            try
+            {
+                WebServerFactory.getDefaultWebServer().stopServer();
+            }
+            catch ( NullPointerException e )
+            {
+                // REST server was not running
+            }
             shutdownLocalDatabase();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.STOPPED,
@@ -116,11 +123,18 @@ public class LifeCycleService
 
     @POST
     @Produces( MediaType.APPLICATION_JSON )
-    @Path( "/restart" )
+    @Path( RESTART_PATH )
     public synchronized Response restart()
     {
 
-        WebServerFactory.getDefaultWebServer().stopServer();
+        try
+        {
+            WebServerFactory.getDefaultWebServer().stopServer();
+        }
+        catch ( NullPointerException e )
+        {
+            // REST server was not running
+        }
         shutdownLocalDatabase();
         WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
         GremlinSessions.destroyAllSessions();

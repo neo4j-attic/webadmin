@@ -108,9 +108,17 @@ public class ConfigFileFactory
 
     private static File getFile( File file ) throws IOException
     {
-        if ( !file.exists() && !file.createNewFile() )
+        if ( !file.exists() )
         {
-            throw new IllegalStateException( file.getAbsolutePath() );
+            if ( file.getParent() != null )
+            {
+                new File( file.getParent() ).mkdirs();
+            }
+
+            if ( !file.createNewFile() )
+            {
+                throw new IllegalStateException( file.getAbsolutePath() );
+            }
         }
 
         return file;

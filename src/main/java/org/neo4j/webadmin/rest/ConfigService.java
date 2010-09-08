@@ -48,7 +48,9 @@ import org.neo4j.webadmin.task.JvmRestartTask;
 public class ConfigService
 {
 
-    protected static final String ROOT_PATH = "/server/config";
+    public static final String ROOT_PATH = "/server/config";
+    public static final String SETTINGS_PATH = "";
+
     protected ServerProperties properties;
 
     //
@@ -90,6 +92,7 @@ public class ConfigService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Path( SETTINGS_PATH )
     public Response formSetMany( @FormParam( "value" ) String data )
     {
         return setMany( data );
