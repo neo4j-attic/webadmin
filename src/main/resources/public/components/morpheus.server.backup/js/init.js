@@ -1,7 +1,5 @@
 morpheus.provide("morpheus.components.server.backup.init");
 
-//$.require( "components/morpheus.server.backup/js/StatusTracker.js" );
-
 /**
  * A component that handles setting up and triggering online backups.
  * 
@@ -43,11 +41,11 @@ morpheus.components.server.backup.init = (function($, undefined) {
                     if( me.uiLoaded === false ) {
                         me.uiLoaded = true;
                         me.basePage.setTemplateURL("components/morpheus.server.backup/templates/index.tp");
-                    	me.loadBackupPath();
+                    	me.loadBackupData();
                         me.render();
                     } else if( me.serverChanged ) {
                     	me.serverChanged = false;
-                    	me.loadBackupPath();
+                    	me.loadBackupData();
                         me.render();
                         me.trackStatus();
                     }
@@ -62,15 +60,10 @@ morpheus.components.server.backup.init = (function($, undefined) {
                 me.server = ev.data.server;
                 me.currentBackupPath = "";
                 
-
-            	me.server.admin.get("backup/job", function(data) {
-            		morpheus.log(data);
-            	});
-                
                 if( me.visible === true ) {
 
                 	// Load current backup path
-                	me.loadBackupPath();
+                	me.loadBackupData();
                     me.render();
                     me.trackStatus();
                     
@@ -99,12 +92,19 @@ morpheus.components.server.backup.init = (function($, undefined) {
         
     };
     
-    me.loadBackupPath = function() {
+    me.loadBackupData = function() {
     	
     	morpheus.components.server.config.get("general.backup.path", function(data) {
     		me.currentBackupPath = data.value;
     		me.updateUiBackupPath();
     	});
+    	
+    	if( me.server ) {
+    		me.server.admin.get("backup/job", function(data) {
+    			morpheus.log(data);
+    		});
+    	}
+    	
     };
     
     me.updateUiBackupPath = function() {
@@ -251,7 +251,7 @@ morpheus.components.server.backup.init = (function($, undefined) {
 	    	me.server.admin.post("backup/triggerfoundation", function(data) {
 	    		me.showStatus("Checking status..");
 	    		
-	    		me.trackStatus();
+	    		setTimeout(me.trackStatus, 50);
 	    	});
     	}
     	

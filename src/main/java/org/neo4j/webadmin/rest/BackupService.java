@@ -83,21 +83,7 @@ public class BackupService
                     actionStarted = ManualBackupFoundationJob.getInstance().getStarted();
                     actionEta = ManualBackupFoundationJob.getInstance().getEta();
                 }
-
-            }
-            catch ( IllegalStateException e )
-            {
-                /* NOP */
-            }
-            catch ( NoBackupPathException e )
-            {
-                /* NOP */
-            }
-
-            try
-            {
-
-                if ( ManualBackupJob.getInstance().isRunning() )
+                else if ( ManualBackupJob.getInstance().isRunning() )
                 {
                     currentAction = BackupStatusRepresentation.CurrentAction.BACKING_UP;
                     actionStarted = ManualBackupJob.getInstance().getStarted();

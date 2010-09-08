@@ -8,6 +8,7 @@ import org.neo4j.webadmin.backup.BackupManager;
 import org.neo4j.webadmin.rrd.RrdManager;
 import org.neo4j.webadmin.rrd.RrdSampler;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
+import org.quartz.SchedulerException;
 
 /**
  * Main entry point for the neo4j stand-alone REST system with web
@@ -87,9 +88,17 @@ public class Main
                 }
                 catch ( IOException e )
                 {
-                    throw new RuntimeException(
-                            "IO Error trying to access round robin database path. See nested exception.",
-                            e );
+                    e.printStackTrace();
+                }
+
+                System.out.println( "Shutting down backup scheduler.." );
+                try
+                {
+                    BackupManager.INSTANCE.stop();
+                }
+                catch ( SchedulerException e )
+                {
+                    e.printStackTrace();
                 }
 
                 // Kill the REST-server

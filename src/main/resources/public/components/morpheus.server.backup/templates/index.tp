@@ -36,12 +36,12 @@
 							<th>Backup path</th>
 							<td><input type="text" class="mor_backup_path" /> <button class="mor_backup_setpathbutton" disabled="disabled">Set</button></td>
 						</tr>
+						<tr>
+							<th></th>
+							<td><button class="mor_backup_triggerbutton" disabled="disabled">Perform manual backup</button></td>
+						</tr>
 					</tbody>
 				</table>
-			</div>
-			<div class="mor_backup_triggerbox mor_module">
-				<h2>Trigger manual backup</h2>
-				<p class="mor_info"><button class="mor_backup_triggerbutton" disabled="disabled" >Perform backup</button></p>
 				<p class="mor_backup_status info mor_info" style="display:none;"></p>
 			</div>
 			<div class="mor_backup_foundationbox info mor_module" style="display:none;">
