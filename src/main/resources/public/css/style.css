@@ -30,6 +30,9 @@ h6 { font-size:0.7em; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
 .info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
 
+.mor_list_button { border:0; border-bottom:1px solid #ddd; cursor:pointer; text-decoration:none; margin: 0; width:100%; display:block; padding: 3px 5px 2px 10px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold; border-top:1px solid #d4d4d4;}
+.mor_list_button:hover {  background:#c0e0e5;}
+
 input.uncommitted { background:#A1D46A; }
 
 .small { font-size:90%; color:#555; }
@@ -48,10 +51,13 @@ input.uncommitted { background:#A1D46A; }
 
 .mor_module > h2 { margin: 0; padding: 7px 5px 6px 10px; color: #444; font-size: 12px; line-height: 16px; font-weight: bold; border-bottom: 1px solid #d4d4d4; -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; background-color: #e6e6e6; }
 
-
 .mor_module_actions { list-style:none; padding: 0; margin:0; float:right; }
 .mor_module_actions li { display:block; float:left; padding: 2px 4px; font-size: 0.8em; }
 .mor_module_actions li a.current { color:#555; }
+
+/* Horizontal menu */
+.mor_horizontal_menu { list-style:none; margin: 0; padding: 0; }
+.mor_horizontal_menu li {  }
 
 /* Fancy table */
 table.mor_fancy { margin: 0; padding: 0; border-spacing: none; }

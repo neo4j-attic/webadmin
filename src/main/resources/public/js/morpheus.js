@@ -255,7 +255,7 @@ var morpheus = ( function( $, undefined )
     	
     	log : function(msg) {
     		// KISS debug implementation
-    		if( console && typeof(console.log) === "function" ) {
+    		if( typeof(console) !== "undefined" && typeof(console.log) === "function" ) {
     			console.log(msg);
     		}
     	}

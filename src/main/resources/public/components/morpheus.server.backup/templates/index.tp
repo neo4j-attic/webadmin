@@ -56,37 +56,9 @@
 		<div class="mor_span-3">
 			<div class="mor_module">
 				<h2>Backup schedule</h2>
+				<button class="mor_backup_add_job mor_list_button">New job</button>
 				<ul class="mor_backup_job_list">
-					<li class="mor_backup_job">
-						<div class="mor_backup_job_left">
-							<h3>Daily</h3>
-							<p class="mor_backup_job_path">/var/backup/neo4j</p>
-							<p class="mor_backup_job_last"><span class="mor_backup_job_last_headline">Last backup:</span> 21 hour ago.</p>
-						</div>
-						<div class="mor_backup_job_right">
-							<p class="mor_backup_job_cron">0 0 0 * * * *</p>
-							<ul class="mor_horizontal_menu">
-								<li><button>Edit</button></li>
-								<li><button>Remove</button></li>
-							</ul>
-						</div>
-						<div class="break"></div>
-					</li>
-					<li class="mor_backup_job">
-						<div class="mor_backup_job_left">
-							<h3>Weekly</h3>
-							<p class="mor_backup_job_path">/var/backup/neo4j</p>
-							<p class="mor_backup_job_last"><span class="mor_backup_job_last_headline">Last backup:</span> 21 hour ago.</p>
-						</div>
-						<div class="mor_backup_job_right">
-							<p class="mor_backup_job_cron">0 0 0 0 * * *</p>
-							<ul class="mor_horizontal_menu">
-								<li><button>Edit</button></li>
-								<li><button>Remove</button></li>
-							</ul>
-						</div>
-						<div class="break"></div>
-					</li>
+					
 				</ul>
 				<div class="break"></div>
 			</div>

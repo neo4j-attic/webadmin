@@ -12,6 +12,7 @@ js/vend/jquery.simplemodal.js
 js/morpheus.event.js
 js/morpheus.neo4j.js
 js/morpheus.servermanager.js
+js/morpheus.forms.js
 		
 # Component dependencies
 components/morpheus.server.lifecycle/js/init.js
@@ -32,4 +33,5 @@ components/morpheus.server.gremlin/js/init.js
 components/morpheus.server.config/js/init.js
 		
 components/morpheus.server.backup/js/StatusTracker.js
+components/morpheus.server.backup/js/Schedule.js
 components/morpheus.server.backup/js/init.js

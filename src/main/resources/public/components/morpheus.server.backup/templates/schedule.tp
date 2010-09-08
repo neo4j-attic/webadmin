@@ -1,0 +1,18 @@
+{#foreach $T.jobs as job}
+	<li class="mor_backup_job">
+		<input type="hidden" class="mor_backup_job_name_value" value="{ $T.job.name }" />
+		<div class="mor_backup_job_left">
+			<h3>{ $T.job.name }</h3>
+			<p class="mor_backup_job_path">{ $T.job.backupPath }</p>
+			<p class="mor_backup_job_last"><span class="mor_backup_job_last_headline">Last backup:</span> unknown</p>
+		</div>
+		<div class="mor_backup_job_right">
+			<p class="mor_backup_job_cron">{ $T.job.cronExpression }</p>
+			<ul class="mor_horizontal_menu">
+				<li><button class="mor_backup_job_edit">Edit</button></li>
+				<li><button class="mor_backup_job_delete">Remove</button></li>
+			</ul>
+		</div>
+		<div class="break"></div>
+	</li>
+{#/for}

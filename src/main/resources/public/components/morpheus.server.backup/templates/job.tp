@@ -1,0 +1,26 @@
+<input type="hidden" class="mor_job_dialog_old_name" value="{ $T.name }"/>
+<table class="mor_fancy">
+	<tbody>
+		<tr>
+			<th>Name</th>
+			<td><input type="text" class="mor_job_dialog_name" value="{ $T.name }"/></td>
+		</tr>
+		<tr>
+			<th>Backup to</th>
+			<td><input type="text" class="mor_job_dialog_path" value="{ $T.backupPath }"/></td>
+		</tr>
+		<tr>
+			<th>Cron expression</th>
+			<td><input type="text" class="mor_job_dialog_cronexp" value="{ $T.cronExpression}" /></td>
+		</tr>
+		<tr>
+			<th>Create foundation automatically</th>
+			<td><input type="checkbox" class="mor_job_dialog_auto-foundation" {#if $T.autoFoundation }checked="checked"{#/if} /></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><button class="mor_job_dialog_save">Save job</button></td>
+		</tr>
+	</tbody>
+
+</table>
