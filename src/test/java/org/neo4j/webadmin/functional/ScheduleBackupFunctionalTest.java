@@ -54,7 +54,7 @@ public class ScheduleBackupFunctionalTest
 
         String properJSON = "{" + "\"name\":\"Daily\","
                             + "\"cronExpression\":\"0 0 0 ? 0 0\","
-                            + "\"autoFoundation\":\"true\","
+                            + "\"autoFoundation\":true,"
                             + "\"backupPath\":\"backup1\"}";
 
         ClientResponse scheduleResponse = createResource.type(

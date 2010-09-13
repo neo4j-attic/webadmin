@@ -48,8 +48,8 @@ morpheus.components.server.backup.init = (function($, undefined) {
                     	me.serverChanged = false;
                         me.render();
                     	me.loadBackupData();
-                        me.trackStatus();
                     }
+                    me.trackStatus();
                     
                 } else {
                     me.visible = false;
@@ -182,14 +182,14 @@ morpheus.components.server.backup.init = (function($, undefined) {
     	
     	me.prevAction = data.current_action;
     	
-    	return keepPolling;
+    	return me.visible;
     };
     
     /**
      * Create a statustracker and trigger it to check status of the backup process.
      */
     me.trackStatus = function() {
-    	var statusTracker = morpheus.components.server.backup.StatusTracker(me.server, me.statusChanged);
+    	var statusTracker = morpheus.components.server.backup.StatusTracker(me.server, me.statusChanged, me.updateBackupJobUi);
 		
 		setTimeout((function(statusTracker) {
 			return function() {
@@ -295,27 +295,18 @@ morpheus.components.server.backup.init = (function($, undefined) {
     		var name = $('input.mor_job_dialog_name').val();
 			var path = $('input.mor_job_dialog_path').val();
 			var cron = $('input.mor_job_dialog_cronexp').val();
-			var autoFoundation = $('input.mor_job_dialog_auto-foundation:checked').val() !== null;
+			var autoFoundation = $('input.mor_job_dialog_auto-foundation:checked').length > 0;
     		
-    		var oldName = $("input.mor_job_dialog_old_name").val();
-    		if(oldName.length > 0 && oldName !== $('input.mor_job_dialog_name').val() ) {
-    			me.schedule.deleteJob(oldName, function() {
-    				me.schedule.setJob(
-						name, path, cron, autoFoundation,
-						function(){
-							me.schedule.getJobs(me.updateBackupJobUi);
-						}
-		    		);
-    			});
-    			
-    		} else {
-	    		me.schedule.setJob(
-					name, path, cron, autoFoundation,
-					function(){
-						me.schedule.getJobs(me.updateBackupJobUi);
-					}
-	    		);
-    		}
+    		var id = $("input.mor_job_dialog_id").val();
+    		
+    		id = id.length > 0 ? id : null;
+    		
+    		me.schedule.setJob(
+				name, path, cron, autoFoundation, id,
+				function(){
+					me.schedule.getJobs(me.updateBackupJobUi);
+				}
+    		);
     		
     		morpheus.ui.dialog.close();
     	}
@@ -324,9 +315,8 @@ morpheus.components.server.backup.init = (function($, undefined) {
     
     $('button.mor_backup_job_edit').live('click', function(ev){
     	
-    	me.schedule.getJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_name_value").val(), function(job){
+    	me.schedule.getJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
     		morpheus.ui.dialog.showUsingTemplate("Edit backup job","components/morpheus.server.backup/templates/job.tp", job);
-    		
     	});
     	
     });
@@ -335,7 +325,7 @@ morpheus.components.server.backup.init = (function($, undefined) {
     $('button.mor_backup_job_delete').live('click', function(ev){
     	
     	if( confirm("Are you sure you want to delete the backup job?") ) {
-	    	me.schedule.deleteJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_name_value").val(), function(job){
+	    	me.schedule.deleteJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
 	    		me.schedule.getJobs(me.updateBackupJobUi);
 	    	});
     	}

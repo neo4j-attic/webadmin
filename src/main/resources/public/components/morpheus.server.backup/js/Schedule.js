@@ -9,13 +9,14 @@ morpheus.components.server.backup.Schedule = function(server) {
 	
 	me.public = {
 		
-		setJob : function( name, path, cron, autoFoundation, callback ) {
+		setJob : function( name, path, cron, autoFoundation, id, callback ) {
 			
 			var entity = {
 					name:name,
 	                cronExpression:cron,
 	                autoFoundation:autoFoundation,
-	                backupPath:path
+	                backupPath:path,
+	                id : id
 	        };
 			
 			var callback = typeof(callback) === "function" ? callback : function(){};
@@ -35,8 +36,53 @@ morpheus.components.server.backup.Schedule = function(server) {
 			me.server.admin.get("backup/job", 
 				function(data) {
 				
-					me.data = data;
-					cb(data);
+					if( data != null ) {
+						me.data = data;
+						
+						for(var i = 0, l = data.jobList.length; i < l; i++) {
+							
+							// Write last-backup message (used by templates)
+							var job = data.jobList[i];
+							if( job.log.latestSuccess == null ) {
+								job.readableLatestSuccess = "Never";
+							} else {
+								var now = new Date().getTime();
+								var diff = (now - job.log.latestSuccess.timestamp) / 1000;
+								
+								var readableDiff = "";
+								if( diff > 60 * 60 * 24 * 2 ) {
+									// Over two days ago, only worry about days
+									readableDiff = Math.floor(diff / (60 * 60 * 24)) + " days ago"; 
+								} else if( diff > 60 * 60 * 24 ) {
+									// Over one day
+									readableDiff = "One day and " + Math.floor( (diff - 60 * 60 * 24) / (60 * 60)) + " hours ago";
+								} else if( diff > 60 * 60 ) {
+									// Over one hour
+									readableDiff = Math.floor( diff / (60*60)) + " hours ago";
+								} else if( diff > 60 ) {
+									// Over one minute
+									readableDiff = Math.floor( diff / 60) + " minutes ago";
+								} else {
+									// Less than a minute
+									readableDiff = "Less than a minute ago"
+								}
+								
+								job.readableLatestSuccess = readableDiff;
+							}
+							
+							// Provide easy access to any blocking error (used by templates)
+							if( job.log.entries.length > 0 && job.log.entries[0].type === "ERROR") {
+								job.error = {
+									message : job.log.entries[0].message,
+									timestamp : job.log.entries[0].timestamp
+								};
+							} else {
+								job.error = false;
+							}
+						}
+					}
+					
+					cb(me.data);
 				
 				},
 				
@@ -49,16 +95,16 @@ morpheus.components.server.backup.Schedule = function(server) {
 			);
 		},
 		
-		getJob : function(name, cb) {
+		getJob : function(id, cb) {
 			
 			if( me.data === null ) {
 				me.public.getJobs(function() {
-					me.public.getJob(name, cb);
+					me.public.getJob(id, cb);
 				});
 			} else {
 				
 				for(var index in me.data.jobList ) {
-					if( me.data.jobList[index].name === name ) {
+					if( me.data.jobList[index].id == id ) {
 						return cb(me.data.jobList[index]);
 					}
 				}
@@ -69,11 +115,11 @@ morpheus.components.server.backup.Schedule = function(server) {
 			
 		},
 		
-		deleteJob : function(name, callback ) {
+		deleteJob : function(id, callback ) {
 			
 			var callback = typeof(callback) === "function" ? callback : function(){};
 			
-			me.server.admin.del("backup/job/" + name, 
+			me.server.admin.del("backup/job/" + id, 
                 
                 function(data) {
 					callback(true);

@@ -51,7 +51,7 @@ public class DeleteBackupFunctionalTest
         WebResource getResource = client.resource( TestUtil.SERVER_BASE
                                                    + BackupService.ROOT_PATH
                                                    + BackupService.JOBS_PATH
-                                                   + "/somejob" );
+                                                   + "/0" );
 
         ClientResponse getResponse = getResource.accept(
                 MediaType.APPLICATION_JSON ).delete( ClientResponse.class );

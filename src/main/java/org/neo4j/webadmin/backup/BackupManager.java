@@ -2,6 +2,7 @@ package org.neo4j.webadmin.backup;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.properties.ConfigFileFactory;
@@ -42,6 +43,8 @@ public enum BackupManager
 
             config = new BackupConfig( ConfigFileFactory.getBackupConfigFile() );
 
+            log.deleteIrrelevantLogs( config );
+
             scheduler = schedulerFactory.getScheduler();
 
             scheduleBackups();
@@ -53,7 +56,7 @@ public enum BackupManager
 
     public void stop() throws SchedulerException
     {
-        if ( !running )
+        if ( running )
         {
             running = false;
             scheduler.shutdown();
@@ -94,6 +97,7 @@ public enum BackupManager
 
             JobDetail jobDetail = new JobDetail( desc.getName(),
                     "Backup trigger group", QuartzBackupJob.class );
+            jobDetail.setJobDataMap( jobData );
 
             CronTrigger trigger = new CronTrigger( desc.getName() + " Trigger",
                     "Backup trigger group" );
@@ -103,16 +107,14 @@ public enum BackupManager
                 CronExpression cron = new CronExpression(
                         desc.getCronExpression() );
                 trigger.setCronExpression( cron );
+                System.out.println( "Scheduling " + desc.getCronExpression() );
+                scheduler.scheduleJob( jobDetail, trigger );
             }
             catch ( ParseException e )
             {
-                throw new BackupFailedException(
-                        "Failed to initialize backup schedule for job '"
-                                + desc.getName() + "', the cron expression '"
-                                + desc.getCronExpression() + "' is invalid.", e );
+                log.logFailure( new Date(), desc,
+                        "The cron expression is invalid." );
             }
-
-            scheduler.scheduleJob( jobDetail, trigger );
         }
 
         scheduler.start();

@@ -26,6 +26,11 @@ h6 { font-size:0.7em; }
 
 .error { background: #F5C4CA; }
 
+.button { padding: 3px 5px; margin: 3px 3px; border:1px solid #ddd; cursor:pointer; text-decoration:none; -moz-border-radius: 5px; -webkit-border-radius: 5px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold;  }
+.bad-button { background: #F59395; }
+.button:hover {background:#c0e0e5;}
+.bad-button:hover {background: #F57375;}
+
 .warning { padding: 0; background:#EB7775; border:1px solid #d5d5d5; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
 .info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
@@ -57,7 +62,7 @@ input.uncommitted { background:#A1D46A; }
 
 /* Horizontal menu */
 .mor_horizontal_menu { list-style:none; margin: 0; padding: 0; }
-.mor_horizontal_menu li {  }
+.mor_horizontal_menu li { margin:0; padding:0; float:left; }
 
 /* Fancy table */
 table.mor_fancy { margin: 0; padding: 0; border-spacing: none; }
@@ -201,9 +206,18 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 /* Backup */
 .mor_backup_job_list { list-style:none; margin:0; padding:0; }
-.mor_backup_job_list li.mor_backup_job { border-bottom:1px solid #EFEFEF; padding: 5px 10px; }
+.mor_backup_job_list li.mor_backup_job { border-bottom:1px solid #EFEFEF; padding: 10px 10px 15px;  }
 .mor_backup_job_left { float:left; width: 60%; }
 .mor_backup_job_right { float:left; width: 40%; }
+
+.mor_backup_job_right .mor_horizontal_menu { float:right; }
+
+.mor_backup_job h3 { padding:0; margin:0; }
+.mor_backup_job p.mor_backup_info { padding: 0; margin:4px 0; }
+
+.mor_backup_job span.mor_backup_job_label { width: 100px; display:block; float:left; font-weight:bold; }
+
+.mor_backup_job p.mor_backup_job_last { margin: 2px 0 10px; }
 
 /* Gremlin */
 

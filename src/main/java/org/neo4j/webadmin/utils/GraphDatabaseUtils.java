@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.AdminServer;
-import org.neo4j.webadmin.domain.DatabaseBlockedException;
 
 /**
  * Utilities for the local underlying graph database.
@@ -22,13 +21,20 @@ public class GraphDatabaseUtils
     private static boolean isRunning = false;
     private static boolean isBlocked = false;
 
-    private static String blockMessage = "";
-
     public static EmbeddedGraphDatabase getLocalDatabase()
     {
-        if ( isBlocked )
+        while ( isBlocked )
         {
-            throw new DatabaseBlockedException( blockMessage );
+            try
+            {
+                Thread.sleep( 13 );
+            }
+            catch ( InterruptedException e )
+            {
+                throw new RuntimeException(
+                        "Waiting for database to unlock failed, got interruptedexception.",
+                        e );
+            }
         }
 
         try
@@ -55,21 +61,15 @@ public class GraphDatabaseUtils
 
     /**
      * Turn off the database, and disallow access to it.
-     * 
-     * @param message will be used as exception message if someone tries to
-     *            access the database. This will be sent back to clients trying
-     *            to use the database while it is blocked.
      */
-    public synchronized static void shutdownAndBlock( String message )
+    public synchronized static void shutdownAndBlock()
     {
-        blockMessage = message;
         isBlocked = true;
         stop();
     }
 
     public static void unblock()
     {
-        blockMessage = "";
         isBlocked = false;
     }
 

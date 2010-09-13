@@ -56,7 +56,7 @@
 		<div class="mor_span-3">
 			<div class="mor_module">
 				<h2>Backup schedule</h2>
-				<button class="mor_backup_add_job mor_list_button">New job</button>
+				<button class="mor_backup_add_job mor_list_button">Schedule new backup job</button>
 				<ul class="mor_backup_job_list">
 					
 				</ul>

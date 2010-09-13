@@ -7,7 +7,19 @@ public class BackupJobDescription
     private String path;
     private String cronExpression;
 
+    private Integer id;
+
     private Boolean autoFoundation = false;
+
+    public Integer getId()
+    {
+        return id;
+    }
+
+    public void setId( Integer id )
+    {
+        this.id = id;
+    }
 
     public String getName()
     {

@@ -47,7 +47,7 @@ public class BackupService
     public static final String MANUAL_TRIGGER_PATH = "/trigger";
     public static final String MANUAL_FOUNDATION_TRIGGER_PATH = "/triggerfoundation";
     public static final String JOBS_PATH = "/job";
-    public static final String JOB_PATH = JOBS_PATH + "/{name}";
+    public static final String JOB_PATH = JOBS_PATH + "/{id}";
 
     protected ServerProperties properties;
 
@@ -216,11 +216,11 @@ public class BackupService
     @DELETE
     @Path( JOB_PATH )
     @Produces( MediaType.APPLICATION_JSON )
-    public Response deleteBackupJob( @PathParam( "name" ) String name )
+    public Response deleteBackupJob( @PathParam( "id" ) Integer id )
     {
         try
         {
-            BackupManager.INSTANCE.getConfig().removeJobDescription( name );
+            BackupManager.INSTANCE.getConfig().removeJobDescription( id );
             BackupManager.INSTANCE.restart();
 
             return addHeaders( Response.ok() ).build();

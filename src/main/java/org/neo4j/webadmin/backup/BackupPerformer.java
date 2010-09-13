@@ -67,7 +67,7 @@ public class BackupPerformer
 
             if ( wasRunning )
             {
-                GraphDatabaseUtils.shutdownAndBlock( "Performing backup foundation, please wait." );
+                GraphDatabaseUtils.shutdownAndBlock();
             }
 
             cpTree( mainDbPath, backupPath );
@@ -77,6 +77,7 @@ public class BackupPerformer
             if ( wasRunning )
             {
                 GraphDatabaseUtils.unblock();
+                GraphDatabaseUtils.getLocalDatabase();
             }
         }
         catch ( IOException e )

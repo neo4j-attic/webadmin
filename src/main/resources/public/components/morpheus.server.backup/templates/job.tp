@@ -1,4 +1,4 @@
-<input type="hidden" class="mor_job_dialog_old_name" value="{ $T.name }"/>
+<input type="hidden" class="mor_job_dialog_id" value="{ $T.id }"/>
 <table class="mor_fancy">
 	<tbody>
 		<tr>

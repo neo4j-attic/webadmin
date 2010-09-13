@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,7 @@ public class BackupConfig implements Representation
 
     private File configFile;
     private ArrayList<BackupJobDescription> descs = new ArrayList<BackupJobDescription>();
+    private int idCount = 0;
 
     //
     // CONSTRUCT
@@ -51,16 +53,32 @@ public class BackupConfig implements Representation
     public void setJobDescription( BackupJobDescription desc )
             throws IOException
     {
-        removeJobDescription( desc.getName() );
+
+        if ( desc.getId() != null )
+        {
+            removeJobDescription( desc.getId() );
+            if ( idCount < desc.getId() )
+            {
+                idCount = desc.getId();
+            }
+
+            BackupManager.INSTANCE.getLog().logInfo( new Date(), desc,
+                    "Settings changed." );
+        }
+        else
+        {
+            desc.setId( ++idCount );
+        }
+
         descs.add( desc );
         persist();
     }
 
-    public BackupJobDescription getJobDescription( String name )
+    public BackupJobDescription getJobDescription( Integer id )
     {
         for ( BackupJobDescription desc : descs )
         {
-            if ( desc.getName().equals( name ) )
+            if ( desc.getId() == id )
             {
                 return desc;
             }
@@ -68,12 +86,12 @@ public class BackupConfig implements Representation
         return null;
     }
 
-    public void removeJobDescription( String name ) throws IOException
+    public void removeJobDescription( Integer id ) throws IOException
     {
         Iterator<BackupJobDescription> it = descs.iterator();
         while ( it.hasNext() )
         {
-            if ( it.next().getName().equals( name ) )
+            if ( it.next().getId() == id )
             {
                 it.remove();
                 persist();
@@ -82,18 +100,23 @@ public class BackupConfig implements Representation
         }
     }
 
-    public Object serialize()
+    public Object serialize( boolean includeLog )
     {
         Map<String, Object> configMap = new HashMap<String, Object>();
         ArrayList<Object> jobList = new ArrayList<Object>();
 
         for ( BackupJobDescription desc : descs )
         {
-            jobList.add( new BackupJobDescriptionRepresentation( desc ).serialize() );
+            jobList.add( new BackupJobDescriptionRepresentation( desc ).serialize( includeLog ) );
         }
 
         configMap.put( JOB_LIST_KEY, jobList );
         return configMap;
+    }
+
+    public Object serialize()
+    {
+        return serialize( true );
     }
 
     //
@@ -103,7 +126,7 @@ public class BackupConfig implements Representation
     private synchronized void persist() throws IOException
     {
         FileOutputStream configOut = new FileOutputStream( configFile );
-        configOut.write( createJsonFrom( serialize() ).getBytes() );
+        configOut.write( createJsonFrom( serialize( false ) ).getBytes() );
         configOut.close();
 
     }
@@ -114,8 +137,7 @@ public class BackupConfig implements Representation
         try
         {
             String raw = getFileAsString( configFile );
-
-            if ( raw == null || raw.length() == 0 )
+            if ( raw == null || raw.trim().length() == 0 )
             {
                 persist();
             }
@@ -125,15 +147,37 @@ public class BackupConfig implements Representation
                 Map<String, Object> configMap = jsonToMap( raw );
                 descs.clear();
 
+                boolean needsPersistence = false;
+
                 for ( Object item : (List<Object>) configMap.get( JOB_LIST_KEY ) )
                 {
-                    descs.add( BackupJobDescriptionRepresentation.deserialize( (Map<String, Object>) item ) );
+                    BackupJobDescription job = BackupJobDescriptionRepresentation.deserialize( (Map<String, Object>) item );
+                    if ( job.getId() == null )
+                    {
+                        job.setId( ++idCount );
+                        needsPersistence = true;
+                    }
+                    else
+                    {
+                        if ( job.getId() > idCount )
+                        {
+                            idCount = job.getId();
+                        }
+                    }
+
+                    descs.add( job );
+                }
+
+                if ( needsPersistence )
+                {
+                    persist();
                 }
             }
         }
         catch ( Exception e )
         {
             e.printStackTrace();
+            throw new RuntimeException( e );
         }
     }
 }
