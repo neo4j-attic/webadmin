@@ -380,22 +380,13 @@ morpheus.neo4j = function( data )
 	    				
 	    				var timespan = (new Date()).getTime() - me.latestDataPointTime;
 	    				
-	    				console.log("NO DATA");
-	    				
 	    				if( timespan >= me.timespan.year ) {
-	    					console.log("MONTH");
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.month;
 	    				} else if( timespan >= me.timespan.month ) {
-
-	    					console.log("WEEK");
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.week;
 	    				} else if( timespan >= me.timespan.week ) {
-
-	    					console.log("DAY");
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.day;
 	    				} else if( timespan >= me.timespan.day ) {
-
-	    					console.log("SIX HOURS");
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.sixHours;
 	    				}
 	    				

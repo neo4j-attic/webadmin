@@ -43,7 +43,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 			mode: "time",
 		    timeformat: "%H:%M:%S"
 		},
-		yaxis : {},
+		yaxis : { },
 		height : 200,
 		data : [],
 		series : {
@@ -146,7 +146,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		
 		// Set zoom and tick label formatting
 		if( data.timestamps.length > 0 ) {
-			me.settings.xaxis.min = data.timestamps[ data.timestamps.length - 1 ] - me.zoom[me.currentZoom].xSpan;
+			me.settings.xaxis.min = me.convertToLocalTimestamp(data.timestamps[ data.timestamps.length - 1 ]) - me.zoom[me.currentZoom].xSpan;
 			me.settings.xaxis.timeformat = me.zoom[me.currentZoom].timeformat;
 		}
 		
@@ -160,6 +160,14 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 			series : me.settings.series,
 			colors : me.settings.colors
 		});
+	};
+	
+	/**
+	 * Convert from UTC-timestamps to local timezone timestamps. 
+	 * This is the way flot does time zones. Great, isn't it?
+	 */
+	me.convertToLocalTimestamp = function (v) {
+		return v - (new Date()).getTimezoneOffset() * 60 * 1000; 
 	};
 	
 	me.parseData = function(data) {
@@ -178,7 +186,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		// Format data for jqChart
 		for( var i = 0, l = data.timestamps.length; i < l; i++ ) {
 			for( var dataIndex = 0; dataIndex < numberOfDataSeries; dataIndex ++ ) {
-				output[dataIndex].data.push( [ data.timestamps[i], data.data[ me.series[dataIndex].key ][i] ] );
+				output[dataIndex].data.push( [ me.convertToLocalTimestamp(data.timestamps[i]), data.data[ me.series[dataIndex].key ][i] ] );
 			}
 		}
 		
@@ -201,6 +209,15 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
     me.removeTooltip = function() {
 		$("#mor_chart_tooltip").remove();
         me.previousHoverPoint = null;
+	};
+	
+	me.zeroPad = function(val) {
+		val = val + "";
+		if(val.length == 1) {
+			return "0" + val;
+		} else {
+			return val;
+		}
 	};
 	
 	// 
@@ -240,7 +257,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
                     y = item.datapoint[1];
                 
                 y = me.settings.tooltipValueFormatter(y);
-                me.showTooltip(item.pageX, item.pageY, "<span><b>" + item.series.label + ":</b> " + y + "</span><br /><span style='font-size:12px;'>" +  x.getUTCDate() + "/" + x.getUTCMonth() + " - " + x.getUTCHours() + ":" + x.getUTCMinutes() + ":" + x.getUTCSeconds() + "</span>");
+                me.showTooltip(item.pageX, item.pageY, "<span><b>" + item.series.label + ":</b> " + y + "</span><br /><span style='font-size:12px;'>" +  me.zeroPad(x.getUTCDate()) + "/" + me.zeroPad(x.getUTCMonth()) + " - " + me.zeroPad(x.getUTCHours()) + ":" + me.zeroPad(x.getUTCMinutes()) + ":" + me.zeroPad(x.getUTCSeconds()) + "</span>");
             }
         }
         else {
