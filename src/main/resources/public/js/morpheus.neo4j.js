@@ -11,7 +11,16 @@ morpheus.neo4j = function( data )
     
     me.monitoring = false;
     me.monitorInterval = 3000;
-    me.latestDataPointTime = (new Date()).getTime() - 1000 * 60 * 60;
+    
+    me.timespan = {
+    	year     : 1000 * 60 * 60 * 24 * 365,
+    	month    : 1000 * 60 * 60 * 24 * 31,
+    	week     : 1000 * 60 * 60 * 24 * 7,
+    	day      : 1000 * 60 * 60 * 24,
+    	sixHours : 1000 * 60 * 60 * 6,
+    };
+    
+    me.latestDataPointTime = (new Date()).getTime() - me.timespan.year;
     
 
     me.domain = me.name = data.domain || data.name || "unknown";
@@ -365,6 +374,31 @@ morpheus.neo4j = function( data )
 	    					
 	    					allData : me.monitorData
 	    				});
+	    			} else {
+	    				
+	    				// No new data. If we polled a wide timespan, scale it down to see if there is any fine grained data available.
+	    				
+	    				var timespan = (new Date()).getTime() - me.latestDataPointTime;
+	    				
+	    				console.log("NO DATA");
+	    				
+	    				if( timespan >= me.timespan.year ) {
+	    					console.log("MONTH");
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.month;
+	    				} else if( timespan >= me.timespan.month ) {
+
+	    					console.log("WEEK");
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.week;
+	    				} else if( timespan >= me.timespan.week ) {
+
+	    					console.log("DAY");
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.day;
+	    				} else if( timespan >= me.timespan.day ) {
+
+	    					console.log("SIX HOURS");
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.sixHours;
+	    				}
+	    				
 	    			}
 	    			
     			} else {

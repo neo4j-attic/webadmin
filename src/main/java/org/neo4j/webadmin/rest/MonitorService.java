@@ -34,8 +34,8 @@ public class MonitorService
     public static final String DATA_FROM_PATH = "/{start}";
     public static final String DATA_SPAN_PATH = "/{start}/{stop}";
 
-    public static final long MAX_TIMESPAN = 1000 * 60 * 60 * 24 * 14;
-    public static final long DEFAULT_TIMESPAN = 1000 * 60 * 60 * 2;
+    public static final long MAX_TIMESPAN = 1000l * 60l * 60l * 24l * 365l * 5;
+    public static final long DEFAULT_TIMESPAN = 1000 * 60 * 60 * 24;
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
@@ -65,7 +65,9 @@ public class MonitorService
             return buildExceptionResponse(
                     Status.BAD_REQUEST,
                     "Start time must be before stop time, and the total time span can be no bigger than "
-                            + MAX_TIMESPAN + "ms.",
+                            + MAX_TIMESPAN
+                            + "ms. Time span was "
+                            + ( stop - start ) + "ms.",
                     new IllegalArgumentException(), JsonRenderers.DEFAULT );
         }
 
@@ -73,7 +75,8 @@ public class MonitorService
         {
 
             FetchRequest request = RrdManager.getRrdDB().createFetchRequest(
-                    ConsolFun.AVERAGE, start, stop );
+                    ConsolFun.AVERAGE, start, stop,
+                    getResolutionFor( stop - start ) );
 
             String entity = JsonRenderers.DEFAULT.render( new RrdDataRepresentation(
                     request.fetchData() ) );
@@ -86,6 +89,20 @@ public class MonitorService
             return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
                     "SEVERE: Round robin IO error.", e, JsonRenderers.DEFAULT );
         }
+    }
+
+    //
+    // INTERNALS
+    //
+
+    private long getResolutionFor( long timespan )
+    {
+        long preferred = (long) Math.floor( timespan
+                                            / ( RrdManager.STEPS_PER_ARCHIVE * 2 ) );
+
+        // Don't allow resolutions smaller than the actual minimum resolution
+        return preferred > RrdManager.STEP_SIZE ? preferred
+                : RrdManager.STEP_SIZE;
     }
 
 }

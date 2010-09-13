@@ -35,6 +35,9 @@ public class RrdManager
 
     public static final String MEMORY_PERCENT = "memory_usage_percent";
 
+    public static final long STEP_SIZE = 3000;
+    public static final int STEPS_PER_ARCHIVE = 750;
+
     /**
      * Singleton instance of central round robin database.
      */
@@ -48,46 +51,51 @@ public class RrdManager
             try
             {
                 // CREATE RRD DEFINITION
-                RrdDef rrdDef = new RrdDef( getDbFilePath(), 3000 );
+                RrdDef rrdDef = new RrdDef( getDbFilePath(), STEP_SIZE );
 
                 rrdDef.setVersion( 2 );
 
                 // DEFINE DATA SOURCES
 
-                rrdDef.addDatasource( NODE_CACHE_SIZE, DsType.GAUGE, 3000, 0,
-                        Long.MAX_VALUE );
-
-                rrdDef.addDatasource( NODE_COUNT, DsType.GAUGE, 3000, 0,
-                        Long.MAX_VALUE );
-
-                rrdDef.addDatasource( RELATIONSHIP_COUNT, DsType.GAUGE, 3000,
+                rrdDef.addDatasource( NODE_CACHE_SIZE, DsType.GAUGE, STEP_SIZE,
                         0, Long.MAX_VALUE );
 
-                rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE, 3000, 0,
+                rrdDef.addDatasource( NODE_COUNT, DsType.GAUGE, STEP_SIZE, 0,
                         Long.MAX_VALUE );
 
-                rrdDef.addDatasource( MEMORY_PERCENT, DsType.GAUGE, 3000, 0,
-                        Long.MAX_VALUE );
+                rrdDef.addDatasource( RELATIONSHIP_COUNT, DsType.GAUGE,
+                        STEP_SIZE, 0, Long.MAX_VALUE );
+
+                rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE, STEP_SIZE,
+                        0, Long.MAX_VALUE );
+
+                rrdDef.addDatasource( MEMORY_PERCENT, DsType.GAUGE, STEP_SIZE,
+                        0, Long.MAX_VALUE );
 
                 // DEFINE ARCHIVES
 
                 // Last 35 minutes
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, 750 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, STEPS_PER_ARCHIVE );
 
                 // Last 6 hours
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10, 750 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10,
+                        STEPS_PER_ARCHIVE );
 
                 // Last day
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 50, 750 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 50,
+                        STEPS_PER_ARCHIVE );
 
                 // Last week
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 300, 750 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 300,
+                        STEPS_PER_ARCHIVE );
 
                 // Last month
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1300, 750 );
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1300,
+                        STEPS_PER_ARCHIVE );
 
-                // Last year
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 15000, 750 );
+                // Last five years
+                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 15000,
+                        STEPS_PER_ARCHIVE * 5 );
 
                 // INSTANTIATE
 

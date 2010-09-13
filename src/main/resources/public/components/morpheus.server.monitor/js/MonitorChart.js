@@ -49,6 +49,7 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
 		series : {
 			
 		},
+		tooltipValueFormatter : function(v) {return v;},
 		colors : ["#326a75","#4f848f","#a0c2c8","#00191e"]
 	};
 	
@@ -197,6 +198,10 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
         }).appendTo("body").fadeIn(100);
     };
 
+    me.removeTooltip = function() {
+		$("#mor_chart_tooltip").remove();
+        me.previousHoverPoint = null;
+	};
 	
 	// 
 	// CONSTRUCT
@@ -234,14 +239,18 @@ morpheus.components.server.monitor.MonitorChart = function(server, settings) {
                 var x = new Date(item.datapoint[0]),
                     y = item.datapoint[1];
                 
-                me.showTooltip(item.pageX, item.pageY, x.getDate() + "/" + x.getMonth() + " - " + x.getHours() + ":" + x.getMinutes() + ":" + x.getSeconds() + "<br />" + item.series.label + ": " + y);
+                y = me.settings.tooltipValueFormatter(y);
+                me.showTooltip(item.pageX, item.pageY, "<span><b>" + item.series.label + ":</b> " + y + "</span><br /><span style='font-size:12px;'>" +  x.getUTCDate() + "/" + x.getUTCMonth() + " - " + x.getUTCHours() + ":" + x.getUTCMinutes() + ":" + x.getUTCSeconds() + "</span>");
             }
         }
         else {
-            $("#mor_chart_tooltip").remove();
-            me.previousHoverPoint = null;            
+        	me.removeTooltip();
         }
     });
+	
+	$("#" + me.containerId).live("mouseout", me.removeTooltip);
+	
+	$("#mor_chart_tooltip").live("mouseout", me.removeTooltip);
 
 	
 	return me.public;
