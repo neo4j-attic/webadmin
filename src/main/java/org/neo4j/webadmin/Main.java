@@ -63,7 +63,9 @@ public class Main
             BackupManager.INSTANCE.start();
 
             System.out.println( "Starting round-robin system state sampler.." );
+
             RrdSampler.INSTANCE.start();
+
             System.out.println( String.format( "Running database at [%s]",
                     System.getProperty( "org.neo4j.graphdb.location" ) ) );
 

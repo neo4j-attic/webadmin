@@ -10,9 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import com.tinkerpop.gremlin.statements.EvaluationException;
-import com.tinkerpop.gremlin.statements.SyntaxException;
-
 /**
  * A wrapper thread for a given gremlin instance. Webadmin spawns one of these
  * threads for each client that uses the gremlin console.
@@ -83,8 +80,8 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
-                    // scriptEngine.getContext().setWriter( scriptOutput );
-                    // scriptEngine.getContext().setErrorWriter( scriptOutput );
+                    scriptEngine.getContext().setWriter( scriptOutput );
+                    scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
 
                 job = jobQueue.take();
@@ -191,18 +188,16 @@ public class GremlinSession implements Runnable
 
             return outputLines;
         }
-        catch ( SyntaxException e )
-        {
-            return exceptionToResultList( e );
-        }
-        catch ( EvaluationException e )
-        {
-            return exceptionToResultList( e );
-        }
         catch ( ScriptException e )
         {
             return exceptionToResultList( e );
         }
+        catch ( RuntimeException e )
+        {
+            e.printStackTrace();
+            return exceptionToResultList( e );
+        }
+        // TODO: Make sure RuntimeExceptions are wrapped by ScriptExceptionscd
     }
 
     protected List<String> exceptionToResultList( Exception e )

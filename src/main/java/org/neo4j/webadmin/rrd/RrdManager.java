@@ -51,7 +51,15 @@ public class RrdManager
             try
             {
                 // CREATE RRD DEFINITION
-                RrdDef rrdDef = new RrdDef( getDbFilePath(), STEP_SIZE );
+                RrdDef rrdDef;
+                if ( new File( getDbFilePath() ).exists() )
+                {
+                    rrdDef = new RrdDef( getDbFilePath() );
+                }
+                else
+                {
+                    rrdDef = new RrdDef( getDbFilePath(), STEP_SIZE );
+                }
 
                 rrdDef.setVersion( 2 );
 

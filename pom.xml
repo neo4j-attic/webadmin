@@ -164,7 +164,7 @@
 		<dependency>
 			<groupId>com.tinkerpop</groupId>
 			<artifactId>gremlin</artifactId>
-			<version>0.2</version>
+			<version>0.5-SNAPSHOT</version>
 
 		</dependency>
 
@@ -205,6 +205,15 @@
 			<id>jsdoctk1</id>
 			<url>http://jsdoctk-plugin.googlecode.com/svn/repo</url>
 		</repository>
+		<repository>
+           <id>tinkerpop-repository</id>
+           <name>TinkerPop Maven2 Repository</name>
+           <url>http://tinkerpop.com/maven2</url>
+           <snapshots>
+               <enabled>true</enabled>
+               <updatePolicy>daily</updatePolicy>
+           </snapshots>
+       </repository>
 	</repositories>
 
 	<pluginRepositories>

@@ -5,15 +5,15 @@ import java.net.URISyntaxException;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.Main;
-import org.neo4j.webadmin.gremlin.tmpimpl.Neo4jGraphTemp;
 
-import com.tinkerpop.gremlin.GremlinEngine;
+import com.tinkerpop.blueprints.pgm.TransactionalGraph;
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.gremlin.GremlinScriptEngine;
 
 /**
  * Builds gremlin evaluators that come pre-packaged with astonishing connective
@@ -33,19 +33,26 @@ public class GremlinFactory
     {
         try
         {
-            ScriptEngine engine = new GremlinEngine();
+            ScriptEngine engine = new GremlinScriptEngine();
 
             // Inject the local database
             GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase( new URI(
                     WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
 
-            engine.getBindings( ScriptContext.ENGINE_SCOPE ).put(
-                    "$_g",
-                    new Neo4jGraphTemp( dbInstance,
-                            DatabaseLocator.getIndexService( dbInstance ) ) );
+            TransactionalGraph graph = new Neo4jGraph( dbInstance,
+                    DatabaseLocator.getIndexService( dbInstance ) );
 
-            engine.eval( "include 'org.neo4j.webadmin.gremlin.WebAdminFunctions'" );
-            engine.eval( "$_ := g:id(0)" );
+            engine.getBindings( ScriptContext.ENGINE_SCOPE ).put( "$_g", graph );
+
+            try
+            {
+                engine.getBindings( ScriptContext.ENGINE_SCOPE ).put( "$_",
+                        graph.getVertex( 0l ) );
+            }
+            catch ( Exception e )
+            {
+                // Om-nom-nom
+            }
 
             return engine;
         }
@@ -54,11 +61,9 @@ public class GremlinFactory
             throw new RuntimeException(
                     "Db path is corrupt, see nested exception.", e );
         }
-        catch ( ScriptException e )
+        catch ( RuntimeException e )
         {
-            throw new RuntimeException(
-                    "Unable to import webadmin functions to gremlin. See nested exception.",
-                    e );
+            throw e;
         }
     }
 
