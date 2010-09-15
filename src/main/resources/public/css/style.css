@@ -232,12 +232,15 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 .mor_data_key_input.focused, .mor_data_value_input.focused, .mor_data_key_input:hover, .mor_data_value_input:hover { border:1px solid #efefef; }
 
+.mor_data_value_input { width: 170px; }
 .mor_span-3 .mor_data_value_input { width: 150px; }
 
 .mor_data_tinynode span { font-size:9px !important; }
 .mor_data_tinynode .mor_data_uneditable_key { width: 35px; }
 .mor_data_tinynode .mor_data_uneditable_key, .mor_data_tinynode .mor_data_uneditable_value, .mor_data_tinynode .mor_data_key_input, .mor_data_tinynode .mor_data_value_input { padding: 1px 2px; } 
 .mor_data_tinynode td, .mor_data_tinynode th { padding: 1px 2px !important; }
+
+.mor_data_delete_node_button { float:right; margin-top:-4px; }
 
 /* Gremlin */
 

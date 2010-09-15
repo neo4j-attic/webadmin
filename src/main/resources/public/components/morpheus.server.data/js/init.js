@@ -97,28 +97,34 @@ morpheus.components.server.data.base = (function($, undefined) {
         	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
                 me.server.rest.get(me.dataUrl, function(data) { 
                     
-                	me.currentItem = data;
-                	me.currentItem.fields = me.extractFields([me.currentItem]);
-            		
-                	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
-                	me.currentItem.isRelationship = me.dataUrl.indexOf("relationship") == 0 ? true : false;
-                    
-                	me.notFound = false;
-                	
-                	if( me.currentItem.isNode ) {
-                		me.currentItem.relationships = {
-                			fields : me.propertiesToListManager.getListFields(),
-                			data : [],
-                		};
+                	if( data !== null ) {
+	                	me.currentItem = data;
+	                	me.currentItem.fields = me.extractFields([me.currentItem]);
+	            		
+	                	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
+	                	me.currentItem.isRelationship = me.dataUrl.indexOf("relationship") == 0 ? true : false;
+	                    
+	                	me.notFound = false;
+	                	
+	                	if( me.currentItem.isNode ) {
+	                		me.currentItem.relationships = {
+	                			fields : me.propertiesToListManager.getListFields(),
+	                			data : [],
+	                		};
+	                	}
+	                	
+	                    me.render();
+	                    
+	                    if( me.currentItem.isNode ) {
+	                    	me.reloadRelations();
+	                    } else if (me.currentItem.isRelationship) {
+	                    	me.reloadRelationshipNodes();
+	                    }
+                	} else {
+                		me.currentItem = false;
+                    	me.notFound = true;
+                    	me.render();
                 	}
-                	
-                    me.render();
-                    
-                    if( me.currentItem.isNode ) {
-                    	me.reloadRelations();
-                    } else if (me.currentItem.isRelationship) {
-                    	me.reloadRelationshipNodes();
-                    }
                 }, function(request) {
                 	
                 	me.currentItem = false;
@@ -241,7 +247,7 @@ morpheus.components.server.data.base = (function($, undefined) {
     me.hashchange = function(ev) {
         var url = $.bbq.getState( "dataurl" );
         
-        if( url !== me.dataUrl) {
+        if( url !== me.dataUrl && me.notFound !== true) {
         	me.dataUrl = url;
         	me.reload();
     	}

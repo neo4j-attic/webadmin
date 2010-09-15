@@ -45,11 +45,13 @@ morpheus.components.server.data.propertyEditor = (function($, undefined) {
 	
 	me.removeProperty = function(ev) {
 		ev.preventDefault();
-		var key = me.getKey(ev.target);
-		if( key !== null ) {
-			morpheus.del(me.propertyUrl(key));
+		if( confirm("Are you sure?")) {
+			var key = me.getKey(ev.target);
+			if( key !== null ) {
+				morpheus.del(me.propertyUrl(key));
+			}
+			$(ev.target).closest("tr").remove();
 		}
-		$(ev.target).closest("tr").remove();
 	};
 	
 	me.propertyValueChanged = function(ev) {

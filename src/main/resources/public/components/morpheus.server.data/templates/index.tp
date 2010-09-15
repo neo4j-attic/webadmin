@@ -65,7 +65,7 @@
 {#else}
 	{#if $T.item.isNode }
 		<div class="mor_module mor_span-4">
-			<h2>Node</h2>
+			<h2>Node <a href="#" class="button bad-button mor_data_delete_node_button">Remove</a></h2>
 			{#include propertyTable root=$T.item}
 		</div>
 		{#include nodeTable root=$T.item.relationships}
