@@ -4,7 +4,7 @@
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
 		<ul class="mor_horizontal_menu">
-			<li><a href="#" class="mor_data_add_node_button button">New node</a></li>
+			<li><a href="#" class="mor_data_add_node_button button add-button">New node</a></li>
 			<li><a href="#" class="mor_data_refresh_button button">Refresh</a></li>
 			<li><a href="#" class="mor_data_reference_node_button button">Reference node</a></li>
 		</ul>
@@ -168,7 +168,7 @@
 <div class="data-table-container mor_span-5">
 	<div class="actions">
 		Related nodes
-		 <a href="#" class="button mor_data_add_relationship">New relationship</a>
+		 <a href="#" class="button mor_data_add_relationship add-button">New relationship</a>
 	</div>
 	<div class="data-table-body">
 		<table class="mor_fancy data-table" cell-spacing="0">

@@ -28,8 +28,11 @@ h6 { font-size:0.7em; }
 
 .button { padding: 3px 5px; margin: 3px 3px; border:1px solid #ddd; cursor:pointer; text-decoration:none; -moz-border-radius: 5px; -webkit-border-radius: 5px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold;  }
 .bad-button { background: #F59395; }
+.add-button { background: #BAF08D; } 
+
 .button:hover {background:#c0e0e5;}
 .bad-button:hover {background: #F57375;}
+.add-button:hover { background: #9CE660; }
 
 .warning { padding: 0; background:#EB7775; border:1px solid #d5d5d5; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
