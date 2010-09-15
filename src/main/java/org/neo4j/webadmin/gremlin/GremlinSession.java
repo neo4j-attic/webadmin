@@ -37,11 +37,11 @@ public class GremlinSession implements Runnable
      * The scriptengine error and out streams are directed into this string
      * writer.
      */
-    protected StringWriter scriptOutput = new StringWriter();
+    protected StringWriter outputWriter;
 
     /**
-     * Commands waiting to be executed. Number of waiting commands is capped at
-     * 128, since this is meant to be used by a single client.
+     * Commands waiting to be executed. Number of waiting commands is capped,
+     * since this is meant to be used by a single client.
      */
     protected BlockingQueue<GremlinEvaluationJob> jobQueue = new ArrayBlockingQueue<GremlinEvaluationJob>(
             MAX_COMMANDS_WAITING );
@@ -80,8 +80,6 @@ public class GremlinSession implements Runnable
                 if ( scriptEngine == null )
                 {
                     scriptEngine = GremlinFactory.createGremlinScriptEngine();
-                    scriptEngine.getContext().setWriter( scriptOutput );
-                    scriptEngine.getContext().setErrorWriter( scriptOutput );
                 }
 
                 job = jobQueue.take();
@@ -164,6 +162,7 @@ public class GremlinSession implements Runnable
         try
         {
             this.lastTimeUsed = new Date();
+            resetOutputWriter();
 
             List<Object> resultLines = (List<Object>) scriptEngine.eval( line );
 
@@ -171,11 +170,27 @@ public class GremlinSession implements Runnable
             List<String> outputLines = new ArrayList<String>();
 
             // Handle eval() result
+            String[] printLines = outputWriter.toString().split( "\n" );
+
+            if ( printLines.length > 0 && printLines[0].length() > 0 )
+            {
+                for ( String printLine : printLines )
+                {
+                    outputLines.add( printLine );
+                }
+            }
+
             if ( resultLines == null
                  || resultLines.size() == 0
-                 || ( resultLines.size() == 1 && resultLines.get( 0 ).toString().length() == 0 ) )
+                 || ( resultLines.size() == 1 && ( resultLines.get( 0 ) == null || resultLines.get(
+                         0 ).toString().length() == 0 ) ) )
             {
-                outputLines.add( "" );
+                // Result was empty, add empty text if there was also no IO
+                // output
+                if ( outputLines.size() == 0 )
+                {
+                    outputLines.add( "" );
+                }
             }
             else
             {
@@ -197,16 +212,22 @@ public class GremlinSession implements Runnable
             e.printStackTrace();
             return exceptionToResultList( e );
         }
-        // TODO: Make sure RuntimeExceptions are wrapped by ScriptExceptionscd
     }
 
-    protected List<String> exceptionToResultList( Exception e )
+    private List<String> exceptionToResultList( Exception e )
     {
         ArrayList<String> resultList = new ArrayList<String>();
 
         resultList.add( e.getMessage() );
 
         return resultList;
+    }
+
+    private void resetOutputWriter()
+    {
+        outputWriter = new StringWriter();
+        scriptEngine.getContext().setWriter( outputWriter );
+        scriptEngine.getContext().setErrorWriter( outputWriter );
     }
 
 }
