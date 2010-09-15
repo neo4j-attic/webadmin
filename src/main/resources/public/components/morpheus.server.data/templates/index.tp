@@ -3,8 +3,12 @@
 	<h1>Data browser</h1>
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
-		<p class="mor_info"><a href="#" class="mor_data_refresh_button">Refresh current view</a></p>
-		<p class="mor_info"><a href="#" class="mor_data_reference_node_button">Go to reference node</a></p>
+		<ul class="mor_horizontal_menu">
+			<li><a href="#" class="mor_data_add_node_button button">New node</a></li>
+			<li><a href="#" class="mor_data_refresh_button button">Refresh</a></li>
+			<li><a href="#" class="mor_data_reference_node_button button">Reference node</a></li>
+		</ul>
+		<p class="mor_info">&nbsp;</p>
 		<div class="mor_module_foldout">
 			<h2><a href="#" class="mor_module_foldout_trigger">More about the data browser</a></h2>
 			<div class="mor_module_foldout_content">
@@ -121,7 +125,7 @@
 			{#else }
 				<th><input type="text" class="mor_data_key_input" value="{$T.field}" /></th>
 				<td><input type="text" class="mor_data_value_input" value="{$T.data[$T.field]}" /></td>
-				<td><a href="#" class="mor_data_remove_property" title="Remove this property" >X</a></td>
+				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove this property" >Remove</a></td>
 			{#/if}
 		</tr>
 		{#/for}
@@ -129,7 +133,7 @@
 			<td><input type="text" class="mor_data_key_input" /></td>
 			<td><input type="text" class="mor_data_value_input" /></td>
 			{#if $P.propertyEditable !== false }
-				<td><a href="#" class="mor_data_remove_property" title="Remove this property" >X</a></td>
+				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove this property" >Remove</a></td>
 			{#/if }
 		</tr>
 	</tbody>

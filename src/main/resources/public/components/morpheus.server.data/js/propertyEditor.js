@@ -48,8 +48,8 @@ morpheus.components.server.data.propertyEditor = (function($, undefined) {
 		var key = me.getKey(ev.target);
 		if( key !== null ) {
 			morpheus.del(me.propertyUrl(key));
-			$(ev.target).closest("tr").remove();
 		}
+		$(ev.target).closest("tr").remove();
 	};
 	
 	me.propertyValueChanged = function(ev) {
