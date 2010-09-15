@@ -12,12 +12,16 @@ morpheus.neo4j = function( data )
     me.monitoring = false;
     me.monitorInterval = 3000;
     
+    /**
+     * These correspond to the granularities available on the server side.
+     */
     me.timespan = {
     	year     : 1000 * 60 * 60 * 24 * 365,
     	month    : 1000 * 60 * 60 * 24 * 31,
     	week     : 1000 * 60 * 60 * 24 * 7,
     	day      : 1000 * 60 * 60 * 24,
-    	sixHours : 1000 * 60 * 60 * 6,
+    	hours    : 1000 * 60 * 60 * 6,
+    	minutes  : 1000 * 60 * 35
     };
     
     me.latestDataPointTime = (new Date()).getTime() - me.timespan.year;
@@ -315,6 +319,9 @@ morpheus.neo4j = function( data )
     		
     		me.public.admin.get("monitor/" + me.latestDataPointTime, function(data) {
 				
+    			// Set to true in parts of this method to trigger a non-delayed re-request
+    			var quickPoll = false;
+    			
     			if( data ) {
 	    			// Find a data point list to check
 					var key;
@@ -382,12 +389,19 @@ morpheus.neo4j = function( data )
 	    				
 	    				if( timespan >= me.timespan.year ) {
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.month;
+	    					quickPoll = true;
 	    				} else if( timespan >= me.timespan.month ) {
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.week;
+	    					quickPoll = true;
 	    				} else if( timespan >= me.timespan.week ) {
 	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.day;
+	    					quickPoll = true;
 	    				} else if( timespan >= me.timespan.day ) {
-	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.sixHours;
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.hours;
+	    					quickPoll = true;
+	    				} else if( timespan >= me.timespan.day ) {
+	    					me.latestDataPointTime = (new Date()).getTime() - me.timespan.minutes;
+	    					quickPoll = true;
 	    				}
 	    				
 	    			}
@@ -398,7 +412,12 @@ morpheus.neo4j = function( data )
     			}
     			
     			// Trigger a new poll
-    			setTimeout( me.pollMonitor, me.monitorInterval);
+    			if(quickPoll) {
+    				setTimeout( me.pollMonitor, 0);
+    			} else {
+    				setTimeout( me.pollMonitor, me.monitorInterval);
+    			}
+    			
     			
     		}, function(error) {
     			// Trigger a new poll

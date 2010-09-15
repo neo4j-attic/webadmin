@@ -50,64 +50,65 @@ public class RrdManager
 
             try
             {
-                // CREATE RRD DEFINITION
-                RrdDef rrdDef;
-                if ( new File( getDbFilePath() ).exists() )
+                if ( !new File( getDbFilePath() ).exists() )
                 {
-                    rrdDef = new RrdDef( getDbFilePath() );
+                    // CREATE RRD DEFINITION
+                    RrdDef rrdDef = new RrdDef( getDbFilePath(), STEP_SIZE );
+
+                    rrdDef.setVersion( 2 );
+
+                    // DEFINE DATA SOURCES
+
+                    rrdDef.addDatasource( NODE_CACHE_SIZE, DsType.GAUGE,
+                            STEP_SIZE, 0, Long.MAX_VALUE );
+
+                    rrdDef.addDatasource( NODE_COUNT, DsType.GAUGE, STEP_SIZE,
+                            0, Long.MAX_VALUE );
+
+                    rrdDef.addDatasource( RELATIONSHIP_COUNT, DsType.GAUGE,
+                            STEP_SIZE, 0, Long.MAX_VALUE );
+
+                    rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE,
+                            STEP_SIZE, 0, Long.MAX_VALUE );
+
+                    rrdDef.addDatasource( MEMORY_PERCENT, DsType.GAUGE,
+                            STEP_SIZE, 0, Long.MAX_VALUE );
+
+                    // DEFINE ARCHIVES
+
+                    // Last 35 minutes
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1,
+                            STEPS_PER_ARCHIVE );
+
+                    // Last 6 hours
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.2, 10,
+                            STEPS_PER_ARCHIVE );
+
+                    // Last day
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.2, 50,
+                            STEPS_PER_ARCHIVE );
+
+                    // Last week
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.2, 300,
+                            STEPS_PER_ARCHIVE );
+
+                    // Last month
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.2, 1300,
+                            STEPS_PER_ARCHIVE );
+
+                    // Last five years
+                    rrdDef.addArchive( ConsolFun.AVERAGE, 0.2, 15000,
+                            STEPS_PER_ARCHIVE * 5 );
+
+                    // INSTANTIATE
+
+                    INSTANCE = new RrdDb( rrdDef );
+
                 }
                 else
                 {
-                    rrdDef = new RrdDef( getDbFilePath(), STEP_SIZE );
+                    INSTANCE = new RrdDb( getDbFilePath() );
                 }
-
-                rrdDef.setVersion( 2 );
-
-                // DEFINE DATA SOURCES
-
-                rrdDef.addDatasource( NODE_CACHE_SIZE, DsType.GAUGE, STEP_SIZE,
-                        0, Long.MAX_VALUE );
-
-                rrdDef.addDatasource( NODE_COUNT, DsType.GAUGE, STEP_SIZE, 0,
-                        Long.MAX_VALUE );
-
-                rrdDef.addDatasource( RELATIONSHIP_COUNT, DsType.GAUGE,
-                        STEP_SIZE, 0, Long.MAX_VALUE );
-
-                rrdDef.addDatasource( PROPERTY_COUNT, DsType.GAUGE, STEP_SIZE,
-                        0, Long.MAX_VALUE );
-
-                rrdDef.addDatasource( MEMORY_PERCENT, DsType.GAUGE, STEP_SIZE,
-                        0, Long.MAX_VALUE );
-
-                // DEFINE ARCHIVES
-
-                // Last 35 minutes
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1, STEPS_PER_ARCHIVE );
-
-                // Last 6 hours
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 10,
-                        STEPS_PER_ARCHIVE );
-
-                // Last day
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 50,
-                        STEPS_PER_ARCHIVE );
-
-                // Last week
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 300,
-                        STEPS_PER_ARCHIVE );
-
-                // Last month
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 1300,
-                        STEPS_PER_ARCHIVE );
-
-                // Last five years
-                rrdDef.addArchive( ConsolFun.AVERAGE, 0.5, 15000,
-                        STEPS_PER_ARCHIVE * 5 );
-
-                // INSTANTIATE
-
-                INSTANCE = new RrdDb( rrdDef );
             }
             catch ( IOException e )
             {
