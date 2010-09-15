@@ -1,9 +1,9 @@
-morpheus.provide("morpheus.components.server.data.addDeleteNodeManager");
+morpheus.provide("morpheus.components.server.data.nodeManager");
 
 /**
  * Handles creating and removing nodes.
  */
-morpheus.components.server.data.addDeleteNodeManager = (function($, undefined) { 
+morpheus.components.server.data.nodeManager = (function($, undefined) { 
 	
 	var me = {};
 	

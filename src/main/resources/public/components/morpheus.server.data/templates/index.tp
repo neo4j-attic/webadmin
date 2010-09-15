@@ -80,7 +80,7 @@
 			</div>
 		</div>
 		<div class="mor_module mor_span-4">
-			<h2>Relationship</h2>
+			<h2>Relationship <a href="#" class="button bad-button mor_data_delete_relationship_button">Remove</a></h2>
 			{#param name=propertyEditable value=true}
 			{#include propertyTable root=$T.item}
 		</div>

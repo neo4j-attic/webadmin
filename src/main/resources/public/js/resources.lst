@@ -20,7 +20,8 @@ components/morpheus.server.lifecycle/js/init.js
 components/morpheus.server.data/js/propertiesToListManager.js
 components/morpheus.server.data/js/init.js
 components/morpheus.server.data/js/propertyEditor.js
-components/morpheus.server.data/js/addDeleteNodeManager.js
+components/morpheus.server.data/js/nodeManager.js
+components/morpheus.server.data/js/relationshipManager.js
 
 components/morpheus.server.monitor/js/init.js
 components/morpheus.server.monitor/js/jmx.js
