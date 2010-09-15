@@ -333,13 +333,16 @@ morpheus.ui.dialog = (function($){
 	me.container = null;
 	
 	me.public = {
-		show : function(title, body) {
+		show : function(title, body, cb) {
+			me.cb = cb;
 			$("#mor_dialog_title").html(title);
 			$("#mor_dialog_data").html(body);
 			me.showImpl();
 		},
 		
-		showUsingTemplate : function( title, templateUrl, templateContext ) {
+		showUsingTemplate : function( title, templateUrl, templateContext, cb ) {
+			cb = typeof(templateContext) === "function" ? templateContext : cb;
+			me.cb = cb;
 			$("#mor_dialog_title").html(title);
 			$("#mor_dialog_data").setTemplateURL(templateUrl);
 			$("#mor_dialog_data").processTemplate(templateContext || {});
@@ -378,13 +381,18 @@ morpheus.ui.dialog = (function($){
 						+ 20; // padding
 					d.container.animate(
 						{height: h}, 
-						200,
+						100,
 						function () {
 							$("div.close", me.container).show();
 							$("#mor_dialog_data", me.container).show();
+							
+							if( typeof(me.cb) === "function" ) {
+								me.cb(true);
+							}
+							
 						}
 					);
-				}, 300);
+				}, 100);
 			});
 		})
 	};
@@ -392,7 +400,7 @@ morpheus.ui.dialog = (function($){
 	me.close = function (d) {
 		d.container.animate(
 			{top:"-" + (d.container.height() + 20)},
-			500,
+			200,
 			function () {
 				$.modal.close();
 			}

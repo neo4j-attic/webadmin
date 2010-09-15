@@ -23,6 +23,48 @@ morpheus.components.server.data.relationshipManager = (function($, undefined) {
 		return me.dataCore.getServer();
 	};
 	
+	me.addRelatiohship = function(ev) {
+		ev.preventDefault();
+		morpheus.ui.dialog.showUsingTemplate("New relationship","components/morpheus.server.data/templates/new_relationship.tp", me.dialogLoaded);
+	};
+	
+	me.saveNewRelationship = function(ev) {
+		ev.preventDefault();
+		var from = $("#mor_data_relationship_dialog_from").val();
+		var type = $("#mor_data_relationship_dialog_type").val();
+		var to = $("#mor_data_relationship_dialog_to").val();
+		
+		if( from.indexOf("://") ) {
+			from = from.substring(from.lastIndexOf("/")+1);
+		}
+		
+		if( ! to.indexOf("://")) {
+			to = me.server().urls.rest + to;
+		}
+		
+		me.server().rest.post("node/" + from + "/relationships", {
+				"to" : to,
+				"data" : {},
+				"type": type
+			}, function(data) {
+				morpheus.components.server.data.base.reload();
+			}
+		);
+		
+		morpheus.ui.dialog.close();
+	};
+	
+	/**
+	 * This is called each time the create relationship dialog is shown.
+	 */
+	me.dialogLoaded = function() {
+		// Populate from field
+		var id = me.dataCore.getItem().self;
+		id = id.substring(id.lastIndexOf("/") + 1);
+		
+		$("#mor_data_relationship_dialog_from").val(id);
+	};
+	
 	me.deleteItem = function(ev) {
 		ev.preventDefault();
 		if( confirm("Are you sure?")) {
@@ -34,6 +76,8 @@ morpheus.components.server.data.relationshipManager = (function($, undefined) {
 	};
 	
 	$(".mor_data_delete_relationship_button").live("click", me.deleteItem);
+	$(".mor_data_add_relationship").live("click", me.addRelatiohship);
+	$(".mor_data_relationship_dialog_save").live("click", me.saveNewRelationship);
 	
 	return me.public;
 	

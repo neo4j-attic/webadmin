@@ -82,6 +82,57 @@ morpheus.components.server.data.base = (function($, undefined) {
              */
             getItem : function() {
             	return me.currentItem;
+            },
+            
+            reload : function() {
+                
+                if( me.server ) {
+                	
+                	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
+                        me.server.rest.get(me.dataUrl, function(data) { 
+                            
+                        	if( data !== null ) {
+        	                	me.currentItem = data;
+        	                	me.currentItem.fields = me.extractFields([me.currentItem]);
+        	            		
+        	                	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
+        	                	me.currentItem.isRelationship = me.dataUrl.indexOf("relationship") == 0 ? true : false;
+        	                    
+        	                	me.notFound = false;
+        	                	
+        	                	if( me.currentItem.isNode ) {
+        	                		me.currentItem.relationships = {
+        	                			fields : me.propertiesToListManager.getListFields(),
+        	                			data : [],
+        	                		};
+        	                	}
+        	                	
+        	                    me.render();
+        	                    
+        	                    if( me.currentItem.isNode ) {
+        	                    	me.reloadRelations();
+        	                    } else if (me.currentItem.isRelationship) {
+        	                    	me.reloadRelationshipNodes();
+        	                    }
+                        	} else {
+                        		me.currentItem = false;
+                            	me.notFound = true;
+                            	me.render();
+                        	}
+                        }, function(request) {
+                        	
+                        	me.currentItem = false;
+                        	me.notFound = true;
+                        	me.render();
+                        	
+                        });
+                    } else {
+                    	me.public.setDataUrl("node/0");
+                    }
+                } else {
+                	me.render();
+                }
+                
             }
             
     };
@@ -90,56 +141,7 @@ morpheus.components.server.data.base = (function($, undefined) {
     // PRIVATE
     //
     
-    me.reload = function() {
-        
-        if( me.server ) {
-        	
-        	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
-                me.server.rest.get(me.dataUrl, function(data) { 
-                    
-                	if( data !== null ) {
-	                	me.currentItem = data;
-	                	me.currentItem.fields = me.extractFields([me.currentItem]);
-	            		
-	                	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
-	                	me.currentItem.isRelationship = me.dataUrl.indexOf("relationship") == 0 ? true : false;
-	                    
-	                	me.notFound = false;
-	                	
-	                	if( me.currentItem.isNode ) {
-	                		me.currentItem.relationships = {
-	                			fields : me.propertiesToListManager.getListFields(),
-	                			data : [],
-	                		};
-	                	}
-	                	
-	                    me.render();
-	                    
-	                    if( me.currentItem.isNode ) {
-	                    	me.reloadRelations();
-	                    } else if (me.currentItem.isRelationship) {
-	                    	me.reloadRelationshipNodes();
-	                    }
-                	} else {
-                		me.currentItem = false;
-                    	me.notFound = true;
-                    	me.render();
-                	}
-                }, function(request) {
-                	
-                	me.currentItem = false;
-                	me.notFound = true;
-                	me.render();
-                	
-                });
-            } else {
-            	me.public.setDataUrl("node/0");
-            }
-        } else {
-        	me.render();
-        }
-        
-    };
+    me.reload = me.public.reload;
     
     /**
 	 * Triggered when showing a node. This will load all relations for the

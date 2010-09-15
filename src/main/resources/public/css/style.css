@@ -241,6 +241,7 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_data_tinynode td, .mor_data_tinynode th { padding: 1px 2px !important; }
 
 .mor_data_delete_node_button, .mor_data_delete_relationship_button { float:right; margin-top:-4px; }
+.mor_data_add_relationship  { float:right; margin-top:-2px; }
 
 /* Gremlin */
 
