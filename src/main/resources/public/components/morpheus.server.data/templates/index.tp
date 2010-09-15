@@ -60,29 +60,32 @@
 	</div>
 {#else}
 	{#if $T.item.isNode }
-		<div class="mor_module mor_span-2">
+		<div class="mor_module mor_span-4">
 			<h2>Node</h2>
 			{#include propertyTable root=$T.item}
 		</div>
 		{#include nodeTable root=$T.item.relationships}
 	{#elseif $T.item.isRelationship}
-		<div class="mor_span-2">
+		<div class="mor_span-2 mor_data_tinynode">
 			<div class="mor_module">
 				<h2>Start node</h2>
 				{#if $T.item.startNode}
-				{#include propertyTable root=$T.item.startNode}
+					{#param name=propertyEditable value=false}
+					{#include propertyTable root=$T.item.startNode}
 				{#/if}
 			</div>
 		</div>
-		<div class="mor_module mor_span-2">
+		<div class="mor_module mor_span-4">
 			<h2>Relationship</h2>
+			{#param name=propertyEditable value=true}
 			{#include propertyTable root=$T.item}
 		</div>
-		<div class="mor_span-2">
+		<div class="mor_span-2 mor_data_tinynode">
 			<div class="mor_module">
 				<h2>End node</h2>
 				{#if $T.item.endNode}
-				{#include propertyTable root=$T.item.endNode}
+					{#param name=propertyEditable value=false}
+					{#include propertyTable root=$T.item.endNode}
 				{#/if}
 			</div>
 		</div>
@@ -95,23 +98,45 @@
 <table class="mor_fancy" cell-spacing="0">
 	<tbody>
 		<tr>
-			<th>Id</th>
-			<td><a href="{ $T.self }" class="mor_data_url_button">{ $T.self }</a></td>
+			<th><span class="mor_data_uneditable_key">Id</span></th>
+			<td><span class="mor_data_uneditable_value"><a href="{ $T.self }" class="mor_data_url_button">{ $T.self }</a></span></td>
+			{#if $P.propertyEditable !== false }
+				<td></td>
+			{#/if }
 		</tr>
 		{#if $T.type }
 		<tr>
-			<th>Type</th>
-			<td>{$T.type}</td>
+			<th><span class="mor_data_uneditable_key">Type</span></th>
+			<td><span class="mor_data_uneditable_value">{$T.type}</span></td>
+			{#if $P.propertyEditable !== false }
+				<td></td>
+			{#/if }
 		</tr>
 		{#/if}
 		{#foreach $T.fields as field}
 		<tr>
-			<th>{$T.field}</th>
-			<td>{$T.data[$T.field]}</td>
+			{#if $P.propertyEditable === false }
+				<th><span class="mor_data_uneditable_key">{$T.field}</span></th>
+				<td><span class="mor_data_uneditable_value">{$T.data[$T.field]}</span></td>
+			{#else }
+				<th><input type="text" class="mor_data_key_input" value="{$T.field}" /></th>
+				<td><input type="text" class="mor_data_value_input" value="{$T.data[$T.field]}" /></td>
+				<td><a href="#" class="mor_data_remove_property" title="Remove this property" >X</a></td>
+			{#/if}
 		</tr>
-		{#/for} 
+		{#/for}
+		<tr class="mor_data_property_template" style="display:none;">
+			<td><input type="text" class="mor_data_key_input" /></td>
+			<td><input type="text" class="mor_data_value_input" /></td>
+			{#if $P.propertyEditable !== false }
+				<td><a href="#" class="mor_data_remove_property" title="Remove this property" >X</a></td>
+			{#/if }
+		</tr>
 	</tbody>
 </table>
+{#if $P.propertyEditable != false }
+	<a href="#" class="mor_data_add_property mor_list_button">New property</a>
+{#(if}
 {#/template propertyTable}
 
 {#template relationNodeTable}
@@ -136,7 +161,7 @@
 {#/template relationNodeTable}
 
 {#template nodeTable}
-<div class="data-table-container mor_span-4">
+<div class="data-table-container mor_span-5">
 	<div class="actions">
 		Related nodes
 	</div>

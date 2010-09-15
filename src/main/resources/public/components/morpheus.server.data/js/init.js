@@ -12,7 +12,7 @@ morpheus.components.server.data.base = (function($, undefined) {
     me.basePage = $("<div></div>");
     me.ui = {};
 
-	me.manager = morpheus.components.server.data.manager;
+	me.propertiesToListManager = morpheus.components.server.data.propertiesToListManager;
     me.uiLoaded  = false;
     me.server = null;
     
@@ -68,6 +68,20 @@ morpheus.components.server.data.base = (function($, undefined) {
             
             setDataUrl : function(url) {
             	$.bbq.pushState({ dataurl: me.stripUrlBase(url) });
+            },
+            
+            /**
+             * Get the current server being browsed.
+             */
+            getServer : function() {
+            	return me.server;
+            },
+            
+            /**
+             * Return the current item being viewed.
+             */
+            getItem : function() {
+            	return me.currentItem;
             }
             
     };
@@ -93,7 +107,7 @@ morpheus.components.server.data.base = (function($, undefined) {
                 	
                 	if( me.currentItem.isNode ) {
                 		me.currentItem.relationships = {
-                			fields : me.manager.getListFields(),
+                			fields : me.propertiesToListManager.getListFields(),
                 			data : [],
                 		};
                 	}
@@ -216,7 +230,7 @@ morpheus.components.server.data.base = (function($, undefined) {
 	 */
     me.listNamesChanged = function(ev) {
     	if( me.currentItem && me.currentItem.relationships) {
-			me.currentItem.relationships.fields = me.manager.getListFields();
+			me.currentItem.relationships.fields = me.propertiesToListManager.getListFields();
 			me.render();
     	}
     };

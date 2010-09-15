@@ -17,8 +17,9 @@ js/morpheus.forms.js
 # Component dependencies
 components/morpheus.server.lifecycle/js/init.js
 
-components/morpheus.server.data/js/manager.js
+components/morpheus.server.data/js/propertiesToListManager.js
 components/morpheus.server.data/js/init.js
+components/morpheus.server.data/js/propertyEditor.js
 
 components/morpheus.server.monitor/js/init.js
 components/morpheus.server.monitor/js/jmx.js

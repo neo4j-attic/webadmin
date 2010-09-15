@@ -35,7 +35,8 @@ h6 { font-size:0.7em; }
 .notice { padding: 0; background:#FAF68C; border:1px solid #d5d5d5; }
 .info { padding: 0; background:#C0F09C; border:1px solid #d5d5d5; }
 
-.mor_list_button { border:0; border-bottom:1px solid #ddd; cursor:pointer; text-decoration:none; margin: 0; width:100%; display:block; padding: 3px 5px 2px 10px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold; border-top:1px solid #d4d4d4;}
+.mor_list_button { border:0; text-align:center; border-bottom:1px solid #ddd; cursor:pointer; text-decoration:none; margin: 0; width:100%; display:block; padding: 3px 5px 2px 10px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold; border-top:1px solid #d4d4d4;}
+a.mor_list_button { width:auto; }
 .mor_list_button:hover {  background:#c0e0e5;}
 
 input.uncommitted { background:#A1D46A; }
@@ -193,11 +194,16 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_page_leftcol { width: 20%; float:left; }
 .mor_page_rightcol { width: 75%; float:left; padding: 48px 0 0 20px; }
 
-.mor_span-1 { width: 7%; float:left;  margin-right:2%; }
-.mor_span-2 { width: 24%; float:left; margin-right:2%; }
-.mor_span-3 { width: 41%; float:left; margin-right:2%; }
-.mor_span-4 { width: 58%; float:left; margin-right:2%; }
-.mor_span-5 { width: 75%; float:left; margin-right:2%; }
+.mor_span-1 { width: 8%; float:left;  margin-right:2%; }
+.mor_span-2 { width: 18%; float:left; margin-right:2%; }
+.mor_span-3 { width: 28%; float:left; margin-right:2%; }
+.mor_span-4 { width: 38%; float:left; margin-right:2%; }
+.mor_span-5 { width: 48%; float:left; margin-right:2%; }
+.mor_span-6 { width: 58%; float:left; margin-right:2%; }
+.mor_span-7 { width: 68%; float:left; margin-right:2%; }
+.mor_span-8 { width: 78%; float:left; margin-right:2%; }
+.mor_span-9 { width: 88%; float:left; margin-right:2%; }
+.mor_span-10 { width: 98%; float:left; margin-right:2%; }
                            
 
 /* 
@@ -218,6 +224,20 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_backup_job span.mor_backup_job_label { width: 100px; display:block; float:left; font-weight:bold; }
 
 .mor_backup_job p.mor_backup_job_last { margin: 2px 0 10px; }
+
+/* Data */
+
+.mor_data_uneditable_key, .mor_data_uneditable_value, .mor_data_key_input, .mor_data_value_input { display:block; margin:0; padding:3px 4px; border:1px solid transparent; font-size:12px; font-family:sans; }
+.mor_data_uneditable_key, .mor_data_key_input { width: 60px; font-weight:bold; }
+
+.mor_data_key_input.focused, .mor_data_value_input.focused, .mor_data_key_input:hover, .mor_data_value_input:hover { border:1px solid #efefef; }
+
+.mor_span-3 .mor_data_value_input { width: 150px; }
+
+.mor_data_tinynode span { font-size:9px !important; }
+.mor_data_tinynode .mor_data_uneditable_key { width: 35px; }
+.mor_data_tinynode .mor_data_uneditable_key, .mor_data_tinynode .mor_data_uneditable_value, .mor_data_tinynode .mor_data_key_input, .mor_data_tinynode .mor_data_value_input { padding: 1px 2px; } 
+.mor_data_tinynode td, .mor_data_tinynode th { padding: 1px 2px !important; }
 
 /* Gremlin */
 

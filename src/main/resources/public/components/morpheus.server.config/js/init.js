@@ -297,11 +297,15 @@ morpheus.components.server.config = (function($, undefined) {
 	    			$("#mor_setting_" + key).val(val);	
 	    		}
 	    		
-	    		cb( true );
+	    		if(typeof(cb) === "function") {
+	    			cb( true );
+	    		}
 	    		
 	        }, function(ev){
-
-	    		cb( false, ev );
+	        	
+	        	if(typeof(cb) === "function") {
+	        		cb( false, ev );
+	        	}
 	        	
 	        });
 		},

@@ -117,12 +117,10 @@ var morpheus = ( function( $, undefined )
         
         setTimeout((function(method, url, data, success, failure, settings){
         	
-        	if( typeof(data) === "object") {
-        		data = JSON.stringify(data);
-        	}
-        	
         	if( data === null || data === "null" ) {
         		data = "";
+        	} else {
+        		data = JSON.stringify(data);
         	}
         	
             return function() {

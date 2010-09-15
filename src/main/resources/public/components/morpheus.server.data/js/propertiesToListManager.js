@@ -1,9 +1,10 @@
-morpheus.provide("morpheus.components.server.data.manage");
+morpheus.provide("morpheus.components.server.data.propertiesToListManager");
 
 /**
- * Data browser.
+ * Handles the control for what properties to list in the related nodes table in the
+ * data browser.
  */
-morpheus.components.server.data.manager = (function($, undefined) { 
+morpheus.components.server.data.propertiesToListManager = (function($, undefined) { 
 	
 	var me = {};
 	
@@ -58,4 +59,4 @@ morpheus.components.server.data.manager = (function($, undefined) {
 })(jQuery);
 
 
-morpheus.event.bind("morpheus.server.changed", morpheus.components.server.data.manager.serverChanged);
+morpheus.event.bind("morpheus.server.changed", morpheus.components.server.data.propertiesToListManager.serverChanged);

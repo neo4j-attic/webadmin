@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	<div class="mor_page_rightcol">
-		<div class="mor_span-3">
+		<div class="mor_span-4">
 			<div class="mor_backup_configbox mor_module">
 				<h2>Manual backup</h2>
 				<table class="mor_fancy">
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 		
-		<div class="mor_span-3">
+		<div class="mor_span-4">
 			<div class="mor_module">
 				<h2>Backup schedule</h2>
 				<button class="mor_backup_add_job mor_list_button">Schedule new backup job</button>
