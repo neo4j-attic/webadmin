@@ -1,6 +1,6 @@
-morpheus.provide("morpheus.components.server.monitor");
+morpheus.provide("morpheus.components.server.console");
 
-morpheus.components.server.gremlin = (function($, undefined) {
+morpheus.components.server.console = (function($, undefined) {
     
     var me = {};
     
@@ -29,13 +29,13 @@ morpheus.components.server.gremlin = (function($, undefined) {
             
             pageChanged : function(ev) {
                 
-                if(ev.data === "morpheus.server.gremlin") {
+                if(ev.data === "morpheus.server.console") {
                     
                     me.visible = true;
                     
                     if( me.uiLoaded === false ) {
                         me.uiLoaded = true;
-                        me.basePage.setTemplateURL("components/morpheus.server.gremlin/templates/index.tp");
+                        me.basePage.setTemplateURL("components/morpheus.server.console/templates/index.tp");
                         me.render();
                     }
                     
@@ -57,7 +57,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
             },
             
             /**
-             * Send a gremlin command up to the server to be evaluated.
+             * Send a console command up to the server to be evaluated.
              * 
              * @param statement
              *            is the statement string
@@ -77,7 +77,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
                 
                 me.hideInput();
                 
-                me.server.admin.post("gremlin/", {command:statement}, (function(statement, cb) {
+                me.server.admin.post("console/", {command:statement}, (function(statement, cb) {
                     return function(data) {
                         cb(statement, data);
                     	me.showInput();
@@ -127,27 +127,27 @@ morpheus.components.server.gremlin = (function($, undefined) {
             server : me.server
         });
         
-        me.consoleWrap      = $(".mor_gremlin_console_wrap");
-        me.consoleElement   = $("#mor_gremlin_console");
-        me.consoleInputWrap = $("#mor_gremlin_console_input_wrap");
-        me.consoleInput     = $("#mor_gremlin_console_input");
+        me.consoleWrap      = $(".mor_console_console_wrap");
+        me.consoleElement   = $("#mor_console_console");
+        me.consoleInputWrap = $("#mor_console_console_input_wrap");
+        me.consoleInput     = $("#mor_console_console_input");
         
     };
     
     me.hideInput = function() {
-    	$("#mor_gremlin_console_input").hide();
+    	$("#mor_console_console_input").hide();
     };
     
     me.showInput = function() {
-    	$("#mor_gremlin_console_input").show();
+    	$("#mor_console_console_input").show();
     };
     
     me.focusOnInputElement = function() {
-    	$("#mor_gremlin_console_input").focus();
+    	$("#mor_console_console_input").focus();
     };
     
     /**
-     * Default callback for evaluated gremlin statements. Prints the result to
+     * Default callback for evaluated console statements. Prints the result to
      * the ui console.
      */
     me.evalCallback = function(originalStatement, data) {
@@ -172,7 +172,7 @@ morpheus.components.server.gremlin = (function($, undefined) {
     /**
      * Look for enter-key press on input field.
      */
-    $("#mor_gremlin_console_input").live("keyup", function(ev) {
+    $("#mor_console_console_input").live("keyup", function(ev) {
         if( ev.keyCode === 13 ) { // ENTER
             me.public.evaluate(me.consoleInput.val());
             me.consoleInput.val("");
@@ -183,8 +183,8 @@ morpheus.components.server.gremlin = (function($, undefined) {
         }
     });
     
-    $("#mor_gremlin_console").live("click", function(ev) {
-    	if(ev.target.id === "mor_gremlin_console") {
+    $("#mor_console_console").live("click", function(ev) {
+    	if(ev.target.id === "mor_console_console") {
     		me.focusOnInputElement();
     	}
     });
@@ -197,9 +197,9 @@ morpheus.components.server.gremlin = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.server.gremlin",morpheus.components.server.gremlin);
-morpheus.ui.mainmenu.add("Gremlin","morpheus.server.gremlin", null, "server",2);
+morpheus.ui.addPage("morpheus.server.console",morpheus.components.server.console);
+morpheus.ui.mainmenu.add("Console","morpheus.server.console", null, "server",2);
 
-morpheus.event.bind("morpheus.init", morpheus.components.server.gremlin.init);
-morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.gremlin.pageChanged);
-morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.gremlin.serverChanged);
+morpheus.event.bind("morpheus.init", morpheus.components.server.console.init);
+morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.server.console.pageChanged);
+morpheus.event.bind("morpheus.server.changed",  morpheus.components.server.console.serverChanged);

@@ -1,6 +1,6 @@
 {#template MAIN}
     <div class="mor_page_leftcol">
-        <h1>Gremlin</h1>
+        <h1>Console</h1>
         <div class="mor_module">
             
             <p>Gremlin is a programming language for working with graphs. It uses XPath expressions as a base for a full Turing-complete language.</p> 
