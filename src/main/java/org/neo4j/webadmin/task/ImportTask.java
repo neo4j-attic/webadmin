@@ -54,8 +54,11 @@ public class ImportTask implements Runnable
                 stream = new FileInputStream( filename );
             }
 
+            System.out.println( "Running import.." );
             GraphMLReader.inputGraph( graph, stream );
+            System.out.println( "Done!" );
         }
+
         catch ( FileNotFoundException e )
         {
             e.printStackTrace();
