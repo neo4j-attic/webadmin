@@ -14,7 +14,7 @@
 		<tr>
 			<th>Cron expression</th>
 			<td><input type="text" class="mor_job_dialog_cronexp" value="{ $T.cronExpression}" /></td>
-			<td><b>Pattern:</b><br />Sec Min Hour Day Month Weekday [Year]<br /><b style="display:block; float:left; width:80px;">Each minute:</b>0 * * * * ? *<br /><b style="display:block; float:left; width:80px;">Daily:</b>0 0 12 * * ? *<br /><a target="_BLANK" href="http://www.quartz-scheduler.org/docs/api/1.8.1/org/quartz/CronExpression.html">Documentation</a></td>
+			<td><b>Pattern:</b><br />Sec Min Hour Day Month Weekday [Year]<br /><b style="display:block; float:left; width:80px;">Every five minutes:</b>*/5 * * * * ? *<br /><b style="display:block; float:left; width:80px;">Daily:</b>0 0 12 * * ? *<br /><a target="_BLANK" href="http://www.quartz-scheduler.org/docs/api/1.8.1/org/quartz/CronExpression.html">Documentation</a></td>
 		</tr>
 		<tr>
 			<th>Create foundation automatically</th>
