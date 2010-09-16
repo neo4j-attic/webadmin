@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.resources.StaticResourceHandler;
 
 /**
@@ -30,10 +30,10 @@ public class StaticResourcesService
     protected static final String TEMPLATE_MEDIA_TYPE = "text/html";
 
     protected final static StaticResourceHandler jsCompiler = new StaticResourceHandler(
-            Main.getWebRoot(), "js/resources.lst" );
+            AdminServer.INSTANCE.getStaticPath(), "js/resources.lst" );
 
     protected final static StaticResourceHandler templateCompiler = new StaticResourceHandler(
-            Main.getWebRoot(), "templates/resources.lst" );
+            AdminServer.INSTANCE.getStaticPath(), "templates/resources.lst" );
 
     //
     // PUBLIC

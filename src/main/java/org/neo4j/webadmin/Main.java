@@ -47,7 +47,7 @@ public class Main
                     WebServerFactory.DEFAULT_PORT ).intValue();
             adminPort = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
 
-            webRoot = args.get( "webRoot", AdminServer.DEFAULT_WEBROOT );
+            webRoot = args.get( "webRoot", AdminServer.DEFAULT_STATIC_PATH );
 
             //
             // 2. START SERVERS
@@ -97,11 +97,6 @@ public class Main
             shutdown();
         }
 
-    }
-
-    public static String getWebRoot()
-    {
-        return webRoot;
     }
 
     private static void shutdown()

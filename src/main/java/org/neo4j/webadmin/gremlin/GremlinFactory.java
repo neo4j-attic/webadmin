@@ -1,15 +1,11 @@
 package org.neo4j.webadmin.gremlin;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.DatabaseLocator;
-import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 import com.tinkerpop.blueprints.pgm.TransactionalGraph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
@@ -36,8 +32,7 @@ public class GremlinFactory
             ScriptEngine engine = new GremlinScriptEngine();
 
             // Inject the local database
-            GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase( new URI(
-                    WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
+            GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
 
             TransactionalGraph graph = new Neo4jGraph( dbInstance,
                     DatabaseLocator.getIndexService( dbInstance ) );
@@ -55,11 +50,6 @@ public class GremlinFactory
             }
 
             return engine;
-        }
-        catch ( URISyntaxException e )
-        {
-            throw new RuntimeException(
-                    "Db path is corrupt, see nested exception.", e );
         }
         catch ( RuntimeException e )
         {

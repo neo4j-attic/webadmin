@@ -23,25 +23,26 @@ public enum AdminServer
     INSTANCE;
 
     public static final int DEFAULT_PORT = 9988;
-    public static final String DEFAULT_WEBROOT = "public";
+    public static final String DEFAULT_STATIC_PATH = "public";
 
     private GrizzlyWebServer server;
     private int port = DEFAULT_PORT;
+    private String staticPath;
 
     public void startServer()
     {
-        startServer( DEFAULT_PORT, DEFAULT_WEBROOT );
+        startServer( DEFAULT_PORT, DEFAULT_STATIC_PATH );
     }
 
-    public void startServer( int port, String webRoot )
+    public void startServer( int port, String staticPath )
     {
         try
         {
             this.port = port;
-            String absWebRoot = ( new File( webRoot ) ).getAbsolutePath();
+            this.staticPath = ( new File( staticPath ) ).getAbsolutePath();
 
             // Instantiate the server
-            server = new GrizzlyWebServer( port, absWebRoot );
+            server = new GrizzlyWebServer( port, this.staticPath );
 
             // Create REST-adapter
             ServletAdapter jerseyAdapter = new ServletAdapter();
@@ -65,7 +66,7 @@ public enum AdminServer
              * 
              * §%&"#"#"%¤#&!&"/#.
              */
-            GrizzlyAdapter staticAdapter = new GrizzlyAdapter( absWebRoot )
+            GrizzlyAdapter staticAdapter = new GrizzlyAdapter( this.staticPath )
             {
                 public void service( GrizzlyRequest req, GrizzlyResponse res )
                 {
@@ -82,6 +83,14 @@ public enum AdminServer
         {
             throw new RuntimeException( e );
         }
+    }
+
+    /**
+     * @return Path to the folder from which we are serving static content.
+     */
+    public String getStaticPath()
+    {
+        return this.staticPath;
     }
 
     public String getBaseUri()

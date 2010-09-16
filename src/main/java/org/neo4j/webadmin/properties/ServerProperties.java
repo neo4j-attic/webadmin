@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.Representation;
-import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation.PropertyType;
@@ -118,7 +118,8 @@ public class ServerProperties implements Representation
 
         // Static web content folder
         properties.add( new ServerPropertyRepresentation( "web.root",
-                "Web root", Main.getWebRoot(), PropertyType.APP_ARGUMENT,
+                "Web root", AdminServer.INSTANCE.getStaticPath(),
+                PropertyType.APP_ARGUMENT,
                 new ValueDefinition( "-webRoot=", "" ) ) );
 
         // Database folder
