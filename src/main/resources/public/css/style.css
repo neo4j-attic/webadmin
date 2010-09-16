@@ -130,6 +130,12 @@ table:first-child thead th, table.data-table thead th { border-top:medium none; 
 
 td.mor_data_relationship_direction { padding: 0 4px !important; text-align:center;}
 
+/* Pagination */
+
+.mor_paginator { font-size:13px; font-color:#444; padding: 5px 3px; }
+.mor_paginator .inactive { text-decoration:none; color: #777; }
+.mor_paginator_label { padding: 0 4px; }
+
 /* Charts */
 .mor_chart_container { padding: 5px 20px 5px 10px; }
 
@@ -248,10 +254,10 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 /* Gremlin */
 
-.mor_gremlin_console_wrap { border-left: 10px solid black;  background: #333; height:400px; overflow:auto;  }
-.mor_gremlin_console { width: 90%; background: #333; height: 400px; float:left; }
-.mor_gremlin_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
-.mor_gremlin_console p input { padding:0; display:block; width: 95%; float:left; background:transparent; border:none; color:inherit; font-size: inherit; line-height:inherit; font-family: inherit;  }
+.mor_console_wrap { border-left: 10px solid black;  background: #333; height:400px; overflow:auto;  }
+.mor_console { width: 90%; background: #333; height: 400px; float:left; }
+.mor_console p { font-size: 12px; font-family: monospace; color:#fafafa; margin:0; padding:0; font-weight:normal; }
+.mor_console p input { padding:0; display:block; width: 95%; float:left; background:transparent; border:none; color:inherit; font-size: inherit; line-height:inherit; font-family: inherit;  }
 
 /* JMX */
 
@@ -264,7 +270,7 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_jmx_table table { table-layout:fixed; width:100%; }
 .mor_jmx_table  p.description { font-size:90%; color:#555; }
 
-.mor_jmx_table td, .mor_jmx_table th {vertical-align:top;}
+.mor_jmx_table td, .mor_jmx_table th { vertical-align:top; }
 .mor_jmx_table h3 { margin: 2px 0; font-size:13px; }
 .mor_jmx_table h4 {margin: 2px 0;  font-size:12px;}
 .mor_jmx_table td, .mor_jmx_table th {margin: 2px 0; font-size:12px; border-bottom:1px solid #c5c5c5; }

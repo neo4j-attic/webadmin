@@ -1,9 +1,9 @@
-morpheus.provide("morpheus.servermanager");
+morpheus.provide("morpheusmanager");
 
 /**
  * Handles the server picking UI, adding and removing servers. 
  */
-morpheus.servermanager = (function($, undefined) {
+morpheusmanager = (function($, undefined) {
 	
 	var me = {};
 	
@@ -35,7 +35,7 @@ morpheus.servermanager = (function($, undefined) {
 			if( currentServer && servers[i] === currentServer ) {
 				extraClasses = " current";
 			}
-			list.append('<li class="mor_servers_server"><a class="'+extraClasses+'" href="#p=morpheus.server.monitor&s='+servers[i].getName()+'">'+servers[i].getName()+'</a></li>');
+			list.append('<li class="mor_servers_server"><a class="'+extraClasses+'" href="#p=morpheus.monitor&s='+servers[i].getName()+'">'+servers[i].getName()+'</a></li>');
 	    }
 
 		//list.append('<li class="mor_servers_add"><a class="mor_servers_add_button" href="#">+</a></li>');
@@ -49,11 +49,11 @@ morpheus.servermanager = (function($, undefined) {
     if( morpheus.neo4j && morpheus.neo4j.loaded ) {
     	me.reload();
     } else {
-        morpheus.event.bind( "morpheus.servers.loaded", function(ev) { me.reload(); });
+        morpheus.event.bind( "morpheuss.loaded", function(ev) { me.reload(); });
     }
 
-    morpheus.event.bind("morpheus.server.changed",  function() { me.reload(); });
-    morpheus.event.bind("morpheus.servers.changed",  function() { me.reload(); });
+    morpheus.event.bind("morpheus.changed",  function() { me.reload(); });
+    morpheus.event.bind("morpheuss.changed",  function() { me.reload(); });
     
     $("a.mor_servers_add_button").live("click",function(ev){
     	ev.preventDefault();

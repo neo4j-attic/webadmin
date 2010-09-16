@@ -255,7 +255,7 @@ morpheus.neo4j = function( data )
             /**
 			 * Start monitoring this server, polling it at regular intervals for
 			 * data about its health. Call this method, and then listen for
-			 * "morpheus.server.monitor.update" events.
+			 * "morpheus.monitor.update" events.
 			 */
             startMonitoring : function() {
             	if( me.monitoring === false ) {
@@ -370,7 +370,7 @@ morpheus.neo4j = function( data )
 	    				me.monitorData.end_time = me.latestDataPointTime;
 	    				
 	    				// Let the world know
-	    				morpheus.event.trigger("morpheus.server.monitor.update", {
+	    				morpheus.event.trigger("morpheus.monitor.update", {
 	    					server : me.public,
 	    					newData : {
 	    						data: newData,
@@ -475,7 +475,7 @@ morpheus.neo4jHandler = (function(undefined) {
 
         $( window ).bind( "hashchange", me.hashchange );
         me.hashchange();
-        morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
+        morpheus.event.trigger("morpheuss.loaded", { servers : me.servers } );
         
     };
     
@@ -555,13 +555,13 @@ morpheus.neo4jHandler = (function(undefined) {
                 
                 // Hide server-related menu items
                 morpheus.ui.mainmenu.hideSet("server");
-                morpheus.event.trigger("morpheus.server.changed", { server:null });
+                morpheus.event.trigger("morpheus.changed", { server:null });
                 
             } else {
                 
                 // Show server-related menu items
                 morpheus.ui.mainmenu.showSet("server");
-                morpheus.event.trigger("morpheus.server.changed", { server:me.currentServer });
+                morpheus.event.trigger("morpheus.changed", { server:me.currentServer });
                 
             }
         }
@@ -617,7 +617,7 @@ morpheus.neo4jHandler = (function(undefined) {
             
             addServer : function(name, url) {
             	me.servers.push(morpheus.neo4j( { adminUrl : url, restUrl : url, name:name }));
-            	morpheus.event.trigger("morpheus.servers.changed", { servers : me.servers } );
+            	morpheus.event.trigger("morpheuss.changed", { servers : me.servers } );
             },
             
             /**

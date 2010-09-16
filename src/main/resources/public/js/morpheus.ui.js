@@ -15,7 +15,7 @@ morpheus.ui = ( function( $ )
     // PRIVATE
     //
 
-    me.DEFAULT_PAGE = "morpheus.server.monitor";
+    me.DEFAULT_PAGE = "morpheus.monitor";
 
     me.pages = {};
     me.currentPage = null;

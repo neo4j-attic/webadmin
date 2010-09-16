@@ -71,8 +71,9 @@ morpheus.event = ( function()
                         	try {
                         		handler( event );
                         	} catch( e ) {
-                        		morpheus.log("Event handler threw exception: " + e.message + ".");
-                        		morpheus.log("Event: " + key);
+                        		morpheus.log(key + ": event handler threw exception: " + e.message + ".");
+                        		morpheus.log("Handler was: ");
+                        		morpheus.log(handler);
                         	}
                         }
                     } )( handlers[i] ), 0 );
