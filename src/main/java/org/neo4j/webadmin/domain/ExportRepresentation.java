@@ -1,6 +1,8 @@
 package org.neo4j.webadmin.domain;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.neo4j.rest.domain.Representation;
 
@@ -13,6 +15,8 @@ import org.neo4j.rest.domain.Representation;
 public class ExportRepresentation implements Representation
 {
 
+    public static final String EXPORT_URL_KEY = "url";
+
     private URI exportUri;
 
     public ExportRepresentation( URI exportURI )
@@ -22,8 +26,10 @@ public class ExportRepresentation implements Representation
 
     public Object serialize()
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        Map<String, Object> serial = new HashMap<String, Object>();
 
+        serial.put( EXPORT_URL_KEY, exportUri.toString() );
+
+        return serial;
+    }
 }

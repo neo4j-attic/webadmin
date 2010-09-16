@@ -9,11 +9,9 @@ import java.net.URISyntaxException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.ExportRepresentation;
@@ -34,13 +32,6 @@ public class ExportService
 
     private static ExportTask exportTask = new ExportTask();
     private boolean isExporting = false;
-
-    private URI baseUri;
-
-    public ExportService( @Context UriInfo uriInfo )
-    {
-        this.baseUri = uriInfo.getBaseUri();
-    }
 
     /**
      * Trigger a full export of the underlying database. Will perform the export
@@ -73,8 +64,10 @@ public class ExportService
             e.printStackTrace();
         }
 
-        String exportLink = baseUri.toString() + ExportTask.EXPORT_FOLDER_PATH
-                            + "/" + ExportTask.EXPORT_FILE_PATH;
+        // TODO: Use injected baseURI here after merge with neo4j-rest is
+        // complete
+        String exportLink = "/" + ExportTask.EXPORT_FOLDER_PATH + "/"
+                            + ExportTask.EXPORT_FILE_PATH;
 
         String entity;
         try

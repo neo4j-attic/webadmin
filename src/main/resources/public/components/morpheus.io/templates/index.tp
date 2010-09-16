@@ -1,0 +1,20 @@
+{#template MAIN}
+	<div class="mor_page_leftcol">
+		<h1>Import / Export</h1>
+		<div class="mor_module">
+			<p class="mor_info">Import data to and export data from your neo4j database.</p>
+			<p class="mor_info info">This module is currently being implemented, the import features are not yet available.</p>
+		</div>
+	</div>
+	<div class="mor_page_rightcol">
+		<div class="mor_span-4 mor_module">
+			<h2>Export</h2>
+			<p class="mor_info">Export your database as a GraphML file.</p>
+			<p class="mor_info mor_io_export_button_wrap" style="text-align:center;">
+				<button class="mor_io_export_button">Export my database</button>
+			</p>
+			<p class="mor_info mor_io_export_progress_wrap info" style="text-align:center;display:none;">Exporting..</p>
+			<p class="mor_info mor_io_export_error_wrap error" style="text-align:center;display:none;">Unknown error.</p>
+		</div>
+	</div>
+{#/template MAIN}

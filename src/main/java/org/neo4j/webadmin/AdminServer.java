@@ -3,6 +3,7 @@ package org.neo4j.webadmin;
 import java.io.File;
 
 import org.neo4j.rest.WebServer;
+import org.neo4j.webadmin.rest.ContentDispositionFilter;
 
 import com.sun.grizzly.http.embed.GrizzlyWebServer;
 import com.sun.grizzly.http.servlet.ServletAdapter;
@@ -70,10 +71,13 @@ public enum AdminServer
             {
                 public void service( GrizzlyRequest req, GrizzlyResponse res )
                 {
+
                 }
             };
             staticAdapter.setHandleStaticResources( true );
             server.addGrizzlyAdapter( staticAdapter, new String[] { "" } );
+
+            server.addAsyncFilter( new ContentDispositionFilter() );
 
             // Start server
             server.start();

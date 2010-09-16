@@ -38,3 +38,6 @@ components/morpheus.config/js/init.js
 components/morpheus.backup/js/StatusTracker.js
 components/morpheus.backup/js/Schedule.js
 components/morpheus.backup/js/init.js
+
+components/morpheus.io/js/init.js
+components/morpheus.io/js/export.js
