@@ -5,19 +5,25 @@ import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.task.ImportTask;
+
+import com.sun.jersey.multipart.BodyPartEntity;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.MultiPart;
 
 /**
  * Handles importing graphml into the underlying database, either by uploading
@@ -76,18 +82,29 @@ public class ImportService
     @POST
     @Consumes( "multipart/form-data" )
     @Produces( MediaType.APPLICATION_JSON )
-    public Response importFromStream( @FormParam( "file" ) InputStream file )
+    public Response importFromStream( @Context HttpHeaders headers,
+            MultiPart rawMultiPart )
     {
         try
         {
+            FormDataMultiPart formData = (FormDataMultiPart) rawMultiPart;
+
+            String redirect = formData.getField( "redirect" ).getValue().toString();
+            BodyPartEntity bpe = (BodyPartEntity) formData.getField( "file" ).getEntity();
+            InputStream file = bpe.getInputStream();
+
             ImportTask task = new ImportTask( file );
             task.run();
             file.close();
 
-            return addHeaders( Response.ok() ).build();
+            URI redirectTo = new URI( redirect );
+
+            return addHeaders( Response.seeOther( redirectTo ) ).build();
+
         }
         catch ( Exception e )
         {
+            e.printStackTrace();
             return buildExceptionResponse( Status.BAD_REQUEST,
                     "Request failed.", e, JsonRenderers.DEFAULT );
         }

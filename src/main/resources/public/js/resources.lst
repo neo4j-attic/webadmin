@@ -41,4 +41,4 @@ components/morpheus.backup/js/init.js
 
 components/morpheus.io/js/init.js
 components/morpheus.io/js/export.js
-components/morpheus.io/js/urlImport.js
+components/morpheus.io/js/import.js

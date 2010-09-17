@@ -1,9 +1,9 @@
-morpheus.provide("morpheus.components.io.urlImport");
+morpheus.provide("morpheus.components.io.import");
 
 /**
  * Import a graphml file by specifying a URL.
  */
-morpheus.components.io.urlImport= (function($, undefined) {
+morpheus.components.io.import= (function($, undefined) {
 	
 	var me = {};
 	
@@ -47,6 +47,16 @@ morpheus.components.io.urlImport= (function($, undefined) {
 				$(".mor_io_urlImport_error_wrap").html("Import failed, please see the server logs.");
 			});
 		}
+		
+	});
+	
+	$("input.mor_io_fileImport_button").live("click",function(ev) { 
+		
+		// Set redirect to correct value right before submitting.
+		$("input.mor_io_fileImport_redirect").val(location.href);
+		
+		$(".mor_io_fileImport_button_wrap").hide();
+		$(".mor_io_fileImport_progress_wrap").show();
 		
 	});
 	
