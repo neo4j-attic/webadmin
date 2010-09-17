@@ -18,10 +18,16 @@ public class ImportTask implements Runnable
 {
 
     private String filename;
+    private InputStream stream;
 
     public ImportTask( String filename )
     {
         this.filename = filename;
+    }
+
+    public ImportTask( InputStream stream )
+    {
+        this.stream = stream;
     }
 
     /**
@@ -38,17 +44,25 @@ public class ImportTask implements Runnable
 
         try
         {
-            InputStream stream;
-            try
+            if ( stream == null )
             {
-                stream = new URL( filename ).openStream();
-            }
-            catch ( MalformedURLException urlEx )
-            {
-                stream = new FileInputStream( filename );
+                try
+                {
+                    stream = new URL( filename ).openStream();
+                }
+                catch ( MalformedURLException urlEx )
+                {
+                    stream = new FileInputStream( filename );
+                }
             }
 
             GraphMLReader.inputGraph( graph, stream );
+
+            if ( filename != null )
+            {
+                // If we were the ones to open the stream, close it.
+                stream.close();
+            }
         }
 
         catch ( FileNotFoundException e )

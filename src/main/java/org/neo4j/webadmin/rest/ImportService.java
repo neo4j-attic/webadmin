@@ -4,9 +4,11 @@ import static org.neo4j.rest.domain.JsonHelper.jsonToMap;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -34,6 +36,12 @@ public class ImportService
 
     public static final String URL_KEY = "url";
 
+    /**
+     * Import a graphml file from any given URL. This includes local files.
+     * 
+     * @param json
+     * @return
+     */
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON )
@@ -65,4 +73,23 @@ public class ImportService
         }
     }
 
+    @POST
+    @Consumes( "multipart/form-data" )
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response importFromStream( @FormParam( "file" ) InputStream file )
+    {
+        try
+        {
+            ImportTask task = new ImportTask( file );
+            task.run();
+            file.close();
+
+            return addHeaders( Response.ok() ).build();
+        }
+        catch ( Exception e )
+        {
+            return buildExceptionResponse( Status.BAD_REQUEST,
+                    "Request failed.", e, JsonRenderers.DEFAULT );
+        }
+    }
 }
