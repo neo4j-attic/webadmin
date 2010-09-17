@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.gremlin;
+package org.neo4j.webadmin.console;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-public class GremlinSessions
+public class ConsoleSessions
 {
 
-    protected static ConcurrentHashMap<String, GremlinSession> sessions = new ConcurrentHashMap<String, GremlinSession>();
+    protected static ConcurrentHashMap<String, ConsoleSession> sessions = new ConcurrentHashMap<String, ConsoleSession>();
 
     //
     // PUBLIC
@@ -24,7 +24,7 @@ public class GremlinSessions
      * Gets a GremlinSesssion for a given sessionId, creating a GremlinSession
      * if one does not exist.
      */
-    public static GremlinSession getSession( String sessionId )
+    public static ConsoleSession getSession( String sessionId )
     {
         ensureSessionExists( sessionId );
         return sessions.get( sessionId );
@@ -63,7 +63,7 @@ public class GremlinSessions
     {
         if ( !sessions.containsKey( sessionId ) )
         {
-            sessions.put( sessionId, new GremlinSession() );
+            sessions.put( sessionId, new ConsoleSession() );
         }
     }
 

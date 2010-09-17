@@ -29,10 +29,10 @@ import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.rest.domain.PropertyValueException;
 import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
-import org.neo4j.webadmin.gremlin.GremlinSessions;
 import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
@@ -203,7 +203,7 @@ public class ConfigService
                             AdminServer.INSTANCE.getBaseUri() ) );
                     WebServerFactory.getDefaultWebServer().startServer(
                             Main.restPort );
-                    GremlinSessions.destroyAllSessions();
+                    ConsoleSessions.destroyAllSessions();
                 }
             }
 

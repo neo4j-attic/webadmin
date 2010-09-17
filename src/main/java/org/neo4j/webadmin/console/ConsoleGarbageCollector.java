@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.gremlin;
+package org.neo4j.webadmin.console;
 
 import java.util.Collection;
 
@@ -10,13 +10,13 @@ import java.util.Collection;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-public class GremlinGarbageCollector extends Thread
+public class ConsoleGarbageCollector extends Thread
 {
 
     long updateInterval = 3000000; // 50 minutes
     long maxIdleInterval = 1790000; // 29 minutes
 
-    GremlinGarbageCollector()
+    ConsoleGarbageCollector()
     {
         setDaemon( true );
         start();
@@ -36,19 +36,19 @@ public class GremlinGarbageCollector extends Thread
             {
             }
 
-            Collection<String> sessionIds = GremlinSessions.getSessionIds();
+            Collection<String> sessionIds = ConsoleSessions.getSessionIds();
 
             for ( String sessionId : sessionIds )
             {
                 // Make sure session exists (otherwise
                 // GremlinSessions.getSession() will create it)
-                if ( GremlinSessions.hasSession( sessionId ) )
+                if ( ConsoleSessions.hasSession( sessionId ) )
                 {
                     // If idle time is above our threshold
-                    if ( GremlinSessions.getSession( sessionId ).getIdleTime() > maxIdleInterval )
+                    if ( ConsoleSessions.getSession( sessionId ).getIdleTime() > maxIdleInterval )
                     {
                         // Throw the GremlinSession instance to the wolves
-                        GremlinSessions.destroySession( sessionId );
+                        ConsoleSessions.destroySession( sessionId );
                     }
                 }
             }

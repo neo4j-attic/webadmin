@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.gremlin;
+package org.neo4j.webadmin.console;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -61,7 +61,7 @@ public class GremlinFactory
     {
         if ( initiated == false )
         {
-            new GremlinGarbageCollector();
+            new ConsoleGarbageCollector();
         }
     }
 }

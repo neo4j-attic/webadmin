@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.gremlin;
+package org.neo4j.webadmin.console;
 
 import java.util.List;
 
@@ -8,14 +8,14 @@ import java.util.List;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-class GremlinEvaluationJob
+class ConsoleEvaluationJob
 {
 
     protected String script;
     protected List<String> result;
     protected volatile boolean complete = false;
 
-    public GremlinEvaluationJob( String script )
+    public ConsoleEvaluationJob( String script )
     {
         this.script = script;
     }

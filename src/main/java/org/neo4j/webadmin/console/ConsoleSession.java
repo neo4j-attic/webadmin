@@ -1,4 +1,4 @@
-package org.neo4j.webadmin.gremlin;
+package org.neo4j.webadmin.console;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import javax.script.ScriptException;
  * 
  */
 @SuppressWarnings( "restriction" )
-public class GremlinSession implements Runnable
+public class ConsoleSession implements Runnable
 {
 
     public static final int MAX_COMMANDS_WAITING = 128;
@@ -43,7 +43,7 @@ public class GremlinSession implements Runnable
      * Commands waiting to be executed. Number of waiting commands is capped,
      * since this is meant to be used by a single client.
      */
-    protected BlockingQueue<GremlinEvaluationJob> jobQueue = new ArrayBlockingQueue<GremlinEvaluationJob>(
+    protected BlockingQueue<ConsoleEvaluationJob> jobQueue = new ArrayBlockingQueue<ConsoleEvaluationJob>(
             MAX_COMMANDS_WAITING );
 
     /**
@@ -60,7 +60,7 @@ public class GremlinSession implements Runnable
     // CONSTRUCT
     //
 
-    public GremlinSession()
+    public ConsoleSession()
     {
         runner.start();
     }
@@ -72,7 +72,7 @@ public class GremlinSession implements Runnable
     public void run()
     {
 
-        GremlinEvaluationJob job;
+        ConsoleEvaluationJob job;
         try
         {
             while ( true )
@@ -108,7 +108,7 @@ public class GremlinSession implements Runnable
     {
         try
         {
-            GremlinEvaluationJob job = new GremlinEvaluationJob( script );
+            ConsoleEvaluationJob job = new ConsoleEvaluationJob( script );
 
             jobQueue.add( job );
 

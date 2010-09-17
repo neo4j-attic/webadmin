@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
-import org.neo4j.webadmin.gremlin.GremlinSessions;
+import org.neo4j.webadmin.console.ConsoleSessions;
 
 /**
  * A web service that keeps track of client sessions and then passes control
@@ -71,7 +71,7 @@ public class ConsoleService
 
             String sessionId = req.getSession( true ).getId();
 
-            List<String> resultLines = GremlinSessions.getSession( sessionId ).evaluate(
+            List<String> resultLines = ConsoleSessions.getSession( sessionId ).evaluate(
                     (String) args.get( "command" ) );
 
             String entity = JsonHelper.createJsonFrom( resultLines );

@@ -13,8 +13,8 @@ import javax.ws.rs.core.Response;
 import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
-import org.neo4j.webadmin.gremlin.GremlinSessions;
 
 /**
  * REST service to start, stop and restart the neo4j backend.
@@ -65,7 +65,7 @@ public class LifeCycleService
         if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
         {
             WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
-            GremlinSessions.destroyAllSessions();
+            ConsoleSessions.destroyAllSessions();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.RUNNING,
                     LifecycleRepresentation.PerformedAction.STARTED );
@@ -137,7 +137,7 @@ public class LifeCycleService
         }
         shutdownLocalDatabase();
         WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
-        GremlinSessions.destroyAllSessions();
+        ConsoleSessions.destroyAllSessions();
 
         LifecycleRepresentation status = new LifecycleRepresentation(
                 LifecycleRepresentation.Status.RUNNING,
