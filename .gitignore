@@ -4,3 +4,4 @@
 target
 neo4j-rest-db
 neo4j-rrdb
+export/database.gml

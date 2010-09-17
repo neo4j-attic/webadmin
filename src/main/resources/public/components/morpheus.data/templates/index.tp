@@ -70,7 +70,12 @@
 		</div>
 		{#include nodeTable root=$T.item.relationships}
 	{#elseif $T.item.isRelationship}
-		<div class="mor_span-2 mor_data_tinynode">
+		<div class="mor_module mor_span-8">
+			<h2>Relationship <a href="#" class="button bad-button mor_data_delete_relationship_button">Remove</a></h2>
+			{#param name=propertyEditable value=true}
+			{#include propertyTable root=$T.item}
+		</div>
+		<div class="mor_span-4">
 			<div class="mor_module">
 				<h2>Start node</h2>
 				{#if $T.item.startNode}
@@ -79,12 +84,7 @@
 				{#/if}
 			</div>
 		</div>
-		<div class="mor_module mor_span-4">
-			<h2>Relationship <a href="#" class="button bad-button mor_data_delete_relationship_button">Remove</a></h2>
-			{#param name=propertyEditable value=true}
-			{#include propertyTable root=$T.item}
-		</div>
-		<div class="mor_span-2 mor_data_tinynode">
+		<div class="mor_span-4">
 			<div class="mor_module">
 				<h2>End node</h2>
 				{#if $T.item.endNode}
@@ -153,7 +153,7 @@
 		<table class="mor_fancy data-table" cell-spacing="0">
 			<thead>
 				<tr>
-					<th>Direction</th>
+					<th>Dir</th>
 					<th>Relationship</th>
 					<th>Node id</th>
 					{#foreach $T.fields as field}

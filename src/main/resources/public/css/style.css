@@ -237,18 +237,17 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 /* Data */
 
 .mor_data_uneditable_key, .mor_data_uneditable_value, .mor_data_key_input, .mor_data_value_input { display:block; margin:0; padding:3px 4px; border:1px solid transparent; font-size:12px; font-family:sans; }
-.mor_data_uneditable_key, .mor_data_key_input { width: 60px; font-weight:bold; }
+.mor_data_uneditable_key, .mor_data_key_input { width: 90px; font-weight:bold; }
 
 .mor_data_key_input.focused, .mor_data_value_input.focused, .mor_data_key_input:hover, .mor_data_value_input:hover { border:1px solid #efefef; }
+
+.mor_data_uneditable_key { color:#999; }
 
 .mor_data_value_input { width: 170px; }
 .mor_span-3 .mor_data_value_input { width: 150px; }
 
-.mor_data_tinynode span { font-size:9px !important; }
-.mor_data_tinynode .mor_data_uneditable_key { width: 35px; }
-.mor_data_tinynode .mor_data_uneditable_key, .mor_data_tinynode .mor_data_uneditable_value, .mor_data_tinynode .mor_data_key_input, .mor_data_tinynode .mor_data_value_input { padding: 1px 2px; } 
-.mor_data_tinynode td, .mor_data_tinynode th { padding: 1px 2px !important; }
-
+.mor_data_remove_property { border:0; width:16px; height:16px; padding:0; color:transparent; overflow:hidden; display:block; background:url(/img/icons/16x16/actions/delete-inactive.png) no-repeat; }
+.mor_data_remove_property:hover { background:url(/img/icons/16x16/actions/delete.png) no-repeat; border:0; }
 .mor_data_delete_node_button, .mor_data_delete_relationship_button { float:right; margin-top:-4px; }
 .mor_data_add_relationship  { float:right; margin-top:-2px; }
 

@@ -29,7 +29,7 @@ morpheus.components.data.base = (function($, undefined) {
     /**
      * Number of related nodes to show per page.
      */
-    me.relatedNodesPerPage = 50;
+    me.relatedNodesPerPage = 10;
     
     //
     // PUBLIC
@@ -100,9 +100,12 @@ morpheus.components.data.base = (function($, undefined) {
                 	
                 	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
                         me.server.rest.get(me.dataUrl, function(data) { 
+    	                	
+                    		me.currentRelatedNodePage = 0;
                             
                         	if( data !== null ) {
-        	                	me.currentItem = data;
+                        		
+                        		me.currentItem = data;
         	                	me.currentItem.fields = me.extractFields([me.currentItem]);
         	            		
         	                	me.currentItem.isNode = me.dataUrl.indexOf("node") == 0 ? true : false;
@@ -286,6 +289,7 @@ morpheus.components.data.base = (function($, undefined) {
 	 * Triggered when the URL hash state changes.
 	 */
     me.hashchange = function(ev) {
+    	
         var url = $.bbq.getState( "dataurl" );
         
         if( url !== me.dataUrl && me.notFound !== true) {
