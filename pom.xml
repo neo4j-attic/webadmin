@@ -214,6 +214,10 @@
 			<url>http://jsdoctk-plugin.googlecode.com/svn/repo</url>
 		</repository>
 		<repository>
+			<id>java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
 			<id>tinkerpop-repository</id>
 			<name>TinkerPop Maven2 Repository</name>
 			<url>http://tinkerpop.com/maven2</url>
