@@ -10,11 +10,21 @@
 		<div class="mor_span-4 mor_module">
 			<h2>Export</h2>
 			<p class="mor_info">Export your database as a GraphML file.</p>
-			<p class="mor_info mor_io_export_button_wrap" style="text-align:center;">
+			<p class="mor_info mor_io_export_button_wrap">
 				<button class="mor_io_export_button">Export my database</button>
 			</p>
 			<p class="mor_info mor_io_export_progress_wrap info" style="text-align:center;display:none;">Exporting..</p>
 			<p class="mor_info mor_io_export_error_wrap error" style="text-align:center;display:none;">Unknown error.</p>
+		</div>
+		<div class="mor_span-4 mor_module">
+			<h2>Import from URL</h2>
+			<p class="mor_info">Import a GraphML file from a URL.</p>
+			<p class="mor_info mor_io_urlImport_button_wrap">
+				<input type="url" class="mor_io_urlImport_url" />
+				<button class="mor_io_urlImport_button">Import</button>
+			</p>
+			<p class="mor_info mor_io_urlImport_progress_wrap info" style="text-align:center;display:none;">Importing..</p>
+			<p class="mor_info mor_io_urlImport_error_wrap error" style="text-align:center;display:none;">Unknown error.</p>
 		</div>
 	</div>
 {#/template MAIN}

@@ -13,6 +13,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.webadmin.parser.GraphMLReader;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
+@SuppressWarnings( "restriction" )
 public class ImportTask implements Runnable
 {
 
@@ -47,16 +48,14 @@ public class ImportTask implements Runnable
                 stream = new FileInputStream( filename );
             }
 
-            System.out.println( "Running import.." );
             GraphMLReader.inputGraph( graph, stream );
-            System.out.println( "Done!" );
         }
 
         catch ( FileNotFoundException e )
         {
             e.printStackTrace();
         }
-        catch ( @SuppressWarnings( "restriction" ) XMLStreamException e )
+        catch ( XMLStreamException e )
         {
             e.printStackTrace();
         }
