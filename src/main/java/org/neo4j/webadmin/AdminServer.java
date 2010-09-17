@@ -107,6 +107,11 @@ public enum AdminServer
         server.stop();
     }
 
+    public int getPort()
+    {
+        return port;
+    }
+
     public static String getLocalhostBaseUri()
     {
         return getLocalhostBaseUri( DEFAULT_PORT );

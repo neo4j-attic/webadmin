@@ -6,8 +6,6 @@ import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 import static org.neo4j.webadmin.rest.WebUtils.dodgeStartingUnicodeMarker;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -23,12 +21,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.rest.WebServerFactory;
-import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.rest.domain.PropertyValueException;
-import org.neo4j.webadmin.AdminServer;
-import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
@@ -36,6 +31,7 @@ import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 /**
  * A web service that exposes various configuration settings for a running neo4j
@@ -198,11 +194,13 @@ public class ConfigService
                 // restart.
                 if ( LifeCycleService.serverStatus == LifecycleRepresentation.Status.RUNNING )
                 {
+
+                    int restPort = WebServerFactory.getDefaultWebServer().getPort();
+
                     WebServerFactory.getDefaultWebServer().stopServer();
-                    DatabaseLocator.shutdownGraphDatabase( new URI(
-                            AdminServer.INSTANCE.getBaseUri() ) );
+                    GraphDatabaseUtils.shutdownLocalDatabase();
                     WebServerFactory.getDefaultWebServer().startServer(
-                            Main.restPort );
+                            restPort );
                     ConsoleSessions.destroyAllSessions();
                 }
             }
@@ -239,12 +237,6 @@ public class ConfigService
                     Status.INTERNAL_SERVER_ERROR,
                     "Unable to save changes to disk, does daemon user have write permissions?",
                     e, JsonRenderers.DEFAULT );
-        }
-        catch ( URISyntaxException e )
-        {
-            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
-                    "SEVERE: Database location path corrupt.", e,
-                    JsonRenderers.DEFAULT );
         }
     }
 }

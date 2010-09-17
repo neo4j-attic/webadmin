@@ -1,13 +1,10 @@
 package org.neo4j.webadmin.task;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.neo4j.rest.WebServerFactory;
-import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.AdminServer;
-import org.neo4j.webadmin.Main;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 import org.neo4j.webadmin.utils.PlatformUtils;
 import org.tanukisoftware.wrapper.WrapperManager;
 
@@ -37,8 +34,7 @@ public class JvmRestartTask implements Runnable
                 // Stop running servers
                 System.out.println( "JVM Reboot. Shutting down server." );
                 WebServerFactory.getDefaultWebServer().stopServer();
-                DatabaseLocator.shutdownGraphDatabase( new URI(
-                        WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
+                GraphDatabaseUtils.shutdownLocalDatabase();
                 AdminServer.INSTANCE.stopServer();
 
                 if ( PlatformUtils.isWindows() )
@@ -57,10 +53,6 @@ public class JvmRestartTask implements Runnable
         catch ( IOException e )
         {
             // TODO: Attempt to resolve the problems that are resolveable
-            e.printStackTrace();
-        }
-        catch ( URISyntaxException e )
-        {
             e.printStackTrace();
         }
     }

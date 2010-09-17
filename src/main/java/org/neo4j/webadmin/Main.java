@@ -21,11 +21,6 @@ import org.quartz.SchedulerException;
 public class Main
 {
 
-    public static int restPort;
-    public static int adminPort;
-
-    private static String webRoot;
-
     public static void main( String[] strArgs ) throws Exception
     {
         try
@@ -43,11 +38,13 @@ public class Main
             System.setProperty( "org.neo4j.webadmin.rrdb.location",
                     args.get( "rrdbPath", "neo4j-rrdb" ) );
 
-            restPort = args.getNumber( "restPort",
+            int restPort = args.getNumber( "restPort",
                     WebServerFactory.DEFAULT_PORT ).intValue();
-            adminPort = args.getNumber( "adminPort", AdminServer.DEFAULT_PORT ).intValue();
+            int adminPort = args.getNumber( "adminPort",
+                    AdminServer.DEFAULT_PORT ).intValue();
 
-            webRoot = args.get( "webRoot", AdminServer.DEFAULT_STATIC_PATH );
+            String webRoot = args.get( "webRoot",
+                    AdminServer.DEFAULT_STATIC_PATH );
 
             //
             // 2. START SERVERS

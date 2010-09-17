@@ -2,20 +2,16 @@ package org.neo4j.webadmin.backup;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
 import org.neo4j.onlinebackup.Neo4jBackup;
-import org.neo4j.rest.WebServerFactory;
-import org.neo4j.rest.domain.DatabaseLocator;
-import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.properties.ServerProperties;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 /**
  * Performs a backup of a running neo4j database.
@@ -117,8 +113,7 @@ public class ManualBackupJob implements Runnable
             this.started = new Date();
 
             // Perform backup
-            EmbeddedGraphDatabase db = (EmbeddedGraphDatabase) DatabaseLocator.getGraphDatabase( new URI(
-                    WebServerFactory.getLocalhostBaseUri( Main.restPort ) ) );
+            EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
 
             Backup backup = Neo4jBackup.allDataSources( db,
                     this.backupPath.getAbsolutePath() );
@@ -130,11 +125,6 @@ public class ManualBackupJob implements Runnable
         catch ( IOException e )
         {
             e.printStackTrace();
-        }
-        catch ( URISyntaxException e )
-        {
-            throw new RuntimeException( "Fatal: Database location is corrupt.",
-                    e );
         }
         catch ( IllegalStateException e )
         {

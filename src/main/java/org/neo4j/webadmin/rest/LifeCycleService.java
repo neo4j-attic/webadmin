@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response;
 
 import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.JsonRenderers;
-import org.neo4j.webadmin.Main;
 import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 
@@ -64,7 +63,8 @@ public class LifeCycleService
 
         if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
         {
-            WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
+            int restPort = WebServerFactory.getDefaultWebServer().getPort();
+            WebServerFactory.getDefaultWebServer().startServer( restPort );
             ConsoleSessions.destroyAllSessions();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.RUNNING,
@@ -136,7 +136,10 @@ public class LifeCycleService
             // REST server was not running
         }
         shutdownLocalDatabase();
-        WebServerFactory.getDefaultWebServer().startServer( Main.restPort );
+
+        int restPort = WebServerFactory.getDefaultWebServer().getPort();
+
+        WebServerFactory.getDefaultWebServer().startServer( restPort );
         ConsoleSessions.destroyAllSessions();
 
         LifecycleRepresentation status = new LifecycleRepresentation(

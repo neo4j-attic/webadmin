@@ -10,12 +10,8 @@ import java.net.URL;
 import javax.xml.stream.XMLStreamException;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.parser.GraphMLReader;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
-
-import com.tinkerpop.blueprints.pgm.TransactionalGraph;
-import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
-import com.tinkerpop.blueprints.pgm.parser.GraphMLReader;
 
 public class ImportTask implements Runnable
 {
@@ -37,10 +33,7 @@ public class ImportTask implements Runnable
         // import functionality from
         // there.
 
-        GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
-
-        TransactionalGraph graph = new Neo4jGraph( dbInstance,
-                DatabaseLocator.getIndexService( dbInstance ) );
+        GraphDatabaseService graph = GraphDatabaseUtils.getLocalDatabase();
 
         try
         {
