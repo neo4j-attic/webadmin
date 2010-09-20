@@ -49,11 +49,11 @@ morpheusmanager = (function($, undefined) {
     if( morpheus.neo4j && morpheus.neo4j.loaded ) {
     	me.reload();
     } else {
-        morpheus.event.bind( "morpheuss.loaded", function(ev) { me.reload(); });
+        morpheus.event.bind( "morpheus.servers.loaded", function(ev) { me.reload(); });
     }
 
     morpheus.event.bind("morpheus.changed",  function() { me.reload(); });
-    morpheus.event.bind("morpheuss.changed",  function() { me.reload(); });
+    morpheus.event.bind("morpheus.servers.changed",  function() { me.reload(); });
     
     $("a.mor_servers_add_button").live("click",function(ev){
     	ev.preventDefault();

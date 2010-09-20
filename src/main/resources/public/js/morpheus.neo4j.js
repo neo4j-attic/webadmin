@@ -475,7 +475,7 @@ morpheus.neo4jHandler = (function(undefined) {
 
         $( window ).bind( "hashchange", me.hashchange );
         me.hashchange();
-        morpheus.event.trigger("morpheuss.loaded", { servers : me.servers } );
+        morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
         
     };
     
@@ -617,7 +617,7 @@ morpheus.neo4jHandler = (function(undefined) {
             
             addServer : function(name, url) {
             	me.servers.push(morpheus.neo4j( { adminUrl : url, restUrl : url, name:name }));
-            	morpheus.event.trigger("morpheuss.changed", { servers : me.servers } );
+            	morpheus.event.trigger("morpheus.servers.changed", { servers : me.servers } );
             },
             
             /**
