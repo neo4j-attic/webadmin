@@ -1,13 +1,14 @@
 package org.neo4j.webadmin.backup;
 
-import static org.neo4j.webadmin.utils.FileUtils.delTree;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
@@ -23,9 +24,17 @@ public class BackupPerformer
 
     public final static String LOGICAL_LOG_REGEX = "\\.v[0-9]+$";
 
+    /**
+     * Keep track of what directories are currently being used, to avoid
+     * multiple backup jobs working in the same directory at once.
+     */
+    private static final Set<File> lockedPaths = Collections.synchronizedSet( new HashSet<File>() );
+
     public static void doBackup( File backupPath )
             throws NoBackupFoundationException, BackupFailedException
     {
+        ensurePathIsLocked( backupPath );
+
         try
         {
             // Naive check to see if folder is initialized
@@ -52,13 +61,20 @@ public class BackupPerformer
             throw new BackupFailedException(
                     "IOException while performing backup, see nested.", e );
         }
+        finally
+        {
+            lockedPaths.remove( backupPath );
+        }
     }
 
     public static void doBackupFoundation( File backupPath )
             throws BackupFailedException
     {
+        ensurePathIsLocked( backupPath );
+
         try
         {
+
             File mainDbPath = new File( DatabaseLocator.DB_PATH ).getAbsoluteFile();
 
             setupBackupFolders( backupPath );
@@ -86,6 +102,10 @@ public class BackupPerformer
                     "IOException while creating backup foundation, see nested.",
                     e );
         }
+        finally
+        {
+            lockedPaths.remove( backupPath );
+        }
     }
 
     //
@@ -99,18 +119,57 @@ public class BackupPerformer
     private static void setupBackupFolders( File backupPath )
     {
         // Delete any pre-existing files in backup folder (if it is a folder)
-        if ( backupPath.exists() )
-        {
-            if ( backupPath.isDirectory() )
-            {
-                delTree( backupPath );
-            }
-
-            backupPath.delete();
-        }
+        // if ( backupPath.exists() )
+        // {
+        // if ( backupPath.isDirectory() )
+        // {
+        // delTree( backupPath );
+        // }
+        //
+        // backupPath.delete();
+        // }
 
         // Create new, empty folder
         backupPath.mkdirs();
+    }
+
+    /**
+     * Try to add a given file to the lockedPaths set.
+     * 
+     * @param path
+     * @return true if path was added, false if path was already locked.
+     */
+    private static synchronized boolean lockPath( File path )
+    {
+        if ( lockedPaths.contains( path ) )
+        {
+            return false;
+        }
+        else
+        {
+            lockedPaths.add( path );
+            return true;
+        }
+    }
+
+    /**
+     * Runs until it is able to lock a given path.
+     * 
+     * @param path
+     */
+    private static void ensurePathIsLocked( File path )
+    {
+        try
+        {
+            while ( !lockPath( path ) )
+            {
+                Thread.sleep( 13 );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     /**

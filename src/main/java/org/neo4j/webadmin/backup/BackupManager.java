@@ -80,6 +80,11 @@ public enum BackupManager
         return log;
     }
 
+    public BackupJobDescription getJobDescription( Integer id )
+    {
+        return getConfig().getJobDescription( id );
+    }
+
     //
     // INTERNALS
     //

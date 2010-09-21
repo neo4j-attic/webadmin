@@ -62,7 +62,8 @@ public class QuartzBackupJob implements Job
             else
             {
                 log.logFailure( new Date(), jobDesc,
-                        "Needs manual backup foundation." );
+                        "Needs manual backup foundation.",
+                        BackupLogEntry.NEED_FOUNDATION_CODE );
             }
         }
         catch ( BackupFailedException e )

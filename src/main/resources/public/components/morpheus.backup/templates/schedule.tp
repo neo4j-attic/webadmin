@@ -14,6 +14,12 @@
 			</ul>
 		</div>
 		<div class="break"></div>
-		{#if $T.job.error !== false}<p class="error">{$T.job.error.message}</p>{#/if}
+		{#if $T.job.error !== false}
+			<p class="error mor_backup_job_error">{$T.job.error.message}
+			{#if $T.job.error.code == 100 }
+				<button class="mor_backup_job_create_foundation button">Create foundation</button>
+			{#/if}
+			</p>
+		{#/if}
 	</li>
 {#/for}

@@ -314,21 +314,44 @@ morpheus.components.backup.init = (function($, undefined) {
     });
     
     $('button.mor_backup_job_edit').live('click', function(ev){
-    	
     	me.schedule.getJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
     		morpheus.ui.dialog.showUsingTemplate("Edit backup job","components/morpheus.backup/templates/job.tp", job);
     	});
-    	
     });
     
     
     $('button.mor_backup_job_delete').live('click', function(ev){
-    	
     	if( confirm("Are you sure you want to delete the backup job?") ) {
 	    	me.schedule.deleteJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
 	    		me.schedule.getJobs(me.updateBackupJobUi);
 	    	});
     	}
+    });
+    
+    $('button.mor_backup_job_create_foundation').live('click', function(ev){
+    	var id = $(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val();
+    	me.schedule.getJob(id, function(job){
+    		if(job && confirm("This will delete any current backup in " + job.backupPath +". Are you sure?")) {
+    			
+    			$(".mor_backup_job_info").html("Creating foundation..");
+    			$(".mor_backup_job_info").show();
+    			
+    			me.server.admin.post("backup/job/" + job.id + "/triggerfoundation", 
+    				function(data) {
+    					$(".mor_backup_job_info").html("Successfully created foundation.");
+    					setTimeout(function() {
+    						$(".mor_backup_job_info").hide();
+    					}, 2000);
+    				}, function(failure) {
+    					$(".mor_backup_job_info").html("Foundation failed, please see server logs.");
+    					setTimeout(function() {
+    						$(".mor_backup_job_info").hide();
+    					}, 2000);
+    				}
+    			);
+    			
+    		}
+    	});
     });
     
     return me.public;

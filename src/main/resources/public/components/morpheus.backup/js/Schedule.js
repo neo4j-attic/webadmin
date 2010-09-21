@@ -73,8 +73,9 @@ morpheus.components.backup.Schedule = function(server) {
 							// Provide easy access to any blocking error (used by templates)
 							if( job.log.entries.length > 0 && job.log.entries[0].type === "ERROR") {
 								job.error = {
-									message : job.log.entries[0].message,
-									timestamp : job.log.entries[0].timestamp
+									message   : job.log.entries[0].message,
+									timestamp : job.log.entries[0].timestamp,
+									code      : job.log.entries[0].code
 								};
 							} else {
 								job.error = false;

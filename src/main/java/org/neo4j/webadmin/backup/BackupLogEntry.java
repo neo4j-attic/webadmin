@@ -9,9 +9,12 @@ import org.neo4j.rest.domain.Representation;
 public class BackupLogEntry implements Representation
 {
 
+    public static final int NEED_FOUNDATION_CODE = 100;
+
     public static final String DATE_KEY = "timestamp";
     public static final String TYPE_KEY = "type";
     public static final String MESSAGE_KEY = "message";
+    public static final String CODE_KEY = "code";
     public static final String JOB_ID_KEY = "jobId";
 
     public enum Type
@@ -25,13 +28,16 @@ public class BackupLogEntry implements Representation
     private Type type;
     private String message;
     private Integer jobId;
+    private Integer code;
 
-    public BackupLogEntry( Date date, Type type, String message, Integer jobId )
+    public BackupLogEntry( Date date, Type type, String message, Integer jobId,
+            Integer code )
     {
         this.date = date;
         this.type = type;
         this.message = message;
         this.jobId = jobId;
+        this.code = code;
     }
 
     public Object serialize()
@@ -42,6 +48,7 @@ public class BackupLogEntry implements Representation
         serial.put( TYPE_KEY, type );
         serial.put( MESSAGE_KEY, message );
         serial.put( JOB_ID_KEY, jobId );
+        serial.put( CODE_KEY, code );
 
         return serial;
     }
@@ -52,7 +59,14 @@ public class BackupLogEntry implements Representation
         String message = (String) data.get( MESSAGE_KEY );
         Type type = getType( (String) data.get( TYPE_KEY ) );
         Integer jobId = (Integer) data.get( JOB_ID_KEY );
-        return new BackupLogEntry( date, type, message, jobId );
+
+        Integer code = -1;
+        if ( data.containsKey( CODE_KEY ) )
+        {
+            code = (Integer) data.get( CODE_KEY );
+        }
+
+        return new BackupLogEntry( date, type, message, jobId, code );
     }
 
     private static Type getType( String typeString )

@@ -4,6 +4,7 @@ import static org.neo4j.rest.domain.JsonHelper.jsonToMap;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -23,6 +24,7 @@ import org.neo4j.rest.domain.JsonParseRuntimeException;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.backup.BackupJobDescription;
 import org.neo4j.webadmin.backup.BackupManager;
+import org.neo4j.webadmin.backup.BackupPerformer;
 import org.neo4j.webadmin.backup.ManualBackupFoundationJob;
 import org.neo4j.webadmin.backup.ManualBackupJob;
 import org.neo4j.webadmin.domain.BackupJobDescriptionRepresentation;
@@ -48,6 +50,8 @@ public class BackupService
     public static final String MANUAL_FOUNDATION_TRIGGER_PATH = "/triggerfoundation";
     public static final String JOBS_PATH = "/job";
     public static final String JOB_PATH = JOBS_PATH + "/{id}";
+    public static final String JOB_FOUNDATION_TRIGGER_PATH = JOB_PATH
+                                                             + "/triggerfoundation";
 
     protected ServerProperties properties;
 
@@ -149,6 +153,32 @@ public class BackupService
         {
 
             DeferredTask.defer( ManualBackupFoundationJob.getInstance() );
+            return addHeaders( Response.ok() ).build();
+
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
+                    "An unexpected internal server error occurred.", e,
+                    JsonRenderers.DEFAULT );
+        }
+    }
+
+    @POST
+    @Path( JOB_FOUNDATION_TRIGGER_PATH )
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response triggerBackupFoundation( @PathParam( "id" ) Integer id )
+    {
+        try
+        {
+
+            BackupJobDescription job = BackupManager.INSTANCE.getJobDescription( id );
+            if ( job != null )
+            {
+                BackupPerformer.doBackupFoundation( new File( job.getPath() ) );
+                BackupManager.INSTANCE.getLog().logSuccess( new Date(), job );
+            }
             return addHeaders( Response.ok() ).build();
 
         }

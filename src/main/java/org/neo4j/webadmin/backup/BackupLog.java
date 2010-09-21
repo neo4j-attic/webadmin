@@ -54,19 +54,25 @@ public class BackupLog
 
     {
         log( date, description, "Backup successful",
-                BackupLogEntry.Type.SUCCESSFUL_BACKUP );
+                BackupLogEntry.Type.SUCCESSFUL_BACKUP, -1 );
     }
 
     public void logFailure( Date date, BackupJobDescription description,
             String message )
     {
-        log( date, description, message, BackupLogEntry.Type.ERROR );
+        log( date, description, message, BackupLogEntry.Type.ERROR, -1 );
+    }
+
+    public void logFailure( Date date, BackupJobDescription description,
+            String message, int code )
+    {
+        log( date, description, message, BackupLogEntry.Type.ERROR, code );
     }
 
     public void logInfo( Date date, BackupJobDescription description,
             String message )
     {
-        log( date, description, message, BackupLogEntry.Type.INFO );
+        log( date, description, message, BackupLogEntry.Type.INFO, -1 );
     }
 
     public ArrayList<BackupLogEntry> getLog( int jobId )
@@ -142,7 +148,7 @@ public class BackupLog
     //
 
     private synchronized void log( Date date, BackupJobDescription description,
-            String message, BackupLogEntry.Type type )
+            String message, BackupLogEntry.Type type, int code )
     {
 
         if ( !mainLog.containsKey( description.getId() ) )
@@ -151,7 +157,7 @@ public class BackupLog
         }
 
         BackupLogEntry logEntry = new BackupLogEntry( date, type, message,
-                description.getId() );
+                description.getId(), code );
 
         // Push stuff to main log for this job description
         ArrayList<BackupLogEntry> myLog = mainLog.get( description.getId() );
