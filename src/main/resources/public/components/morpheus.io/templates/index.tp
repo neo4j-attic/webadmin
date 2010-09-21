@@ -3,7 +3,6 @@
 		<h1>Import / Export</h1>
 		<div class="mor_module">
 			<p class="mor_info">Import data to and export data from your neo4j database.</p>
-			<p class="mor_info info">This module is currently being implemented, the import features are not yet available.</p>
 		</div>
 	</div>
 	<div class="mor_page_rightcol">
