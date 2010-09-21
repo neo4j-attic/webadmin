@@ -99,8 +99,9 @@ morpheus.components.data.base = (function($, undefined) {
                 if( me.server ) {
                 	
                 	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
-                        me.server.rest.get(me.dataUrl, function(data) { 
-    	                	
+                        morpheus.log("Fetching from REST url " + me.dataUrl);
+                		me.server.rest.get(me.dataUrl, function(data) { 
+                			morpheus.log("Got result from REST url " + me.dataUrl);
                     		me.currentRelatedNodePage = 0;
                             
                         	if( data !== null ) {
@@ -257,6 +258,7 @@ morpheus.components.data.base = (function($, undefined) {
     	
     	var relatedNodeStartIndex = me.currentRelatedNodePage * me.relatedNodesPerPage;
     	var relatedNodeStopIndex = relatedNodeStartIndex + me.relatedNodesPerPage - 1;
+    	var nodePageCount = Math.ceil(relatedNodeCount / me.relatedNodesPerPage);
     	if( relatedNodeStopIndex >= relatedNodeCount ) {
     		relatedNodeStopIndex = relatedNodeCount - 1;
     	}
@@ -269,7 +271,7 @@ morpheus.components.data.base = (function($, undefined) {
 			relatedNodeStartIndex : relatedNodeStartIndex,
             relatedNodeStopIndex : relatedNodeStopIndex,
             relatedNodePage : me.currentRelatedNodePage,
-            relatedNodePageCount : Math.ceil(relatedNodeCount / me.relatedNodesPerPage),
+            relatedNodePageCount : nodePageCount > 0 ? nodePageCount : 1,
             relatedNodesPerPage : me.relatedNodesPerPage
     	};
     };

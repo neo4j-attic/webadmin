@@ -125,15 +125,15 @@
 			{#else }
 				<th><input type="text" class="mor_data_key_input" value="{$T.field}" /></th>
 				<td><input type="text" class="mor_data_value_input" value="{$T.data[$T.field]}" /></td>
-				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove this property" >Remove</a></td>
+				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove property from node" >Remove</a></td>
 			{#/if}
 		</tr>
 		{#/for}
 		<tr class="mor_data_property_template" style="display:none;">
-			<td><input type="text" class="mor_data_key_input" /></td>
-			<td><input type="text" class="mor_data_value_input" /></td>
+			<td><input type="text" class="mor_data_key_input" placeholder="Enter key" /></td>
+			<td><input type="text" class="mor_data_value_input" placeholder="Enter value" /></td>
 			{#if $P.propertyEditable !== false }
-				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove this property" >Remove</a></td>
+				<td><a href="#" class="mor_data_remove_property button bad-button" title="Remove property from node" >Remove</a></td>
 			{#/if }
 		</tr>
 	</tbody>
