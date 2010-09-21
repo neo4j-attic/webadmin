@@ -77,7 +77,7 @@ public enum AdminServer
             staticAdapter.setHandleStaticResources( true );
             server.addGrizzlyAdapter( staticAdapter, new String[] { "" } );
 
-            server.addAsyncFilter( new ContentDispositionFilter() );
+            //server.addAsyncFilter( new ContentDispositionFilter() );
 
             // Start server
             server.start();

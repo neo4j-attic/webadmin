@@ -236,7 +236,7 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 /* Data */
 
-.mor_data_uneditable_key, .mor_data_uneditable_value, .mor_data_key_input, .mor_data_value_input { display:block; margin:0; padding:3px 4px; border:1px solid transparent; font-size:12px; font-family:sans; }
+.mor_data_uneditable_key, .mor_data_uneditable_value, .mor_data_key_input, .mor_data_value_input { display:block; margin:0; padding:3px 4px; border:1px solid transparent; font-size:12px; font-family:sans-serif; }
 .mor_data_uneditable_key, .mor_data_key_input { width: 90px; font-weight:bold; }
 
 .mor_data_key_input.focused, .mor_data_value_input.focused, .mor_data_key_input:hover, .mor_data_value_input:hover { border:1px solid #efefef; }
