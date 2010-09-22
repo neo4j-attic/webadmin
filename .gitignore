@@ -5,3 +5,4 @@ target
 neo4j-rest-db
 neo4j-rrdb
 src/main/resources/public/export
+conf
