@@ -82,36 +82,39 @@ public class ServerProperties implements Representation
         // JVM ARGS
         //
 
-        // Garbage collector
-        TreeMap<String, String> gcs = new TreeMap<String, String>();
-        gcs.put( "Serial GC", "-XX:+UseSerialGC" );
-        gcs.put( "Throughput GC", "-XX:+UseParallelGC" );
-        gcs.put( "Concurrent Low Pause GC", "-XX:+UseConcMarkSweepGC" );
-        gcs.put( "Incremental Low Pause GC", "-Xincgc" );
-
-        properties.add( new ServerPropertyRepresentation(
-                "jvm.garbagecollector", "Garbage collector",
-                "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "", "", gcs ) ) );
-
-        // Min heap size
-        properties.add( new ServerPropertyRepresentation( "jvm.min_heap_size",
-                "Min heap size", "512m", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "-Xms", "" ) ) );
-
-        // Max heap size
-        properties.add( new ServerPropertyRepresentation( "jvm.max_heap_size",
-                "Max heap size", "512m", PropertyType.JVM_ARGUMENT,
-                new ValueDefinition( "-Xmx", "" ) ) );
-
-        // JVM server mode
-        if ( PlatformUtils.jvmServerModeIsAvailable() )
+        if ( DatabaseLocator.isLocalDatabase() )
         {
-            properties.add( new ServerPropertyRepresentation( "jvm.server",
-                    "JVM server mode", "", PropertyType.JVM_ARGUMENT,
-                    new ValueDefinition( "", "", "-server" ) ) );
-        }
 
+            // Garbage collector
+            TreeMap<String, String> gcs = new TreeMap<String, String>();
+            gcs.put( "Serial GC", "-XX:+UseSerialGC" );
+            gcs.put( "Throughput GC", "-XX:+UseParallelGC" );
+            gcs.put( "Concurrent Low Pause GC", "-XX:+UseConcMarkSweepGC" );
+            gcs.put( "Incremental Low Pause GC", "-Xincgc" );
+
+            properties.add( new ServerPropertyRepresentation(
+                    "jvm.garbagecollector", "Garbage collector",
+                    "-XX:+UseSerialGC", PropertyType.JVM_ARGUMENT,
+                    new ValueDefinition( "", "", gcs ) ) );
+
+            // Min heap size
+            properties.add( new ServerPropertyRepresentation(
+                    "jvm.min_heap_size", "Min heap size", "512m",
+                    PropertyType.JVM_ARGUMENT, new ValueDefinition( "-Xms", "" ) ) );
+
+            // Max heap size
+            properties.add( new ServerPropertyRepresentation(
+                    "jvm.max_heap_size", "Max heap size", "512m",
+                    PropertyType.JVM_ARGUMENT, new ValueDefinition( "-Xmx", "" ) ) );
+
+            // JVM server mode
+            if ( PlatformUtils.jvmServerModeIsAvailable() )
+            {
+                properties.add( new ServerPropertyRepresentation( "jvm.server",
+                        "JVM server mode", "", PropertyType.JVM_ARGUMENT,
+                        new ValueDefinition( "", "", "-server" ) ) );
+            }
+        }
         //
         // APP ARGS
         //
@@ -124,46 +127,53 @@ public class ServerProperties implements Representation
 
         // Database folder
         properties.add( new ServerPropertyRepresentation( "db.root",
-                "Neo4j path", DatabaseLocator.getDatabaseLocation(),
+                "Database location", DatabaseLocator.getDatabaseLocation(),
                 PropertyType.APP_ARGUMENT, new ValueDefinition( "-dbPath=", "" ) ) );
 
         //
         // CONFIG FILE ARGS
         //
 
-        // Logical logs
-        properties.add( new ServerPropertyRepresentation( "keep_logical_logs",
-                "Enable logical logs", "false", PropertyType.CONFIG_PROPERTY,
-                new ValueDefinition( "", "", "true", "false" ) ) );
+        if ( DatabaseLocator.isLocalDatabase() )
+        {
 
-        // Remote shell
-        properties.add( new ServerPropertyRepresentation(
-                "enable_remote_shell", "Enable remote shell", "false",
-                PropertyType.CONFIG_PROPERTY, new ValueDefinition( "", "",
-                        "true", "false" ) ) );
+            // Logical logs
+            properties.add( new ServerPropertyRepresentation(
+                    "keep_logical_logs", "Enable logical logs", "false",
+                    PropertyType.CONFIG_PROPERTY, new ValueDefinition( "", "",
+                            "true", "false" ) ) );
 
-        // This is commented out, waiting for authentication scheme to be
-        // switched over to OAuth.
+            // Remote shell
+            properties.add( new ServerPropertyRepresentation(
+                    "enable_remote_shell", "Enable remote shell", "false",
+                    PropertyType.CONFIG_PROPERTY, new ValueDefinition( "", "",
+                            "true", "false" ) ) );
 
-        // properties.add( new ServerPropertyRepresentation(
-        // "rest_enable_authentication", "Enable authentication", "false",
-        // PropertyType.CONFIG_PROPERTY ) );
-        //
-        // properties.add( new ServerPropertyRepresentation( "rest_username",
-        // "Authentication username", "", PropertyType.CONFIG_PROPERTY ) );
-        //
-        // properties.add( new ServerPropertyRepresentation( "rest_password",
-        // "Authentication password", "", PropertyType.CONFIG_PROPERTY ) );
+            // This is commented out, waiting for authentication scheme to be
+            // switched over to OAuth.
 
-        // DB CREATION ARGS
+            // properties.add( new ServerPropertyRepresentation(
+            // "rest_enable_authentication", "Enable authentication", "false",
+            // PropertyType.CONFIG_PROPERTY ) );
+            //
+            // properties.add( new ServerPropertyRepresentation(
+            // "rest_username",
+            // "Authentication username", "", PropertyType.CONFIG_PROPERTY ) );
+            //
+            // properties.add( new ServerPropertyRepresentation(
+            // "rest_password",
+            // "Authentication password", "", PropertyType.CONFIG_PROPERTY ) );
 
-        properties.add( new ServerPropertyRepresentation(
-                "create.array_block_size", "Array block size", "133",
-                PropertyType.DB_CREATION_PROPERTY ) );
+            // DB CREATION ARGS
 
-        properties.add( new ServerPropertyRepresentation(
-                "create.string_block_size", "String block size", "133",
-                PropertyType.DB_CREATION_PROPERTY ) );
+            properties.add( new ServerPropertyRepresentation(
+                    "create.array_block_size", "Array block size", "133",
+                    PropertyType.DB_CREATION_PROPERTY ) );
+
+            properties.add( new ServerPropertyRepresentation(
+                    "create.string_block_size", "String block size", "133",
+                    PropertyType.DB_CREATION_PROPERTY ) );
+        }
 
         //
         // GENERAL SETTINGS
@@ -208,10 +218,14 @@ public class ServerProperties implements Representation
         if ( dbConfig == null )
         {
             dbConfig = new Properties();
-            FileInputStream in = new FileInputStream(
-                    ConfigFileFactory.getDbConfigFile() );
-            dbConfig.load( in );
-            in.close();
+
+            if ( DatabaseLocator.isLocalDatabase() )
+            {
+                FileInputStream in = new FileInputStream(
+                        ConfigFileFactory.getDbConfigFile() );
+                dbConfig.load( in );
+                in.close();
+            }
         }
 
         if ( generalConfig == null )
@@ -277,14 +291,16 @@ public class ServerProperties implements Representation
                             + "'." );
         }
 
-        // Update the value in property object
         prop.setValue( value );
 
         switch ( prop.getType() )
         {
         case CONFIG_PROPERTY:
-            dbConfig.put( key, prop.getFullValue() );
-            saveProperties( dbConfig, ConfigFileFactory.getDbConfigFile() );
+            if ( DatabaseLocator.isLocalDatabase() )
+            {
+                dbConfig.put( key, prop.getFullValue() );
+                saveProperties( dbConfig, ConfigFileFactory.getDbConfigFile() );
+            }
             break;
         default:
             generalConfig.put( key, prop.getFullValue() );

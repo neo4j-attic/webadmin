@@ -35,7 +35,7 @@ public class GremlinFactory
             GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
 
             TransactionalGraph graph = new Neo4jGraph( dbInstance,
-                    DatabaseLocator.getIndexService( dbInstance ) );
+                    DatabaseLocator.getIndexService() );
 
             engine.getBindings( ScriptContext.ENGINE_SCOPE ).put( "$_g", graph );
 
@@ -51,9 +51,11 @@ public class GremlinFactory
 
             return engine;
         }
-        catch ( RuntimeException e )
+        catch ( Throwable e )
         {
-            throw e;
+            // Pokemon catch b/c fails here get hidden until the server exits.
+            e.printStackTrace();
+            return null;
         }
     }
 

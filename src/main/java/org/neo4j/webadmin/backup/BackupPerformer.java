@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
 import org.neo4j.onlinebackup.Neo4jBackup;
@@ -49,12 +50,22 @@ public class BackupPerformer
             }
 
             // Perform backup
-            EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
+            GraphDatabaseService genericDb = GraphDatabaseUtils.getLocalDatabase();
 
-            Backup backup = Neo4jBackup.allDataSources( db,
-                    backupPath.getAbsolutePath() );
+            if ( genericDb instanceof EmbeddedGraphDatabase )
+            {
 
-            backup.doBackup();
+                Backup backup = Neo4jBackup.allDataSources(
+                        (EmbeddedGraphDatabase) genericDb,
+                        backupPath.getAbsolutePath() );
+
+                backup.doBackup();
+            }
+            else
+            {
+                throw new UnsupportedOperationException(
+                        "Performing backups on non-local databases is currently not supported." );
+            }
         }
         catch ( IOException e )
         {

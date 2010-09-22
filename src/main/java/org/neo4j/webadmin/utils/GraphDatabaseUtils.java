@@ -1,11 +1,7 @@
 package org.neo4j.webadmin.utils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.rest.domain.DatabaseLocator;
-import org.neo4j.webadmin.AdminServer;
 
 /**
  * Utilities for the local underlying graph database.
@@ -21,7 +17,7 @@ public class GraphDatabaseUtils
     private static boolean isRunning = false;
     private static boolean isBlocked = false;
 
-    public static EmbeddedGraphDatabase getLocalDatabase()
+    public static GraphDatabaseService getLocalDatabase()
     {
         while ( isBlocked )
         {
@@ -37,21 +33,11 @@ public class GraphDatabaseUtils
             }
         }
 
-        try
-        {
-            EmbeddedGraphDatabase db = (EmbeddedGraphDatabase) DatabaseLocator.getGraphDatabase( new URI(
-                    AdminServer.INSTANCE.getBaseUri() ) );
+        GraphDatabaseService db = DatabaseLocator.getGraphDatabase();
 
-            isRunning = true;
+        isRunning = true;
 
-            return db;
-        }
-        catch ( URISyntaxException e )
-        {
-            throw new RuntimeException(
-                    "FATAL: URI to local db is corrupt, see nested exception. ",
-                    e );
-        }
+        return db;
     }
 
     public static void shutdownLocalDatabase()
@@ -86,18 +72,8 @@ public class GraphDatabaseUtils
     {
         if ( isRunning )
         {
-            try
-            {
-                DatabaseLocator.shutdownGraphDatabase( new URI(
-                        AdminServer.INSTANCE.getBaseUri() ) );
-                isRunning = false;
-            }
-            catch ( URISyntaxException e )
-            {
-                throw new RuntimeException(
-                        "FATAL: URI to local db is corrupt, see nested exception. ",
-                        e );
-            }
+            DatabaseLocator.shutdownGraphDatabase();
+            isRunning = false;
         }
     }
 

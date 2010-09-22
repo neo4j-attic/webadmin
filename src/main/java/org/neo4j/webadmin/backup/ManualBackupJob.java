@@ -4,14 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.onlinebackup.Backup;
-import org.neo4j.onlinebackup.Neo4jBackup;
 import org.neo4j.webadmin.domain.BackupAlreadyRunningException;
+import org.neo4j.webadmin.domain.BackupFailedException;
+import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.properties.ServerProperties;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 /**
  * Performs a backup of a running neo4j database.
@@ -94,39 +92,28 @@ public class ManualBackupJob implements Runnable
             if ( this.isRunning() )
             {
                 throw new BackupAlreadyRunningException(
-                        "Only one backup task can run at a time." );
-            }
-
-            // Naive check to see if folder is initialized
-            // I don't want to add an all-out check here, it'd be better
-            // for the Neo4jBackup class to throw an exception.
-            if ( this.backupPath.listFiles() == null
-                 || this.backupPath.listFiles().length == 0
-                 || !( new File( this.backupPath, "neostore" ) ).exists() )
-            {
-                throw new IllegalStateException(
-                        "Database has not been copied to backup folder." );
+                        "Only one manual backup task can run at a time." );
             }
 
             this.needFoundation = false;
             this.running = true;
             this.started = new Date();
 
-            // Perform backup
-            EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
+            try
+            {
+                BackupPerformer.doBackup( this.backupPath );
 
-            Backup backup = Neo4jBackup.allDataSources( db,
-                    this.backupPath.getAbsolutePath() );
-
-            backup.doBackup();
-
-            this.running = false;
+            }
+            finally
+            {
+                this.running = false;
+            }
         }
-        catch ( IOException e )
+        catch ( BackupFailedException e )
         {
             e.printStackTrace();
         }
-        catch ( IllegalStateException e )
+        catch ( NoBackupFoundationException e )
         {
             this.running = false;
             this.needFoundation = true;

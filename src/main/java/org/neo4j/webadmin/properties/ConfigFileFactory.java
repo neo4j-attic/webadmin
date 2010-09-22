@@ -12,11 +12,16 @@ public class ConfigFileFactory
     public static final String JVM_ARGS_DEV_PATH = "target/jvmargs";
 
     public static final String DB_CONFIG_PATH = "neo4j.properties";
-    public static final String GENERAL_CONFIG_PATH = "startup.properties";
+
     public static final String BACKUP_CONFIG_PATH = "backup.json";
     public static final String BACKUP_LOG_PATH = "backup.log.json";
 
-    public static final String SERVICE_CONFIG_PATH = "./conf/wrapper.conf";
+    public static final String CONFIG_FOLDER = "./conf/";
+
+    public static final String GENERAL_CONFIG_PATH = CONFIG_FOLDER
+                                                     + "startup.properties";
+    public static final String SERVICE_CONFIG_PATH = CONFIG_FOLDER
+                                                     + "wrapper.conf";
 
     /**
      * Get database config file, creating one if it does not exist.
@@ -40,8 +45,7 @@ public class ConfigFileFactory
      */
     public static File getGeneralConfigFile() throws IOException
     {
-        File configFile = new File( new File(
-                DatabaseLocator.getDatabaseLocation() ), GENERAL_CONFIG_PATH );
+        File configFile = new File( GENERAL_CONFIG_PATH );
 
         return ensureFileExists( configFile );
     }
@@ -92,14 +96,34 @@ public class ConfigFileFactory
 
     public static File getBackupConfigFile() throws IOException
     {
-        return ensureFileExists( new File( new File(
-                DatabaseLocator.getDatabaseLocation() ), BACKUP_CONFIG_PATH ) );
+        File file;
+        if ( DatabaseLocator.isLocalDatabase() )
+        {
+
+            file = new File( new File( DatabaseLocator.getDatabaseLocation() ),
+                    BACKUP_CONFIG_PATH );
+        }
+        else
+        {
+            file = new File( new File( CONFIG_FOLDER ), BACKUP_CONFIG_PATH );
+        }
+        return ensureFileExists( file );
     }
 
     public static File getBackupLogFile() throws IOException
     {
-        return ensureFileExists( new File( new File(
-                DatabaseLocator.getDatabaseLocation() ), BACKUP_LOG_PATH ) );
+        File file;
+        if ( DatabaseLocator.isLocalDatabase() )
+        {
+
+            file = new File( new File( DatabaseLocator.getDatabaseLocation() ),
+                    BACKUP_LOG_PATH );
+        }
+        else
+        {
+            file = new File( new File( CONFIG_FOLDER ), BACKUP_LOG_PATH );
+        }
+        return ensureFileExists( file );
     }
 
     //

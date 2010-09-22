@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.JmxDomainListRepresentation;
@@ -195,9 +196,17 @@ public class JmxService
     @Path( KERNEL_NAME_PATH )
     public Response currentKernelInstance()
     {
-        Kernel kernelBean = ( (EmbeddedGraphDatabase) getLocalDatabase() ).getManagementBean( Kernel.class );
-        return addHeaders(
-                Response.ok( "\"" + kernelBean.getMBeanQuery().toString()
-                             + "\"", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+        if ( DatabaseLocator.isLocalDatabase() )
+        {
+            Kernel kernelBean = ( (EmbeddedGraphDatabase) getLocalDatabase() ).getManagementBean( Kernel.class );
+            return addHeaders(
+                    Response.ok( "\"" + kernelBean.getMBeanQuery().toString()
+                                 + "\"", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+        }
+        else
+        {
+            return addHeaders(
+                    Response.ok( "null", JsonRenderers.DEFAULT.getMediaType() ) ).build();
+        }
     }
 }

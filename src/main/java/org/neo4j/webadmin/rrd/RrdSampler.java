@@ -15,6 +15,7 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeDataSupport;
 
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
@@ -174,28 +175,33 @@ public class RrdSampler
     {
         try
         {
-            EmbeddedGraphDatabase db = GraphDatabaseUtils.getLocalDatabase();
+            GraphDatabaseService genericDb = GraphDatabaseUtils.getLocalDatabase();
 
-            // Grab relevant jmx management beans
-            ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
-            String instance = neoQuery.getKeyProperty( "instance" );
-            String baseName = neoQuery.getDomain() + ":instance=" + instance
-                              + ",name=";
+            if ( genericDb instanceof EmbeddedGraphDatabase )
+            {
+                EmbeddedGraphDatabase db = (EmbeddedGraphDatabase) genericDb;
+                // Grab relevant jmx management beans
+                ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
+                String instance = neoQuery.getKeyProperty( "instance" );
+                String baseName = neoQuery.getDomain() + ":instance="
+                                  + instance + ",name=";
 
-            primitivesName = new ObjectName( baseName
-                                             + JMX_NEO4J_PRIMITIVE_COUNT );
-            storeSizesName = new ObjectName( baseName
-                                             + JMX_NEO4J_STORE_FILE_SIZES );
-            transactionsName = new ObjectName( baseName
-                                               + JMX_NEO4J_TRANSACTIONS );
-            memoryMappingName = new ObjectName( baseName
-                                                + JMX_NEO4J_MEMORY_MAPPING );
-            kernelName = new ObjectName( baseName + JMX_NEO4J_KERNEL );
-            lockingName = new ObjectName( baseName + JMX_NEO4J_LOCKING );
-            cacheName = new ObjectName( baseName + JMX_NEO4J_CACHE );
-            configurationName = new ObjectName( baseName
-                                                + JMX_NEO4J_CONFIGURATION );
-            xaResourcesName = new ObjectName( baseName + JMX_NEO4J_XA_RESOURCES );
+                primitivesName = new ObjectName( baseName
+                                                 + JMX_NEO4J_PRIMITIVE_COUNT );
+                storeSizesName = new ObjectName( baseName
+                                                 + JMX_NEO4J_STORE_FILE_SIZES );
+                transactionsName = new ObjectName( baseName
+                                                   + JMX_NEO4J_TRANSACTIONS );
+                memoryMappingName = new ObjectName( baseName
+                                                    + JMX_NEO4J_MEMORY_MAPPING );
+                kernelName = new ObjectName( baseName + JMX_NEO4J_KERNEL );
+                lockingName = new ObjectName( baseName + JMX_NEO4J_LOCKING );
+                cacheName = new ObjectName( baseName + JMX_NEO4J_CACHE );
+                configurationName = new ObjectName( baseName
+                                                    + JMX_NEO4J_CONFIGURATION );
+                xaResourcesName = new ObjectName( baseName
+                                                  + JMX_NEO4J_XA_RESOURCES );
+            }
 
         }
         catch ( MalformedObjectNameException e )
@@ -224,24 +230,32 @@ public class RrdSampler
 
             sample.setTime( new Date().getTime() );
 
-            sample.setValue( RrdManager.NODE_CACHE_SIZE, 0d );;
+            sample.setValue( RrdManager.NODE_CACHE_SIZE, 0d );
 
-            sample.setValue( RrdManager.NODE_COUNT, (Long) server.getAttribute(
-                    primitivesName, JMX_ATTR_NODE_COUNT ) );
+            if ( primitivesName != null )
+            {
+                sample.setValue( RrdManager.NODE_COUNT,
+                        (Long) server.getAttribute( primitivesName,
+                                JMX_ATTR_NODE_COUNT ) );
 
-            sample.setValue( RrdManager.RELATIONSHIP_COUNT,
-                    (Long) server.getAttribute( primitivesName,
-                            JMX_ATTR_RELATIONSHIP_COUNT ) );
+                sample.setValue( RrdManager.RELATIONSHIP_COUNT,
+                        (Long) server.getAttribute( primitivesName,
+                                JMX_ATTR_RELATIONSHIP_COUNT ) );
 
-            sample.setValue( RrdManager.PROPERTY_COUNT,
-                    (Long) server.getAttribute( primitivesName,
-                            JMX_ATTR_PROPERTY_COUNT ) );
+                sample.setValue( RrdManager.PROPERTY_COUNT,
+                        (Long) server.getAttribute( primitivesName,
+                                JMX_ATTR_PROPERTY_COUNT ) );
+            }
 
-            sample.setValue(
-                    RrdManager.MEMORY_PERCENT,
-                    ( ( (Long) ( (CompositeDataSupport) server.getAttribute(
-                            memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "used" ) + 0.0d ) / (Long) ( (CompositeDataSupport) server.getAttribute(
-                            memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "max" ) ) * 100 );
+            if ( memoryName != null )
+            {
+                sample.setValue(
+                        RrdManager.MEMORY_PERCENT,
+                        ( ( (Long) ( (CompositeDataSupport) server.getAttribute(
+                                memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "used" ) + 0.0d ) / (Long) ( (CompositeDataSupport) server.getAttribute(
+                                memoryName, JMX_ATTR_HEAP_MEMORY ) ).get( "max" ) ) * 100 );
+
+            }
 
             sample.update();
         }
