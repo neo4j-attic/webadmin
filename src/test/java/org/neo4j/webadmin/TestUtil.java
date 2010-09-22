@@ -20,7 +20,7 @@ public abstract class TestUtil
 
     public static void deleteTestDb()
     {
-        deleteFileOrDirectory( new File( DatabaseLocator.DB_PATH ) );
+        deleteFileOrDirectory( new File( DatabaseLocator.getDatabaseLocation() ) );
     }
 
     public static void deleteFileOrDirectory( File file )

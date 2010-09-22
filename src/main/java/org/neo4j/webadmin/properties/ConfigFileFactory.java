@@ -26,10 +26,10 @@ public class ConfigFileFactory
      */
     public static File getDbConfigFile() throws IOException
     {
-        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
-                DB_CONFIG_PATH );
+        File configFile = new File( new File(
+                DatabaseLocator.getDatabaseLocation() ), DB_CONFIG_PATH );
 
-        return getFile( configFile );
+        return ensureFileExists( configFile );
     }
 
     /**
@@ -40,10 +40,10 @@ public class ConfigFileFactory
      */
     public static File getGeneralConfigFile() throws IOException
     {
-        File configFile = new File( new File( DatabaseLocator.DB_PATH ),
-                GENERAL_CONFIG_PATH );
+        File configFile = new File( new File(
+                DatabaseLocator.getDatabaseLocation() ), GENERAL_CONFIG_PATH );
 
-        return getFile( configFile );
+        return ensureFileExists( configFile );
     }
 
     /**
@@ -54,7 +54,7 @@ public class ConfigFileFactory
      */
     public static File getDevelopmentJvmArgsFile() throws IOException
     {
-        return getFile( new File( JVM_ARGS_DEV_PATH ) );
+        return ensureFileExists( new File( JVM_ARGS_DEV_PATH ) );
     }
 
     /**
@@ -65,7 +65,7 @@ public class ConfigFileFactory
      */
     public static File getDevelopmentAppArgsFile() throws IOException
     {
-        return getFile( new File( APP_ARGS_DEV_PATH ) );
+        return ensureFileExists( new File( APP_ARGS_DEV_PATH ) );
     }
 
     /**
@@ -92,21 +92,22 @@ public class ConfigFileFactory
 
     public static File getBackupConfigFile() throws IOException
     {
-        return getFile( new File( new File( DatabaseLocator.DB_PATH ),
-                BACKUP_CONFIG_PATH ) );
+        return ensureFileExists( new File( new File(
+                DatabaseLocator.getDatabaseLocation() ), BACKUP_CONFIG_PATH ) );
     }
 
     public static File getBackupLogFile() throws IOException
     {
-        return getFile( new File( new File( DatabaseLocator.DB_PATH ),
-                BACKUP_LOG_PATH ) );
+        return ensureFileExists( new File( new File(
+                DatabaseLocator.getDatabaseLocation() ), BACKUP_LOG_PATH ) );
     }
 
     //
     // INTERNALS
     //
 
-    private static File getFile( File file ) throws IOException
+    private static synchronized File ensureFileExists( File file )
+            throws IOException
     {
         if ( !file.exists() )
         {

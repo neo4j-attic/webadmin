@@ -124,7 +124,7 @@ public class ServerProperties implements Representation
 
         // Database folder
         properties.add( new ServerPropertyRepresentation( "db.root",
-                "Neo4j path", DatabaseLocator.DB_PATH,
+                "Neo4j path", DatabaseLocator.getDatabaseLocation(),
                 PropertyType.APP_ARGUMENT, new ValueDefinition( "-dbPath=", "" ) ) );
 
         //

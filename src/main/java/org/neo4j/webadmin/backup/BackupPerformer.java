@@ -75,7 +75,7 @@ public class BackupPerformer
         try
         {
 
-            File mainDbPath = new File( DatabaseLocator.DB_PATH ).getAbsoluteFile();
+            File mainDbPath = new File( DatabaseLocator.getDatabaseLocation() ).getAbsoluteFile();
 
             setupBackupFolders( backupPath );
 
