@@ -186,8 +186,8 @@ this.monitor.getDataFrom(this.endTimestamp,this.processMonitorData)
 }};
 neo4j.GraphDatabaseHeartbeat.prototype.processMonitorData=function(d){this.isPolling=false;
 if(d&&!d.error){var a=this.findDataBoundaries(d);
-this.endTimestamp=d.timestamps[a.dataEnd];
-if(a.dataEnd>=0){var e=d.timestamps.splice(a.dataStart,a.dataEnd-a.dataStart);
+if(a.dataEnd>=0){this.endTimestamp=d.timestamps[a.dataEnd];
+var e=d.timestamps.splice(a.dataStart,a.dataEnd-a.dataStart);
 this.timestamps=this.timestamps.concat(e);
 var c={};
 for(var b in d.data){c[b]=d.data[b].splice(a.dataStart,a.dataEnd-a.dataStart);
