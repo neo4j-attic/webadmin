@@ -16,7 +16,7 @@ public abstract class TestUtil
      * services into the REST project instead.
      */
     public static String SERVER_BASE = AdminServer.INSTANCE.getBaseUri()
-                                       + "admin";
+                                       + "manage";
 
     public static void deleteTestDb()
     {

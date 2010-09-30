@@ -198,15 +198,15 @@ this.callListeners(f)
 }else{this.adjustRequestedTimespan()
 }}};
 neo4j.GraphDatabaseHeartbeat.prototype.adjustRequestedTimespan=function(a){var b=(new Date()).getTime()-this.endTimestamp;
-if(b>=me.timespan.year){this.endTimestamp=(new Date()).getTime()-this.timespan.month;
+if(b>=this.timespan.year){this.endTimestamp=(new Date()).getTime()-this.timespan.month;
 this.beat()
-}else{if(b>=me.timespan.month){this.endTimestamp=(new Date()).getTime()-this.timespan.week;
+}else{if(b>=this.timespan.month){this.endTimestamp=(new Date()).getTime()-this.timespan.week;
 this.beat()
-}else{if(b>=me.timespan.week){this.endTimestamp=(new Date()).getTime()-this.timespan.day;
+}else{if(b>=this.timespan.week){this.endTimestamp=(new Date()).getTime()-this.timespan.day;
 this.beat()
-}else{if(b>=me.timespan.day){this.endTimestamp=(new Date()).getTime()-this.timespan.hours;
+}else{if(b>=this.timespan.day){this.endTimestamp=(new Date()).getTime()-this.timespan.hours;
 this.beat()
-}else{if(b>=me.timespan.day){this.endTimestamp=(new Date()).getTime()-this.timespan.minutes;
+}else{if(b>=this.timespan.day){this.endTimestamp=(new Date()).getTime()-this.timespan.minutes;
 this.beat()
 }}}}}};
 neo4j.GraphDatabaseHeartbeat.prototype.findDataBoundaries=function(d){var c=this.getFirstKey(d);
