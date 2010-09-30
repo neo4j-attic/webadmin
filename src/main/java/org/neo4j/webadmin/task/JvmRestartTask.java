@@ -34,8 +34,8 @@ public class JvmRestartTask implements Runnable
                 // Stop running servers
                 System.out.println( "JVM Reboot. Shutting down server." );
                 WebServerFactory.getDefaultWebServer().stopServer();
-                GraphDatabaseUtils.shutdownLocalDatabase();
                 AdminServer.INSTANCE.stopServer();
+                GraphDatabaseUtils.shutdownAndBlock();
 
                 if ( PlatformUtils.isWindows() )
                 {

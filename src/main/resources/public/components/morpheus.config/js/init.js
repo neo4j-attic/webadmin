@@ -218,17 +218,19 @@ morpheus.components.config = (function($, undefined) {
             // Find all settings that are changed
             var changed = me.getUncommittedChanges({excludeType:"DB_CREATION_PROPERTY"});
             
+            // Commit changes to server
+            morpheus.ui.Loading.show("Hold on..", "Waiting for changes to be applied..");
+
             // Disable controls while saving
             $("input",me.basePage).attr('disabled', 'disabled');
             
-            // Commit changes to server
             setRemoteProperties(changed,function(data){
-            	
-                me.allChangesCommitted({excludeType:"DB_CREATION_PROPERTY"});
-                
-                $("input",me.basePage).removeAttr('disabled');
-                me.updateSaveButtonState();
-                
+                setTimeout(function() {
+                    morpheus.Servers.getCurrentServer().heartbeat.waitForPulse(function() {
+                        morpheus.ui.Loading.hide();
+                        window.location.reload();
+                    });
+                }, 100);
             });
         }
     });
@@ -259,7 +261,7 @@ morpheus.components.config = (function($, undefined) {
                 // Update the UI if applicable
                 if ( me.config[key].type === "JVM_ARGUMENT" ||
                      me.config[key].type === "CONFIG_PROPERTY") {
-                    $("#mor_setting_" + key).val(val);  
+                    $("#mor_setting_" + key).val(val);
                 }
                 
                 if(typeof(cb) === "function") {

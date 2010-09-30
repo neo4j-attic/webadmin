@@ -6,8 +6,6 @@ import org.neo4j.rest.domain.DatabaseLocator;
 /**
  * Utilities for the local underlying graph database.
  * 
- * TODO: Implement system-wide "database-is-turned-off-don't-touch-it".
- * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */

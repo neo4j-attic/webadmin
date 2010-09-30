@@ -5,6 +5,7 @@ import javax.script.ScriptEngine;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.domain.MockIndexService;
 import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 import com.tinkerpop.blueprints.pgm.TransactionalGraph;
@@ -25,6 +26,26 @@ public class GremlinFactory
 
     protected volatile static boolean initiated = false;
 
+    public static TransactionalGraph getGremlinWrappedGraph()
+    {
+        GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
+        TransactionalGraph graph;
+        try
+        {
+            graph = new Neo4jGraph( dbInstance,
+                    DatabaseLocator.getIndexService() );
+
+        }
+        catch ( UnsupportedOperationException e )
+        {
+            // Tempary until indexing is implemented in webadmin for remote
+            // databases
+            graph = new Neo4jGraph( dbInstance, new MockIndexService() );
+        }
+
+        return graph;
+    }
+
     public static ScriptEngine createGremlinScriptEngine()
     {
         try
@@ -32,10 +53,7 @@ public class GremlinFactory
             ScriptEngine engine = new GremlinScriptEngine();
 
             // Inject the local database
-            GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
-
-            TransactionalGraph graph = new Neo4jGraph( dbInstance,
-                    DatabaseLocator.getIndexService() );
+            TransactionalGraph graph = getGremlinWrappedGraph();
 
             engine.getBindings( ScriptContext.ENGINE_SCOPE ).put( "$_g", graph );
 

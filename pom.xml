@@ -154,6 +154,7 @@
 								<include>js/morpheus.ui.Pages-min.js</include>
 								<include>js/morpheus.ui.MainMenu-min.js</include>
 								<include>js/morpheus.ui.Dialog-min.js</include>
+								<include>js/morpheus.ui.Loading-min.js</include>
 								<include>js/morpheus.event-min.js</include>
 								<include>js/morpheus.neo4j-min.js</include>
 								<include>js/morpheus.Servers-min.js</include>

@@ -165,6 +165,7 @@ this.data={};
 this.isPolling=false;
 this.processMonitorData=neo4j.proxy(this.processMonitorData,this);
 this.beat=neo4j.proxy(this.beat,this);
+this.waitForPulse=neo4j.proxy(this.waitForPulse,this);
 setInterval(this.beat,2000)
 };
 neo4j.GraphDatabaseHeartbeat.prototype.addListener=function(a){this.listenerCounter++;
@@ -181,7 +182,7 @@ c=true
 }};
 neo4j.GraphDatabaseHeartbeat.prototype.getCachedData=function(){return{timestamps:this.timestamps,data:this.data,endTimestamp:this.endTimestamp,startTimestamp:this.startTimestamp}
 };
-neo4j.GraphDatabaseHeartbeat.prototype.beat=function(){if(this.listenerCounter>0&&!this.isPolling){this.isPolling=true;
+neo4j.GraphDatabaseHeartbeat.prototype.beat=function(){if(this.listenerCounter>0&&!this.isPolling&&this.monitor.available){this.isPolling=true;
 this.monitor.getDataFrom(this.endTimestamp,this.processMonitorData)
 }};
 neo4j.GraphDatabaseHeartbeat.prototype.processMonitorData=function(d){this.isPolling=false;
@@ -197,6 +198,14 @@ if(typeof(this.data[b])==="undefined"){this.data[b]=[]
 this.callListeners(f)
 }else{this.adjustRequestedTimespan()
 }}};
+neo4j.GraphDatabaseHeartbeat.prototype.waitForPulse=function(b){var a=this.waitForPulse;
+this.db.get("",function(c){if(c===null){setTimeout(function(){a(b)
+},500)
+}else{b(true)
+}},function(c){console.log(c);
+setTimeout(a,500)
+})
+};
 neo4j.GraphDatabaseHeartbeat.prototype.adjustRequestedTimespan=function(a){var b=(new Date()).getTime()-this.endTimestamp;
 if(b>=this.timespan.year){this.endTimestamp=(new Date()).getTime()-this.timespan.month;
 this.beat()

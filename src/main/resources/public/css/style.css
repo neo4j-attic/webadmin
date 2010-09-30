@@ -147,14 +147,11 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 /* Dialog */
 #mor_dialog_content, #mor_dialog_data {display:none;}
-
-/* Overlay */
 #mor_dialog_overlay {background-color:#000; cursor:wait;}
 
-/* Container */
-#mor_dialog_container {background-color:#eee; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:600px; -moz-border-radius-bottomleft:6px; -webkit-border-bottom-left-radius:6px; -moz-border-radius-bottomright:6px; -webkit-border-bottom-right-radius:6px; border-radius:0 0 6px 6px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
+#mor_dialog_container {background-color:#eee; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:600px; -moz-border-radius:6px; -webkit-border-radius:6px; border-radius:6px 6px 6px 6px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
 
-#mor_dialog_container #mor_dialog_title {color:#000; background-color:#ddd; border-bottom:1px solid #ccc; font-weight:bold; padding:6px 8px; text-shadow:0 1px 0 #f4f4f4;}
+#mor_dialog_container #mor_dialog_title {color:#000; background-color:#ddd; border-bottom:1px solid #ccc; font-weight:bold; padding:6px 8px; text-shadow:0 1px 0 #f4f4f4;border-radius:6px 6px 0 0; -moz-border-radius-topleft:6px;-moz-border-radius-topright:6px; -webkit-border-top-left-radius:6px; -webkit-border-top-right-radius:6px; }
 #mor_dialog_container .close {display:none; position:absolute; right:0; top:0;}
 #mor_dialog_container .close a {display:block; color:#777; font-weight:bold; padding:6px 12px 0; text-decoration:none; text-shadow:0 1px 0 #f4f4f4;}
 #mor_dialog_container .close a:hover {color:#000;}
@@ -162,6 +159,19 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 #mor_dialog_container h2 {margin:10px 0 6px;}
 #mor_dialog_container p {margin-bottom:10px;}
 #mor_dialog_container span {color:#777;}
+
+/* Loading */
+#mor_loading_content {display:none;}
+#mor_loading_overlay {background-color:#000; cursor:wait;}
+
+#mor_loading_container {background-color:#eee; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:600px; -moz-border-radius:6px; -webkit-border-radius:6px; border-radius:6px 6px 6px 6px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
+
+#mor_loading_container #mor_loading_title {color:#000; background-color:#ddd; border-bottom:1px solid #ccc; font-weight:bold; padding:6px 8px; text-shadow:0 1px 0 #f4f4f4; border-radius:6px 6px 0 0; -moz-border-radius-topleft:6px;-moz-border-radius-topright:6px; -webkit-border-top-left-radius:6px; -webkit-border-top-right-radius:6px; }
+#mor_loading_container #mor_loading_message {font-size:12px; padding:6px 12px;}
+#mor_loading_container h2 {margin:10px 0 6px;}
+#mor_loading_container p {margin-bottom:10px;}
+#mor_loading_container span {color:#777;}
+
 
 /* Foldout content */
 .mor_module_foldout { border-top:1px solid #eee; }

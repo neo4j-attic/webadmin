@@ -1,11 +1,10 @@
-morpheus.provide( "morpheus.ui.Pages" );
+morpheus.provide("morpheus.ui.Pages");
 
 /**
  * Morpheus user interface. Builds the base ui, keeps track of registered
  * components and provides an API to inject new UI parts.
  */
-morpheus.ui.Pages = ( function( $ )
-{
+morpheus.ui.Pages = (function($) {
 
     var me = {};
 
@@ -22,52 +21,61 @@ morpheus.ui.Pages = ( function( $ )
     /**
      * Set up the user interface.
      */
-    me.init = function()
-    {
+    me.init = function() {
 
         // Init pages
-        me.pageRoot = $( "#mor_pages" );
+        me.pageRoot = $("#mor_pages");
 
-        for ( key in me.pages )
+        for (key in me.pages)
         {
-            me.pageRoot.append( me.pages[key].element );
+            me.pageRoot.append(me.pages[key].element);
             me.pages[key].element.hide();
         }
 
-        $( window ).bind( "hashchange", me.hashchange );
+        $(window).bind("hashchange", me.hashchange);
 
-        me.showPage($.bbq.getState( "p" ));
+        me.showPage($.bbq.getState("p"));
 
     };
 
-    me.showPage = function( key )
-    {
+    me.showPage = function(key) {
 
         // Does the requested page exist?
-        if ( typeof ( me.pages[key] ) !== "undefined" )
+        if (typeof (me.pages[key]) !== "undefined")
         {
-            if ( me.currentPage === key ) { return; }
+            if (me.currentPage === key)
+            {
+                return;
+            }
 
-            if ( me.currentPage !== null )
+            if (me.currentPage !== null)
             {
                 me.pages[me.currentPage].element.hide();
             }
 
             me.currentPage = key;
             me.pages[key].element.show();
-            morpheus.ui.MainMenu.setCurrentPage( key );
-            
+            morpheus.ui.MainMenu.setCurrentPage(key);
+
             neo4j.events.trigger("morpheus.ui.page.changed", key);
-        }
-        else
+        } else
         {
-            if ( key !== me.DEFAULT_PAGE )
+            if (key !== me.DEFAULT_PAGE)
             {
-                $.bbq.pushState(
-                {
+                $.bbq.pushState({
                     p : me.DEFAULT_PAGE
-                } );
-            } else {
+                });
+            } else
+            {
+                // Default page is not available, try showing the first
+                // available page
+                for (key in me.pages)
+                {
+                    $.bbq.pushState({
+                        p : key
+                    });
+                    break;
+                }
             }
         }
     };
@@ -75,11 +83,10 @@ morpheus.ui.Pages = ( function( $ )
     /**
      * Called whenever the url hash changes.
      */
-    me.hashchange = function( event )
-    {
+    me.hashchange = function(event) {
 
-        var pageKey = $.bbq.getState( "p" );
-        me.showPage( pageKey );
+        var pageKey = $.bbq.getState("p");
+        me.showPage(pageKey);
 
     };
 
@@ -89,22 +96,20 @@ morpheus.ui.Pages = ( function( $ )
 
     return {
         init : me.init,
-        add : function( key, page )
-        {
+        add : function(key, page) {
 
-            me.pages[key] =
-            {
+            me.pages[key] = {
                 obj : page,
                 element : page.getPage()
             };
 
-            if ( me.pageRoot !== null )
+            if (me.pageRoot !== null)
             {
-                me.pageRoot.append( me.pages[key].element );
+                me.pageRoot.append(me.pages[key].element);
                 me.pages[key].element.hide();
             }
 
         }
     };
 
-} )( jQuery );
+})(jQuery);

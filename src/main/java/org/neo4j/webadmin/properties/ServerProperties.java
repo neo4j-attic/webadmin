@@ -387,12 +387,13 @@ public class ServerProperties implements Representation
             // JVM Args
             configFileBuilder.append( propertiesToJSWConfigString(
                     "wrapper.java.additional.",
-                    ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT ) );
+                    ServerPropertyRepresentation.PropertyType.JVM_ARGUMENT, 1 ) );
 
             // App args
+            configFileBuilder.append( "wrapper.app.parameter.1=org.neo4j.webadmin.Main\n" );
             configFileBuilder.append( propertiesToJSWConfigString(
                     "wrapper.app.parameter.",
-                    ServerPropertyRepresentation.PropertyType.APP_ARGUMENT ) );
+                    ServerPropertyRepresentation.PropertyType.APP_ARGUMENT, 2 ) );
 
             // Write changes to file.
             FileOutputStream out = new FileOutputStream( serviceConfig );
@@ -443,15 +444,14 @@ public class ServerProperties implements Representation
         }
 
         String out = args.toString();
-        return out.substring( 0, out.length() - 1 );
+        return out.length() > 0 ? out.substring( 0, out.length() - 1 ) : "";
     }
 
     private String propertiesToJSWConfigString( String prepend,
-            ServerPropertyRepresentation.PropertyType type )
+            ServerPropertyRepresentation.PropertyType type, int argNo )
     {
         StringBuilder builder = new StringBuilder();
 
-        int argNo = 1;
         for ( ServerPropertyRepresentation prop : properties )
         {
             if ( prop.getType() == type )

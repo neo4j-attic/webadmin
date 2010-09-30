@@ -4,6 +4,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.remote.RemoteGraphDatabase;
 import org.neo4j.webadmin.rest.BackupService;
 import org.neo4j.webadmin.rest.ConfigService;
 import org.neo4j.webadmin.rest.ConsoleService;
@@ -12,6 +15,7 @@ import org.neo4j.webadmin.rest.ImportService;
 import org.neo4j.webadmin.rest.JmxService;
 import org.neo4j.webadmin.rest.LifecycleService;
 import org.neo4j.webadmin.rest.MonitorService;
+import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 public class ServerRootRepresentation extends RootRepresentation
 {
@@ -34,17 +38,32 @@ public class ServerRootRepresentation extends RootRepresentation
         Map<String, Object> def = new HashMap<String, Object>();
         Map<String, Object> services = new HashMap<String, Object>();
 
-        services.put( "backup", baseUri + BackupService.ROOT_PATH );
-        services.put( "config", baseUri + ConfigService.ROOT_PATH );
-        services.put( "importing", baseUri + ImportService.ROOT_PATH );
-        services.put( "exporting", baseUri + ExportService.ROOT_PATH );
-        services.put( "console", baseUri + ConsoleService.ROOT_PATH );
-        services.put( "jmx", baseUri + JmxService.ROOT_PATH );
-        services.put( "lifecycle", baseUri + LifecycleService.ROOT_PATH );
-        services.put( "monitor", baseUri + MonitorService.ROOT_PATH );
+        GraphDatabaseService currentDb = GraphDatabaseUtils.getLocalDatabase();
+
+        if ( currentDb instanceof EmbeddedGraphDatabase )
+        {
+
+            services.put( "backup", baseUri + BackupService.ROOT_PATH );
+            services.put( "config", baseUri + ConfigService.ROOT_PATH );
+            services.put( "importing", baseUri + ImportService.ROOT_PATH );
+            services.put( "exporting", baseUri + ExportService.ROOT_PATH );
+            services.put( "console", baseUri + ConsoleService.ROOT_PATH );
+            services.put( "jmx", baseUri + JmxService.ROOT_PATH );
+            services.put( "lifecycle", baseUri + LifecycleService.ROOT_PATH );
+            services.put( "monitor", baseUri + MonitorService.ROOT_PATH );
+
+        }
+        else if ( currentDb instanceof RemoteGraphDatabase )
+        {
+            // services.put( "backup", baseUri + BackupService.ROOT_PATH );
+            services.put( "importing", baseUri + ImportService.ROOT_PATH );
+            services.put( "config", baseUri + ConfigService.ROOT_PATH );
+            services.put( "exporting", baseUri + ExportService.ROOT_PATH );
+            services.put( "console", baseUri + ConsoleService.ROOT_PATH );
+            // services.put( "monitor", baseUri + MonitorService.ROOT_PATH );
+        }
 
         def.put( "services", services );
         return def;
     }
-
 }
