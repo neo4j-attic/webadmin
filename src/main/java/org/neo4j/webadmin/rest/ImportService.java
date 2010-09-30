@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,8 +18,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonRenderers;
+import org.neo4j.webadmin.domain.ImportServiceRepresentation;
 import org.neo4j.webadmin.task.ImportTask;
 
 import com.sun.jersey.multipart.BodyPartEntity;
@@ -41,6 +44,18 @@ public class ImportService
     public static final String IMPORT_URL_PATH = "/url";
 
     public static final String URL_KEY = "url";
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new ImportServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
 
     /**
      * Import a graphml file from any given URL. This includes local files.

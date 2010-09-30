@@ -16,22 +16,24 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonParseRuntimeException;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.backup.BackupJobDescription;
 import org.neo4j.webadmin.backup.BackupManager;
 import org.neo4j.webadmin.backup.BackupPerformer;
-import org.neo4j.webadmin.backup.ManualBackupFoundationJob;
-import org.neo4j.webadmin.backup.ManualBackupJob;
 import org.neo4j.webadmin.domain.BackupJobDescriptionRepresentation;
+import org.neo4j.webadmin.domain.BackupServiceRepresentation;
 import org.neo4j.webadmin.domain.BackupStatusRepresentation;
+import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
+import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.properties.ServerProperties;
-import org.neo4j.webadmin.task.DeferredTask;
 
 /**
  * Lays the groundwork for online backups, allows triggering of backup jobs,
@@ -66,6 +68,19 @@ public class BackupService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new BackupServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
+
+    @Deprecated
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
     @Path( STATUS_PATH )
     public synchronized Response status()
     {
@@ -77,37 +92,6 @@ public class BackupService
             BackupStatusRepresentation.CurrentAction currentAction = BackupStatusRepresentation.CurrentAction.IDLE;
             Date actionStarted = null;
             Date actionEta = null;
-
-            try
-            {
-
-                if ( ManualBackupFoundationJob.getInstance().isRunning() )
-                {
-                    currentAction = BackupStatusRepresentation.CurrentAction.CREATING_FOUNDATION;
-                    actionStarted = ManualBackupFoundationJob.getInstance().getStarted();
-                    actionEta = ManualBackupFoundationJob.getInstance().getEta();
-                }
-                else if ( ManualBackupJob.getInstance().isRunning() )
-                {
-                    currentAction = BackupStatusRepresentation.CurrentAction.BACKING_UP;
-                    actionStarted = ManualBackupJob.getInstance().getStarted();
-                    actionEta = ManualBackupJob.getInstance().getEta();
-                }
-                else if ( ManualBackupJob.getInstance().needsFoundation() )
-                {
-                    currentAction = BackupStatusRepresentation.CurrentAction.WAITING_FOR_FOUNDATION;
-                }
-
-            }
-            catch ( IllegalStateException e )
-            {
-                /* NOP */
-            }
-            catch ( NoBackupPathException e )
-            {
-                /* NOP */
-            }
-
             BackupStatusRepresentation backupInfo = new BackupStatusRepresentation(
                     currentAction, actionStarted, actionEta );
             String entity = JsonRenderers.DEFAULT.render( backupInfo );
@@ -131,9 +115,15 @@ public class BackupService
         try
         {
 
-            DeferredTask.defer( ManualBackupJob.getInstance() );
+            BackupPerformer.doBackup( getConfiguredBackupPath() );
             return addHeaders( Response.ok() ).build();
 
+        }
+        catch ( NoBackupFoundationException e )
+        {
+            return buildExceptionResponse( Response.Status.BAD_REQUEST,
+                    "Configured backup path needs backup foundation.", e,
+                    JsonRenderers.DEFAULT );
         }
         catch ( Exception e )
         {
@@ -152,7 +142,8 @@ public class BackupService
         try
         {
 
-            DeferredTask.defer( ManualBackupFoundationJob.getInstance() );
+            BackupPerformer.doBackupFoundation( getConfiguredBackupPath() );
+
             return addHeaders( Response.ok() ).build();
 
         }
@@ -262,6 +253,30 @@ public class BackupService
             return buildExceptionResponse( Status.INTERNAL_SERVER_ERROR,
                     "An unexpected internal server error occurred.", e,
                     JsonRenderers.DEFAULT );
+        }
+    }
+
+    protected File getConfiguredBackupPath() throws IOException
+    {
+
+        try
+        {
+            String strPath = ServerProperties.getInstance().get(
+                    "general.backup.path" ).getValue();
+            if ( strPath.length() > 0 )
+            {
+                return new File( strPath );
+            }
+            else
+            {
+                throw new NoBackupPathException(
+                        "The backup path property is empty." );
+            }
+        }
+        catch ( NoSuchPropertyException e )
+        {
+            throw new NoBackupPathException(
+                    "The backup path property is empty." );
         }
     }
 }

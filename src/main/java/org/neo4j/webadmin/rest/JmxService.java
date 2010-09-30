@@ -21,9 +21,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
@@ -33,6 +35,7 @@ import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.JmxDomainListRepresentation;
 import org.neo4j.webadmin.domain.JmxDomainRepresentation;
 import org.neo4j.webadmin.domain.JmxMBeanRepresentation;
+import org.neo4j.webadmin.domain.JmxServiceRepresentation;
 
 /**
  * Exposes the underlying neo4j instances JMX interface.
@@ -47,7 +50,7 @@ public class JmxService
 
     public static final String ROOT_PATH = "/server/jmx";
 
-    public static final String DOMAINS_PATH = "";
+    public static final String DOMAINS_PATH = "/domain";
     public static final String DOMAIN_PATH = DOMAINS_PATH + "/{domain}";
     public static final String BEAN_PATH = DOMAIN_PATH + "/{objectName}";
     public static final String QUERY_PATH = "/query";
@@ -55,6 +58,19 @@ public class JmxService
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new JmxServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( DOMAINS_PATH )
     public Response listDomains() throws NullPointerException
     {
 

@@ -22,7 +22,7 @@
 				<h2>Import file</h2>
 				<p class="mor_info">Import a GraphML file.</p>
 				<div class="mor_io_fileImport_button_wrap">
-					<form action="/admin/server/import" method="POST" enctype="multipart/form-data">
+					<form action="{$T.uploadUrl}" method="POST" enctype="multipart/form-data">
 						<input type="hidden" class="mor_io_fileImport_redirect" name="redirect" value="/index.html" />
 						<p class="mor_info"><input type="file" class="mor_io_fileImport_url" name="file" /></p>
 						<p class="mor_info"><input type="submit" class="mor_io_fileImport_button" value="Import" /></p>

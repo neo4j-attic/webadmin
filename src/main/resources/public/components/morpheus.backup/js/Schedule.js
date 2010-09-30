@@ -7,7 +7,7 @@ morpheus.components.backup.Schedule = function(server) {
 	me.server = server;
 	me.data = null;
 	
-	me.public = {
+	me.api = {
 		
 		setJob : function( name, path, cron, autoFoundation, id, callback ) {
 			
@@ -99,8 +99,8 @@ morpheus.components.backup.Schedule = function(server) {
 		getJob : function(id, cb) {
 			
 			if( me.data === null ) {
-				me.public.getJobs(function() {
-					me.public.getJob(id, cb);
+				me.api.getJobs(function() {
+					me.api.getJob(id, cb);
 				});
 			} else {
 				
@@ -132,6 +132,6 @@ morpheus.components.backup.Schedule = function(server) {
 		}
 	};
 	
-	return me.public;
+	return me.api;
 	
 };

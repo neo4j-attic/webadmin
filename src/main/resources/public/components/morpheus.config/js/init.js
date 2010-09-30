@@ -50,10 +50,7 @@ morpheus.components.config = (function($, undefined) {
                 me.basePage.setTemplateURL("components/morpheus.config/templates/index.tp");
             }
             
-            // If configuration has not been loaded for the current server
-            if( me.server !== null && me.config === null && me.loadingConfig === false ) {
-                me.loadConfig();   
-            } else if ( me.config !== null ) {
+            if ( me.config !== null ) {
             	me.render();
             }
             
@@ -62,22 +59,12 @@ morpheus.components.config = (function($, undefined) {
         }
     };
     
-    me.serverChanged = function(ev) {
-        
-        me.config = null;
-        me.server = ev.data.server;
-        
-        // If the config page is currently visible, load config stuff
-        me.loadConfig();
-        
-    };
-    
     me.getUncommittedChanges = function(args) {
         var args = args || {};
-        var changed = [];
+        var changed = {};
         for( var key in me.config ) {
             if( me.config[key].newValue !== undefined && ( !args.excludeType || me.config[key].type !== args.excludeType)) {
-                changed.push({ 'key' : key, 'value' : me.config[key].newValue });
+                changed[key] = me.config[key].newValue;
             }
         }
         
@@ -103,50 +90,44 @@ morpheus.components.config = (function($, undefined) {
      * Enable save button if there are uncommitted changes. Disable it otherwise.
      */
     me.updateSaveButtonState = function() {
-        if( me.getUncommittedChanges({excludeType:"DB_CREATION_PROPERTY"}).length > 0 ) {
+        if( hasUncommittedChanges() ) {
             $("input#mor_setting_save",me.basePage).removeAttr('disabled');
         } else {
             $("input#mor_setting_save",me.basePage).attr('disabled', 'disabled');
         }
     };
     
-    me.loadConfig = function() {
+    function hasUncommittedChanges () {
+        for(var key in me.getUncommittedChanges({excludeType:"DB_CREATION_PROPERTY"})) {
+            return true;
+        }
+        return false;
+    }
+    
+    function loadConfig() {
 
-        if(me.server !== null ) {
+    	me.loadingConfig = true;
+    	
+    	getRemoteProperties(function(properties) {
+            me.config = {};
             
-        	me.loadingConfig = true;
-        	
-            me.server.admin.get("config", function(data) {
-                
-                me.config = {};
-                
-                for( var index in data ) {
-                    me.config[data[index].key] = data[index];
-                }
-                
-                // Process pending config requests
-                for( var index in me.pendingConfigRequests ) {
-                	me.pendingConfigRequests[index].cb( me.config[me.pendingConfigRequests[index].key] );
-                }
-                
-                me.render();
-                
-                me.loadingConfig = false;
-                
-            }, function() {
-                
-                me.config = {};
-
-                // Server unreachable
-                me.render();
-                
-                me.loadingConfig = false;
-            });   
-        }  
+            for( var index in properties ) {
+                me.config[properties[index].key] = properties[index];
+            }
+            
+            // Process pending config requests
+            for( var index in me.pendingConfigRequests ) {
+                me.pendingConfigRequests[index].cb( me.config[me.pendingConfigRequests[index].key] );
+            }
+            
+            me.render();
+            
+            me.loadingConfig = false;
+        });
+  
     };
     
     me.render = function() {
-    	
     	if( me.uiLoaded ) {
 	    	var config = [], advanced_config = [], jvm_config = [], general_config = [];
 	        
@@ -208,6 +189,14 @@ morpheus.components.config = (function($, undefined) {
         }
     };
     
+    function getRemoteProperties(callback) {
+        morpheus.Servers.getCurrentServer().manage.config.getProperties(callback);
+    }
+    
+    function setRemoteProperties(settings, callback) {
+        morpheus.Servers.getCurrentServer().manage.config.setProperties(settings, callback);
+    }
+    
     //
     // CONSTRUCT
     //
@@ -224,43 +213,19 @@ morpheus.components.config = (function($, undefined) {
      */
     $("#mor_setting_save").live('click',function() {
         
-        // Find all settings that are changed
-        var changed = me.getUncommittedChanges({excludeType:"DB_CREATION_PROPERTY"});
-        
-        if(changed.length > 0) {
+        if(hasUncommittedChanges()) {
+            
+            // Find all settings that are changed
+            var changed = me.getUncommittedChanges({excludeType:"DB_CREATION_PROPERTY"});
             
             // Disable controls while saving
             $("input",me.basePage).attr('disabled', 'disabled');
             
-            // Check if username or password has changed
-            var authChanged = false;
-            for( var item in changed ) {
-            	
-            	if(item.key === "rest_username") {
-            		me.server.setUsername(item.value);
-            		authChanged = true;
-            	}
-            	
-            	if(item.key === "rest_password") {
-            		me.server.setPassword(item.value);
-            		authChanged = true;
-            	}
-            }
-            
-            if ( authChanged ) {
-            	me.server.save();
-            }
-            
             // Commit changes to server
-            me.server.admin.post("config",changed,function(data){
+            setRemoteProperties(changed,function(data){
             	
                 me.allChangesCommitted({excludeType:"DB_CREATION_PROPERTY"});
                 
-                $("input",me.basePage).removeAttr('disabled');
-                me.updateSaveButtonState();
-                
-            }, function(ev){
-            	
                 $("input",me.basePage).removeAttr('disabled');
                 me.updateSaveButtonState();
                 
@@ -268,14 +233,15 @@ morpheus.components.config = (function($, undefined) {
         }
     });
     
+    neo4j.events.bind("morpheus.servers.current.changed", loadConfig);
+    
     //
     // PUBLIC INTERFACE
     //
     
-    me.public = {
+    return {
         getPage : me.getPage,
         pageChanged : me.pageChanged,
-        serverChanged : me.serverChanged,
     
         /**
          * Set a single value and apply it directly to the server.
@@ -286,48 +252,38 @@ morpheus.components.config = (function($, undefined) {
          *        if attempt failed. 
          */
         set : function(key, val, cb) {
-    		var changed = [
-    		    { 'key' : key, 'value' : val }
-    		];
-    		
-	    	me.server.admin.post("config",changed,function(data){
-	    		// Update the UI if applicable
-	    		if ( me.config[key].type === "JVM_ARGUMENT" ||
+            var changed = {};
+            changed[key] = value;
+            
+            setRemoteProperties(changed,function(data){
+                // Update the UI if applicable
+                if ( me.config[key].type === "JVM_ARGUMENT" ||
                      me.config[key].type === "CONFIG_PROPERTY") {
-	    			$("#mor_setting_" + key).val(val);	
-	    		}
-	    		
-	    		if(typeof(cb) === "function") {
-	    			cb( true );
-	    		}
-	    		
-	        }, function(ev){
-	        	
-	        	if(typeof(cb) === "function") {
-	        		cb( false, ev );
-	        	}
-	        	
-	        });
-		},
+                    $("#mor_setting_" + key).val(val);  
+                }
+                
+                if(typeof(cb) === "function") {
+                    cb( true );
+                }   
+            });
+        },
     
-		/**
-		 * Get some setting. 
-		 * @param key is the key to fetch
-		 * @param cb is a callback that will be called with the config data
-		 */
-    	get : function(key, cb) {
-			if( me.config === null ) {
-				me.pendingConfigRequests.push({ key:key,cb:cb });
-				if( me.loadingConfig === false ) {
-					me.loadConfig();
-				}
-			} else {
-				cb( me.config[key] );
-			}
-		}
+        /**
+         * Get some setting. 
+         * @param key is the key to fetch
+         * @param cb is a callback that will be called with the config data
+         */
+        get : function(key, cb) {
+            if( me.config === null ) {
+                me.pendingConfigRequests.push({ key:key,cb:cb });
+                if( me.loadingConfig === false ) {
+                    loadConfig();
+                }
+            } else {
+                cb( me.config[key] );
+            }
+        }
     };
-    
-    return me.public;
     
 })(jQuery);
 
@@ -335,8 +291,7 @@ morpheus.components.config = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.config",morpheus.components.config);
-morpheus.ui.mainmenu.add("Configuration","morpheus.config", null, "server",3);
+morpheus.ui.Pages.add("morpheus.config",morpheus.components.config);
+morpheus.ui.MainMenu.add({ label : "Configuration", pageKey:"morpheus.config", index:3, requiredServices:['config'], perspectives:['server']});
 
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.config.pageChanged);
-morpheus.event.bind("morpheus.changed",  morpheus.components.config.serverChanged);

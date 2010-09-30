@@ -7,13 +7,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
+import org.neo4j.webadmin.domain.LifecycleServiceRepresentation;
 
 /**
  * REST service to start, stop and restart the neo4j backend.
@@ -21,11 +24,11 @@ import org.neo4j.webadmin.domain.LifecycleRepresentation;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-@Path( LifeCycleService.ROOT_PATH )
-public class LifeCycleService
+@Path( LifecycleService.ROOT_PATH )
+public class LifecycleService
 {
 
-    public static final String ROOT_PATH = "/server";
+    public static final String ROOT_PATH = "/lifecycle";
     public static final String STATUS_PATH = "/status";
     public static final String START_PATH = "/start";
     public static final String STOP_PATH = "/stop";
@@ -38,6 +41,18 @@ public class LifeCycleService
      * not.
      */
     protected static volatile LifecycleRepresentation.Status serverStatus = LifecycleRepresentation.Status.RUNNING;
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new LifecycleServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )

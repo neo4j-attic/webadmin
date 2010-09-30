@@ -36,7 +36,7 @@ morpheus.components.backup.StatusTracker = function(server, manualCb, scheduleCb
 	// PUBLIC
 	//
 	
-	me.public = {
+	me.api = {
 		run : function() {
 			me.poll();
 		}
@@ -88,5 +88,5 @@ morpheus.components.backup.StatusTracker = function(server, manualCb, scheduleCb
 	// CONSTRUCT
 	// 
 	
-	return me.public;
+	return me.api;
 };

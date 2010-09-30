@@ -29,7 +29,7 @@
 				<configuration>
 					<mainClass>org.neo4j.webadmin.Main</mainClass>
 					<arguments>
-						<argument>-webRoot=src/main/resources/public</argument>
+						<argument>-webRoot=${project.build.directory}/classes/public</argument>
 						<argument>-development=true</argument>
 					</arguments>
 				</configuration>
@@ -110,6 +110,92 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.1</version>
+
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<sourceDirectory>src/main/resources</sourceDirectory>
+					<aggregations>
+						<aggregation>
+							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
+							<!-- insert new line after each concatenation (default: false) -->
+							<insertNewLine>true</insertNewLine>
+
+							<output>${project.build.directory}/classes/public/webadmin.js</output>
+
+							<inputDir>${project.build.directory}/classes/public</inputDir>
+
+
+							<!-- files to include, path relative to output's directory or absolute 
+								path -->
+							<includes>
+								<include>js/vend/jquery.1.4.2-min.js</include>
+								<include>js/vend/json2-min.js</include>
+								<include>js/vend/jquery-jtemplates-min.js</include>
+								<include>js/vend/jquery.bbq-min.js</include>
+								<include>js/vend/jquery.flot-min.js</include>
+								<include>js/vend/jquery.simplemodal-min.js</include>
+
+								<include>js/vend/neo4js.js</include>
+
+								<include>js/morpheus-min.js</include>
+								<include>js/morpheus.ui.Pages-min.js</include>
+								<include>js/morpheus.ui.MainMenu-min.js</include>
+								<include>js/morpheus.ui.Dialog-min.js</include>
+								<include>js/morpheus.event-min.js</include>
+								<include>js/morpheus.neo4j-min.js</include>
+								<include>js/morpheus.Servers-min.js</include>
+								<include>js/morpheus.ServerSelector-min.js</include>
+								<include>js/morpheus.forms-min.js</include>
+
+
+								<include>components/morpheus.lifecycle/js/init-min.js</include>
+
+								<include>components/morpheus.data/js/propertiesToListManager-min.js</include>
+								<include>components/morpheus.data/js/init-min.js</include>
+								<include>components/morpheus.data/js/propertyEditor-min.js</include>
+								<include>components/morpheus.data/js/nodeManager-min.js</include>
+								<include>components/morpheus.data/js/relationshipManager-min.js</include>
+
+								<include>components/morpheus.monitor/js/init-min.js</include>
+								<include>components/morpheus.monitor/js/jmx-min.js</include>
+								<include>components/morpheus.monitor/js/PrimitiveCountWidget-min.js</include>
+								<include>components/morpheus.monitor/js/JmxValueTracker-min.js</include>
+								<include>components/morpheus.monitor/js/DiskUsageWidget-min.js</include>
+								<include>components/morpheus.monitor/js/CacheWidget-min.js</include>
+								<include>components/morpheus.monitor/js/CacheWidget-min.js</include>
+								<include>components/morpheus.monitor/js/MonitorChart-min.js</include>
+
+								<include>components/morpheus.console/js/init-min.js</include>
+								<include>components/morpheus.config/js/init-min.js</include>
+
+								<include>components/morpheus.backup/js/StatusTracker-min.js</include>
+								<include>components/morpheus.backup/js/Schedule-min.js</include>
+								<include>components/morpheus.backup/js/parseJobData-min.js</include>
+								<include>components/morpheus.backup/js/init-min.js</include>
+
+								<include>components/morpheus.io/js/init-min.js</include>
+								<include>components/morpheus.io/js/export-min.js</include>
+								<include>components/morpheus.io/js/import-min.js</include>
+								
+								<include>js/morpheus.boot-min.js</include>
+							</includes>
+						</aggregation>
+					</aggregations>
+
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

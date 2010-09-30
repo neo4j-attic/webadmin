@@ -9,25 +9,17 @@ morpheus.components.io.init = (function($, undefined) {
 	
 	me.basePage = $("<div></div>");
 	me.uiLoaded  = false;
+	me.uploadUrl = "";
 	
-	//
-	// PUBLIC
-	//
-	
-	me.public = {
-		getPage :  function() {
-		    return me.basePage;
-		}
-	};
 	
 	//
 	// INTERNALS
 	//
 	
 	me.render = function() {
-	    	
-        me.basePage.processTemplate();
-        
+	    if( me.uiLoaded ) {
+	        me.basePage.processTemplate({uploadUrl:me.uploadUrl});
+	    }
     };
     
     me.pageChanged = function(ev) {
@@ -46,11 +38,24 @@ morpheus.components.io.init = (function($, undefined) {
 	// LISTEN TO THE WORLD
 	//
 	
-	morpheus.ui.addPage("morpheus.io",me.public);
-	morpheus.ui.mainmenu.add("Import / Export","morpheus.io", null, "server", 8);
+	morpheus.ui.MainMenu.add({ label : "Import / Export", pageKey:"morpheus.io", index:8, requiredServices:['importing','exporting'], perspectives:['server']});
 	
 	morpheus.event.bind("morpheus.ui.page.changed", me.pageChanged);
+	morpheus.event.bind("morpheus.servers.current.changed", function(ev) {
+	    var server = morpheus.Servers.getCurrentServer();
+	    server.manage.importing.getUploadUrl(function(url){
+	        me.uploadUrl = url;
+	        me.render();
+	    })
+	});
 	
-	return me.public;
+	return {
+        getPage :  function() {
+            return me.basePage;
+        }
+    };;
 	
 })(jQuery);
+
+
+morpheus.ui.Pages.add("morpheus.io",morpheus.components.io.init);

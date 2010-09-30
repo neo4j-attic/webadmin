@@ -10,18 +10,6 @@ morpheus.components.data.propertiesToListManager = (function($, undefined) {
 	
 	me.listFields = ['name'];
 	
-	me.public = {
-		getListFields : function() {
-			return me.listFields;
-		},
-		
-		serverChanged : function(ev) {
-			morpheus.components.config.get("general.data.listfields", function(data) {
-	    		me.setFieldString(data.value);
-	    	}); 
-		}
-	};
-	
 	//
 	// INTERNALS
 	//
@@ -54,7 +42,17 @@ morpheus.components.data.propertiesToListManager = (function($, undefined) {
 		morpheus.components.config.set("general.data.listfields", fieldString);
 	});
 	
-	return me.public;
+	return {
+        getListFields : function() {
+            return me.listFields;
+        },
+        
+        serverChanged : function(ev) {
+            morpheus.components.config.get("general.data.listfields", function(data) {
+                me.setFieldString(data.value);
+            }); 
+        }
+    };
 	
 })(jQuery);
 

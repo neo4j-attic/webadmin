@@ -10,12 +10,6 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 	me.dataCore = morpheus.components.data.base;
 	
 	//
-	// PUBLIC
-	//
-	
-	me.public = {};
-	
-	//
 	// INTERNALS
 	//
 	
@@ -25,7 +19,7 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 	
 	me.addRelatiohship = function(ev) {
 		ev.preventDefault();
-		morpheus.ui.dialog.showUsingTemplate("New relationship","components/morpheus.data/templates/new_relationship.tp", me.dialogLoaded);
+		morpheus.ui.Dialog.showUsingTemplate("New relationship","components/morpheus.data/templates/new_relationship.tp", me.dialogLoaded);
 	};
 	
 	me.saveNewRelationship = function(ev) {
@@ -39,10 +33,10 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 		}
 		
 		if( ! to.indexOf("://")) {
-			to = me.server().urls.rest + to;
+			to = me.server().url + to;
 		}
 		
-		me.server().rest.post("node/" + from + "/relationships", {
+		me.server().post("node/" + from + "/relationships", {
 				"to" : to,
 				"data" : {},
 				"type": type
@@ -51,7 +45,7 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 			}
 		);
 		
-		morpheus.ui.dialog.close();
+		morpheus.ui.Dialog.close();
 	};
 	
 	/**
@@ -68,7 +62,7 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 	me.deleteItem = function(ev) {
 		ev.preventDefault();
 		if( confirm("Are you sure?")) {
-			morpheus.del(me.dataCore.getItem().self, function(data) {
+			neo4j.Web.del(me.dataCore.getItem().self, function(data) {
 				// Go to root node
 				$.bbq.pushState({ dataurl: "node/0" });
 			});
@@ -79,6 +73,6 @@ morpheus.components.data.relationshipManager = (function($, undefined) {
 	$(".mor_data_add_relationship").live("click", me.addRelatiohship);
 	$(".mor_data_relationship_dialog_save").live("click", me.saveNewRelationship);
 	
-	return me.public;
+	return {};
 	
 })(jQuery);

@@ -9,7 +9,7 @@ morpheus.provide("morpheus.components.monitor.JmxValueTracker");
  * @param cb is a callback that is triggered with the new value any time the value beeing tracked changes.
  * @param interval (optional) is the update interval in milliseconds. The default is 10000.
  */
-morpheus.components.monitor.JmxValueTracker = function(server, beanName, extractor, cb, interval) {
+morpheus.components.monitor.JmxValueTracker = function(server, beanDomain, beanName, extractor, cb, interval) {
 	
 	var me = {};
 	
@@ -25,8 +25,9 @@ morpheus.components.monitor.JmxValueTracker = function(server, beanName, extract
 	
 	me.callback = cb;
 	me.extractor = extractor;
+	me.beanDomain = beanDomain;
 	me.beanName = beanName;
-	me.server = server;
+	me.jmx = server.manage.jmx;
 	
 	me.prevValue = null;
 	
@@ -34,7 +35,7 @@ morpheus.components.monitor.JmxValueTracker = function(server, beanName, extract
 	// PUBLIC
 	//
 	
-	me.public = {
+	me.api = {
 		run : function() {
 			me.poll();
 		},
@@ -49,7 +50,7 @@ morpheus.components.monitor.JmxValueTracker = function(server, beanName, extract
 	//
 	
 	me.poll = function() {
-		me.server.jmx(beanName, function(beans) {
+		me.jmx.getBean(beanDomain, beanName, function(beans) {
 			if( beans ) {
 				var value = me.extractor(beans[0]);
 				if ( value !== me.prevValue ) {
@@ -84,5 +85,5 @@ morpheus.components.monitor.JmxValueTracker = function(server, beanName, extract
 	// CONSTRUCT
 	// 
 	
-	return me.public;
+	return me.api;
 };

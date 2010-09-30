@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,10 +18,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.console.ConsoleSessions;
+import org.neo4j.webadmin.domain.ConsoleServiceRepresentation;
 
 /**
  * A web service that keeps track of client sessions and then passes control
@@ -44,6 +47,18 @@ public class ConsoleService
     //
     // PUBLIC
     //
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new ConsoleServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
 
     @POST
     @Produces( MediaType.APPLICATION_JSON )

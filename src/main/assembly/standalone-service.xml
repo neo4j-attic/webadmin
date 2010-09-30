@@ -64,7 +64,7 @@
         
         <!-- PUBLIC -->
         <fileSet>
-            <directory>src/main/resources/public</directory>
+            <directory>target/classes/public</directory>
             <outputDirectory>public</outputDirectory>
             <includes>
                 <include>*</include>

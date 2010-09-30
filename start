@@ -12,7 +12,7 @@ if [ -f target/appargs ]
 then
 	APP_ARGS=`cat target/appargs`
 else 
-	APP_ARGS="-webRoot=src/main/resources/public -development=true"
+	APP_ARGS="-webRoot=target/classes/public -development=true"
 fi
 
 env MAVEN_OPTS="$EXTRA_JVM_ARGS" mvn --settings neo4j-repo.xml compile exec:java -Dexec.args="$APP_ARGS -development=true" "$@"

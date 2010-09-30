@@ -14,7 +14,6 @@ morpheus.components.backup.init = (function($, undefined) {
     
     me.uiLoaded  = false;
     me.serverChanged = false;
-    me.server = null;
     me.schedule = null;
     
     me.currentBackupPath = "";
@@ -27,7 +26,7 @@ morpheus.components.backup.init = (function($, undefined) {
     // PUBLIC
     //
     
-    me.public = {
+    me.api = {
             
             getPage :  function() {
                 return me.basePage;
@@ -49,7 +48,6 @@ morpheus.components.backup.init = (function($, undefined) {
                         me.render();
                     	me.loadBackupData();
                     }
-                    me.trackStatus();
                     
                 } else {
                     me.visible = false;
@@ -58,7 +56,6 @@ morpheus.components.backup.init = (function($, undefined) {
             
             serverChanged : function(ev) {
                 
-                me.server = ev.data.server;
                 me.currentBackupPath = "";
                 
                 if( me.visible === true ) {
@@ -66,7 +63,6 @@ morpheus.components.backup.init = (function($, undefined) {
                 	// Load current backup path
                 	me.loadBackupData();
                     me.render();
-                    me.trackStatus();
                     
                 } else {
                 	me.serverChanged = true;
@@ -75,7 +71,7 @@ morpheus.components.backup.init = (function($, undefined) {
             },
             
             init : function() {
-            	
+                me.loadBackupData();
             }
             
     };
@@ -83,6 +79,10 @@ morpheus.components.backup.init = (function($, undefined) {
     // 
     // PRIVATE
     //
+    
+    function serverManager() {
+        return morpheus.Servers.getCurrentServer().manage;
+    }
     
     me.render = function() {
     	
@@ -95,16 +95,16 @@ morpheus.components.backup.init = (function($, undefined) {
     
     me.loadBackupData = function() {
     	
-    	morpheus.components.config.get("general.backup.path", function(data) {
-    		me.currentBackupPath = data.value;
-    		me.updateUiBackupPath();
-    	});
-    	
-    	if( me.server ) {
-    		me.schedule = morpheus.components.backup.Schedule(me.server);
-    		me.schedule.getJobs(me.updateBackupJobUi);
-    	}
-    	
+        var server = morpheus.Servers.getCurrentServer();
+        
+        if( server ) { 
+        	server.manage.config.getProperty("general.backup.path", function(prop) {
+        		me.currentBackupPath = prop.value;
+        		me.updateUiBackupPath();
+        	});
+        	
+        	updateJobs();
+        }
     };
     
     me.updateUiBackupPath = function() {
@@ -121,12 +121,13 @@ morpheus.components.backup.init = (function($, undefined) {
     };
     
     me.updateBackupJobUi = function(data) {
-    	morpheus.log(data);
     	
     	if( ! me.ui.jobList ) {
     		me.ui.jobList = $("ul.mor_backup_job_list");
     		me.ui.jobList.setTemplateURL("components/morpheus.backup/templates/schedule.tp")
     	}
+    	
+    	var data = morpheus.components.backup.parseJobData(data);
     	
     	me.ui.jobList.processTemplate({
     		jobs : data.jobList
@@ -135,71 +136,8 @@ morpheus.components.backup.init = (function($, undefined) {
     };
     
     /**
-     * This is a callback for StatusTracker, called every time status changes.
-     */
-    me.statusChanged = function(data) {
-    	
-    	var keepPolling = false;
-    	
-    	if( data.current_action === "WAITING_FOR_FOUNDATION" ) {
-    		
-    		$('p.mor_backup_status').hide();
-    		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
-    		$('div.mor_backup_foundationbox').show();
-    		
-    		// No more polling, please.
-    		keepPolling = false;
-    	} else if ( data.current_action === "BACKING_UP" ) {
-    		
-    		me.showStatus("Performing backup..");
-    		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
-    		
-    		// Keep polling, please.
-    		keepPolling = true;
-    	} else if ( data.current_action === "CREATING_FOUNDATION" ) {
-    		
-    		me.showStatus("Copying files and preparing your database for online backups..");
-    		$('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
-    		
-    		// Keep polling, please.
-    		keepPolling = true;
-    		
-    	} else if ( me.prevAction ===  "BACKING_UP" ) { 
-    		
-    		me.showStatus("Backup successful!");
-    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
-    		
-    	} else if ( me.prevAction ===  "CREATING_FOUNDATION" ) { 
-    		
-    		me.showStatus("Foundation successful! Your database is now ready for online backups.");
-    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
-    		
-    	} else {
-    		$('button.mor_backup_triggerbutton').removeAttr('disabled');
-    		me.hideStatus();
-        	
-    	}
-    	
-    	me.prevAction = data.current_action;
-    	
-    	return me.visible;
-    };
-    
-    /**
-     * Create a statustracker and trigger it to check status of the backup process.
-     */
-    me.trackStatus = function() {
-    	var statusTracker = morpheus.components.backup.StatusTracker(me.server, me.statusChanged, me.updateBackupJobUi);
-		
-		setTimeout((function(statusTracker) {
-			return function() {
-				statusTracker.run();
-			};
-		})(statusTracker),10);
-    };
-    
-    /**
-     * Show a simple status message. This will hide the big backup foundation-message.
+     * Show a simple status message. This will hide the big backup
+     * foundation-message.
      */
     me.showStatus = function(message) {
     	$('p.mor_backup_status').html(message);
@@ -214,6 +152,15 @@ morpheus.components.backup.init = (function($, undefined) {
     	$('p.mor_backup_status').hide();
 		$('div.mor_backup_foundationbox').hide();
     };
+
+    function updateJobs() {
+        if( me.visible ) {
+            var server = morpheus.Servers.getCurrentServer();
+            if(server && server.manage.backup.available) {
+                server.manage.backup.getJobs(me.updateBackupJobUi);
+            }
+        }
+    }
     
     //
     // CONSTRUCT
@@ -237,43 +184,58 @@ morpheus.components.backup.init = (function($, undefined) {
     $('button.mor_backup_setpathbutton').live('click',function(ev) {
     	$('input.mor_backup_path').attr('disabled', 'disabled');
     	
-    	morpheus.components.config.set("general.backup.path", $('input.mor_backup_path').val(), function(result) {
-    		$('input.mor_backup_path').removeAttr('disabled');
-    		
-    		if ( result === true ) {
-    			me.currentBackupPath = $('input.mor_backup_path').val();
-    			me.updateUiBackupPath();
-    		} 
-    	});
+    	var server = morpheus.Servers.getCurrentServer();
+        
+        server.manage.config.setProperty("general.backup.path", $('input.mor_backup_path').val(), function(result) {
+            $('input.mor_backup_path').removeAttr('disabled');
+            
+            me.currentBackupPath = $('input.mor_backup_path').val();
+            me.updateUiBackupPath();
+            
+        });
     	
     });
     
     $('button.mor_backup_triggerbutton').live('click', function(ev) {
     	
-    	me.server.admin.post("backup/trigger", function(data) {
-    		me.showStatus("Checking status..");
-    		
-    		me.trackStatus();
-    	});
-    	
+        var server = morpheus.Servers.getCurrentServer();
+        
+        me.showStatus("Performing backup..");
+        $('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
+        
+        server.manage.backup.triggerManual(function(data) {
+            if(data !== false) {
+                me.showStatus("Backup successful!");
+                $('button.mor_backup_triggerbutton').removeAttr('disabled');
+            } else {
+                $('p.mor_backup_status').hide();
+                $('button.mor_backup_triggerbutton').attr('disabled', 'disabled');
+                $('div.mor_backup_foundationbox').show();
+            }
+        });
+        
     });
     
     $('button.mor_backup_foundation_triggerbutton').live('click', function(ev) {
     	
     	if( confirm("This will DESTROY any files in '" + me.currentBackupPath + "', are you sure?") ) {
 	    	
-	    	me.server.admin.post("backup/triggerfoundation", function(data) {
-	    		me.showStatus("Checking status..");
-	    		
-	    		setTimeout(me.trackStatus, 50);
-	    	});
+    	    var server = morpheus.Servers.getCurrentServer();
+    	    
+    	    me.showStatus("Creating foundation..");
+            
+            server.manage.backup.triggerManualFoundation(function(data) {
+                me.showStatus("Foundation successful! Your database is now ready for online backups.");
+                $('button.mor_backup_triggerbutton').removeAttr('disabled');            
+                
+            });
     	}
     	
     });
     
     $('button.mor_backup_add_job').live('click',function(ev) {
     	
-    	morpheus.ui.dialog.showUsingTemplate("New backup job","components/morpheus.backup/templates/job.tp");
+    	morpheus.ui.Dialog.showUsingTemplate("New backup job","components/morpheus.backup/templates/job.tp");
     	
     });
     
@@ -301,60 +263,70 @@ morpheus.components.backup.init = (function($, undefined) {
     		
     		id = id.length > 0 ? id : null;
     		
-    		me.schedule.setJob(
-				name, path, cron, autoFoundation, id,
+    		// Save job
+    		
+    		var server = morpheus.Servers.getCurrentServer();
+    		
+    		server.manage.backup.setJob(
+    		    {
+    		        'name': name,
+    		        'backupPath':path,
+    		        'cronExpression':cron,
+    		        'autoFoundation': autoFoundation,
+    		        'id':id
+    		    },
 				function(){
-					me.schedule.getJobs(me.updateBackupJobUi);
+    		        server.manage.backup.getJobs(me.updateBackupJobUi);
 				}
     		);
     		
-    		morpheus.ui.dialog.close();
+    		morpheus.ui.Dialog.close();
     	}
     	
     });
     
     $('button.mor_backup_job_edit').live('click', function(ev){
-    	me.schedule.getJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
-    		morpheus.ui.dialog.showUsingTemplate("Edit backup job","components/morpheus.backup/templates/job.tp", job);
+        var server = morpheus.Servers.getCurrentServer();
+    	server.manage.backup.getJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
+    	    neo4j.log(job);
+    		morpheus.ui.Dialog.showUsingTemplate("Edit backup job","components/morpheus.backup/templates/job.tp", job);
     	});
     });
     
     
     $('button.mor_backup_job_delete').live('click', function(ev){
     	if( confirm("Are you sure you want to delete the backup job?") ) {
-	    	me.schedule.deleteJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), function(job){
-	    		me.schedule.getJobs(me.updateBackupJobUi);
-	    	});
+    	    var server = morpheus.Servers.getCurrentServer();
+            server.manage.backup.deleteJob($(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val(), updateJobs);
     	}
     });
     
     $('button.mor_backup_job_create_foundation').live('click', function(ev){
     	var id = $(ev.target).closest("li.mor_backup_job").find(".mor_backup_job_id_value").val();
-    	me.schedule.getJob(id, function(job){
+    	var server = morpheus.Servers.getCurrentServer();
+        server.manage.backup.getJob(id, function(job){
     		if(job && confirm("This will delete any current backup in " + job.backupPath +". Are you sure?")) {
     			
     			$(".mor_backup_job_info").html("Creating foundation..");
     			$(".mor_backup_job_info").show();
     			
-    			me.server.admin.post("backup/job/" + job.id + "/triggerfoundation", 
+    			server.manage.backup.triggerJobFoundation(job.id, 
     				function(data) {
     					$(".mor_backup_job_info").html("Successfully created foundation.");
     					setTimeout(function() {
     						$(".mor_backup_job_info").hide();
     					}, 2000);
-    				}, function(failure) {
-    					$(".mor_backup_job_info").html("Foundation failed, please see server logs.");
-    					setTimeout(function() {
-    						$(".mor_backup_job_info").hide();
-    					}, 2000);
-    				}
-    			);
+    				});
     			
     		}
     	});
     });
     
-    return me.public;
+    // Update job info at regular intervals
+    
+    setInterval(updateJobs, 5000);
+    
+    return me.api;
     
 })(jQuery);
 
@@ -362,9 +334,9 @@ morpheus.components.backup.init = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.backup",morpheus.components.backup.init);
-morpheus.ui.mainmenu.add("Backup","morpheus.backup", null, "server", 4);
+morpheus.ui.Pages.add("morpheus.backup",morpheus.components.backup.init);
+morpheus.ui.MainMenu.add({ label : "Backup", pageKey:"morpheus.backup", index:4, requiredServices:['backup'], perspectives:['server']});
 
-morpheus.event.bind("morpheus.init", morpheus.components.backup.init.init);
-morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.backup.init.pageChanged);
-morpheus.event.bind("morpheus.changed",  morpheus.components.backup.init.serverChanged);
+neo4j.events.bind("morpheus.init", morpheus.components.backup.init.init);
+neo4j.events.bind("morpheus.ui.page.changed", morpheus.components.backup.init.pageChanged);
+neo4j.events.bind("morpheus.servers.current.changed", morpheus.components.backup.init.serverChanged);

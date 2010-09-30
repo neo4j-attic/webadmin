@@ -46,10 +46,10 @@ morpheus.neo4j = function( data )
     // PUBLIC
     //
 
-    me.public = {
+    me.api = {
     		
             toJSON : function() {
-                return {adminUrl:me.public.urls.admin, restUrl:me.public.urls.rest, domain:me.domain, name:me.name, password:me.password,username:me.username};
+                return {adminUrl:me.api.urls.admin, restUrl:me.api.urls.rest, domain:me.domain, name:me.name, password:me.password,username:me.username};
             },
             
             urls : {
@@ -68,10 +68,10 @@ morpheus.neo4j = function( data )
             			return url;
             		}
             		
-            		if ( url.indexOf(me.public.urls.rest) === 0 ) {
-            			return url.substring(me.public.urls.rest.length);
-            		} else if ( url.indexOf(me.public.urls.admin) === 0 ) {
-            			return url.substring(me.public.urls.admin.length);
+            		if ( url.indexOf(me.api.urls.rest) === 0 ) {
+            			return url.substring(me.api.urls.rest.length);
+            		} else if ( url.indexOf(me.api.urls.admin) === 0 ) {
+            			return url.substring(me.api.urls.admin.length);
             		} else {
             			return url.substring("/", 8);
             		}
@@ -79,10 +79,10 @@ morpheus.neo4j = function( data )
             },
             
             admin : {
-                get  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'get'); },
-                post : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'post');},
-                put  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'put'); },
-                del  : function(resource, data, success, failure) { return me.public.admin.ajax(resource,data,success,failure,'del'); },
+                get  : function(resource, data, success, failure) { return me.api.admin.ajax(resource,data,success,failure,'get'); },
+                post : function(resource, data, success, failure) { return me.api.admin.ajax(resource,data,success,failure,'post');},
+                put  : function(resource, data, success, failure) { return me.api.admin.ajax(resource,data,success,failure,'put'); },
+                del  : function(resource, data, success, failure) { return me.api.admin.ajax(resource,data,success,failure,'del'); },
                 
                 ajax : function( resource, data, success, failure, method ) {
                 	
@@ -92,7 +92,7 @@ morpheus.neo4j = function( data )
                         data = null;
                     }
                 	
-                	return morpheus[method]( me.public.urls.admin + resource, data, success, me.wrapFailureCallback(failure), {
+                	return neo4j.Web[method]( me.api.urls.admin + resource, data, success, me.wrapFailureCallback(failure), {
                 		username : me.username,
                 		password : me.password
                 	});
@@ -100,10 +100,10 @@ morpheus.neo4j = function( data )
             },
             
             rest : {
-            	get  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'get'); },
-                post : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'post');},
-                put  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'put'); },
-                del  : function(resource, data, success, failure) { return me.public.rest.ajax(resource,data,success,failure,'del'); },
+            	get  : function(resource, data, success, failure) { return me.api.rest.ajax(resource,data,success,failure,'get'); },
+                post : function(resource, data, success, failure) { return me.api.rest.ajax(resource,data,success,failure,'post');},
+                put  : function(resource, data, success, failure) { return me.api.rest.ajax(resource,data,success,failure,'put'); },
+                del  : function(resource, data, success, failure) { return me.api.rest.ajax(resource,data,success,failure,'del'); },
                 
                 ajax : function( resource, data, success, failure, method ) {
                 	
@@ -113,7 +113,7 @@ morpheus.neo4j = function( data )
                         data = null;
                     }
                 	
-                	return morpheus[method]( me.public.urls.rest + resource, data, success, me.wrapFailureCallback(failure), {
+                	return neo4j.Web[method]( me.api.urls.rest + resource, data, success, me.wrapFailureCallback(failure), {
                 		username : me.username,
                 		password : me.password
                 	});
@@ -154,7 +154,7 @@ morpheus.neo4j = function( data )
             	
             	var noNameSpecified = (typeof(cb) === "undefined");
             	
-            	var beanName = me.public.parseBeanName(name);
+            	var beanName = me.api.parseBeanName(name);
             	var cb = cb || name || function() {};
             	
             	
@@ -164,7 +164,7 @@ morpheus.neo4j = function( data )
             		if( me.domains ) {
             			cb(me.domains);
             		} else {
-		            	me.public.admin.get("jmx", (function(cb) {
+		            	me.api.admin.get("jmx", (function(cb) {
 		                    return function(data) {
 		                    	me.domains = data;
 		                        cb(data);
@@ -177,12 +177,12 @@ morpheus.neo4j = function( data )
             		if( beanName.domain === "localkernel") {
             			
             			// Find out what instance name the local kernel has
-            			me.public.kernelInstanceName((function(cb, name) {
+            			me.api.kernelInstanceName((function(cb, name) {
             				return function(instanceName) {
             					
             					if( instanceName ) {
 	            					var query = escape(instanceName + ",name=" + name);
-	            					me.public.admin.get("jmx/org.neo4j/" + query, (function(cb) {
+	            					me.api.admin.get("jmx/org.neo4j/" + query, (function(cb) {
 	        		                    return function(data) {
 	        		                        cb(data);
 	        		                    };
@@ -196,7 +196,7 @@ morpheus.neo4j = function( data )
             			})(cb,beanName.name));
             			
             		} else {
-		            	me.public.admin.get("jmx/" + beanName.domain + "/" + beanName.name, (function(cb) {
+		            	me.api.admin.get("jmx/" + beanName.domain + "/" + beanName.name, (function(cb) {
 		                    return function(data) {
 		                        cb(data);
 		                    };
@@ -217,7 +217,7 @@ morpheus.neo4j = function( data )
             	
             	if( ! me.kernelQueryRunning ) {
             		me.kernelQueryRunning = true;
-	            	me.public.admin.get("jmx/kernelquery",  
+	            	me.api.admin.get("jmx/kernelquery",  
 	            		function(data) {
 	            		
 	            			// Data looks like : org.neo4j:instance=kernel#0,name=*
@@ -311,13 +311,13 @@ morpheus.neo4j = function( data )
 	 * new data that is available on the current health of the server. It will
 	 * also trigger itself to be called again at a regular interval.
 	 * 
-	 * To stop this, call me.public.stopMonitoring()
+	 * To stop this, call me.api.stopMonitoring()
 	 */
     me.pollMonitor = function() {
     	
     	if( me.monitoring ) {
     		
-    		me.public.admin.get("monitor/" + me.latestDataPointTime, function(data) {
+    		me.api.admin.get("monitor/" + me.latestDataPointTime, function(data) {
 				
     			// Set to true in parts of this method to trigger a non-delayed re-request
     			var quickPoll = false;
@@ -371,7 +371,7 @@ morpheus.neo4j = function( data )
 	    				
 	    				// Let the world know
 	    				morpheus.event.trigger("morpheus.monitor.update", {
-	    					server : me.public,
+	    					server : me.api,
 	    					newData : {
 	    						data: newData,
 	    						timestamps : newTimestamps,
@@ -447,7 +447,7 @@ morpheus.neo4j = function( data )
     // CONSTRUCT
     //
 
-    return me.public;
+    return me.api;
 
 };
 
@@ -473,9 +473,9 @@ morpheus.neo4jHandler = (function(undefined) {
 	 */
     me.init = function() {
 
-        $( window ).bind( "hashchange", me.hashchange );
-        me.hashchange();
-        morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
+        //$( window ).bind( "hashchange", me.hashchange );
+        //me.hashchange();
+        //morpheus.event.trigger("morpheus.servers.loaded", { servers : me.servers } );
         
     };
     
@@ -595,7 +595,7 @@ morpheus.neo4jHandler = (function(undefined) {
     //
     
     // Fetch available neo4j servers
-    morpheus.prop("neo4j-servers", me.serversLoaded );
+    //morpheus.prop("neo4j-servers", me.serversLoaded );
     
     //
     // PUBLIC API

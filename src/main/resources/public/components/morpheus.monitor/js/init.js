@@ -1,11 +1,5 @@
 morpheus.provide("morpheus.components.monitor.base");
 
-//$.require( "components/morpheus.monitor/js/jmx.js" );
-//$.require( "components/morpheus.monitor/js/PrimitiveCountWidget.js" );
-//$.require( "components/morpheus.monitor/js/DiskUsageWidget.js" );
-//$.require( "components/morpheus.monitor/js/CacheWidget.js" );
-//$.require( "components/morpheus.monitor/js/MonitorChart.js" );
-
 /**
  * Base module for the monitor component.
  */
@@ -28,23 +22,25 @@ morpheus.components.monitor.base = (function($, undefined) {
     // PUBLIC
     //
     
-    me.public = {
+    me.api = {
             
             getPage :  function() {
                 return me.basePage;
             },
             
             pageChanged : function(ev) {
-                
                 if(ev.data === "morpheus.monitor") {
-                    
             		me.visible = true;
                 
                     if( me.uiLoaded === false ) {
                     	me.uiLoaded = true;
                         me.basePage.setTemplateURL("components/morpheus.monitor/templates/index.tp");
 	                    
-	                    me.reload();
+                        me.server = morpheus.Servers.getCurrentServer();
+                        
+                        if(me.server) {
+                            me.reload();
+                        }
                     } else {
                     	me.runMonitors();
                     }
@@ -57,11 +53,12 @@ morpheus.components.monitor.base = (function($, undefined) {
             
             serverChanged : function(ev) {
                 
-                me.server = ev.data.server;
-                
-                // If the monitor page is currently visible
-                if( me.visible === true ) {
-                	me.reload();
+                if( me.server != morpheus.Servers.getCurrentServer() ) {
+                    me.server = morpheus.Servers.getCurrentServer();
+                    // If the monitor page is currently visible
+                    if( me.visible === true ) {
+                    	me.reload();
+                    }
                 }
             },
             
@@ -81,13 +78,12 @@ morpheus.components.monitor.base = (function($, undefined) {
         
         me.destroyMonitors();
         
-        if( me.server ) {
-        	
-        	me.server.startMonitoring();
-        	
-        	me.loadMonitors(me.server);
+        var server = morpheus.Servers.getCurrentServer();
+        
+        if( server ) {
+        	me.loadMonitors(server);
         	$("#mor_monitor_lifecycle").empty();
-        	$("#mor_monitor_lifecycle").append( morpheus.components.Lifecycle(me.server).render() );
+        	$("#mor_monitor_lifecycle").append( morpheus.components.Lifecycle(server).render() );
         }
         
     };
@@ -192,7 +188,7 @@ morpheus.components.monitor.base = (function($, undefined) {
         ev.preventDefault();
     });
     
-    return me.public;
+    return me.api;
     
 })(jQuery);
 
@@ -200,9 +196,9 @@ morpheus.components.monitor.base = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.monitor",morpheus.components.monitor.base);
-morpheus.ui.mainmenu.add("Dashboard","morpheus.monitor", null, "server",0);
+morpheus.ui.Pages.add("morpheus.monitor",morpheus.components.monitor.base);
+morpheus.ui.MainMenu.add({ label : "Dashboard", pageKey:"morpheus.monitor", index:0, requiredServices:['monitor'], perspectives:['server']});
 
 morpheus.event.bind("morpheus.init", morpheus.components.monitor.base.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.monitor.base.pageChanged);
-morpheus.event.bind("morpheus.changed",  morpheus.components.monitor.base.serverChanged);
+morpheus.event.bind("morpheus.servers.current.changed",  morpheus.components.monitor.base.serverChanged);

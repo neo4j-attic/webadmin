@@ -3,15 +3,9 @@ morpheus.provide("morpheus.components.io.import");
 /**
  * Import a graphml file by specifying a URL.
  */
-morpheus.components.io.import= (function($, undefined) {
+morpheus.components.io.importing = (function($, undefined) {
 	
 	var me = {};
-	
-	//
-	// PUBLIC
-	//
-	
-	me.public = {};
 	
 	//
 	// PRIVATE
@@ -33,25 +27,18 @@ morpheus.components.io.import= (function($, undefined) {
 			$(".mor_io_urlImport_button_wrap").hide();
 			$(".mor_io_urlImport_progress_wrap").show();
 			
-			var request = {
-				url : url
-			};
-			
-			morpheus.neo4jHandler.currentServer().admin.post("import/url", request ,function(data){
+			var server = morpheus.Servers.getCurrentServer();
+	        
+	        server.manage.importing.fromUrl( url ,function(data){
 				$(".mor_io_urlImport_button_wrap").show();
 				$(".mor_io_urlImport_progress_wrap").hide();
-			}, function(error){
-				$(".mor_io_urlImport_button_wrap").show();
-				$(".mor_io_urlImport_progress_wrap").hide();
-				$(".mor_io_urlImport_error_wrap").show();
-				$(".mor_io_urlImport_error_wrap").html("Import failed, please see the server logs.");
 			});
 		}
 		
 	});
 	
-	$("input.mor_io_fileImport_button").live("click",function(ev) { 
-		
+	$("input.mor_io_fileImport_button").live("click",function(ev) {
+	    
 		// Set redirect to correct value right before submitting.
 		$("input.mor_io_fileImport_redirect").val(location.href);
 		
@@ -60,6 +47,6 @@ morpheus.components.io.import= (function($, undefined) {
 		
 	});
 	
-	return me.public;
+	return {};
 	
 })(jQuery);

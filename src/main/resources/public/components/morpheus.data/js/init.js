@@ -35,7 +35,7 @@ morpheus.components.data.base = (function($, undefined) {
     // PUBLIC
     //
     
-    me.public = {
+    me.api = {
             
             getPage :  function() {
                 return me.basePage;
@@ -84,7 +84,7 @@ morpheus.components.data.base = (function($, undefined) {
              * Get the current server being browsed.
              */
             getServer : function() {
-            	return me.server;
+            	return morpheus.Servers.getCurrentServer();
             },
             
             /**
@@ -96,12 +96,12 @@ morpheus.components.data.base = (function($, undefined) {
             
             reload : function() {
                 
-                if( me.server ) {
+                var server = morpheus.Servers.getCurrentServer();
+                
+                if( server ) {
                 	
                 	if( typeof(me.dataUrl) !== "undefined" && me.dataUrl !== null ) {
-                        morpheus.log("Fetching from REST url " + me.dataUrl);
-                		me.server.rest.get(me.dataUrl, function(data) { 
-                			morpheus.log("Got result from REST url " + me.dataUrl);
+                		server.get(me.dataUrl, function(data) {
                     		me.currentRelatedNodePage = 0;
                             
                         	if( data !== null ) {
@@ -141,7 +141,7 @@ morpheus.components.data.base = (function($, undefined) {
                         	
                         });
                     } else {
-                    	me.public.setDataUrl("node/0");
+                    	me.api.setDataUrl("node/0");
                     }
                 } else {
                 	me.render();
@@ -155,7 +155,7 @@ morpheus.components.data.base = (function($, undefined) {
     // PRIVATE
     //
     
-    me.reload = me.public.reload;
+    me.reload = me.api.reload;
     
     /**
 	 * Triggered when showing a node. This will load all relations for the
@@ -164,7 +164,9 @@ morpheus.components.data.base = (function($, undefined) {
     me.reloadRelations = function() {
     	var relationshipUrl = me.dataUrl + "/relationships/all";
     	
-    	me.server.rest.get(relationshipUrl, function(data) {
+    	var server = morpheus.Servers.getCurrentServer();
+    	
+    	server.get(relationshipUrl, function(data) {
 
     		// For each relation, find out which node is the "other" node, in
 			// relation to the current node we're showing.
@@ -202,7 +204,9 @@ morpheus.components.data.base = (function($, undefined) {
     		"max depth": 1
     	};
     	
-    	me.server.rest.post(traversalUrl, traversal, function(data) {
+    	var server = morpheus.Servers.getCurrentServer();
+        
+        server.post(traversalUrl, traversal, function(data) {
     		// Create a lookup table for related nodes, to make it easy for the
 			// template to render it.
     		me.currentItem.relationships.nodes = nodes = {};
@@ -223,13 +227,15 @@ morpheus.components.data.base = (function($, undefined) {
     	var startUrl = me.stripUrlBase(me.currentItem.start);
     	var endUrl = me.stripUrlBase(me.currentItem.end);
     	
-    	me.server.rest.get(startUrl, function(data) {
+    	var server = morpheus.Servers.getCurrentServer();
+        
+        server.get(startUrl, function(data) {
     		me.currentItem.startNode = data;
     		me.currentItem.startNode.fields = me.extractFields([data]);
     		me.render();
     	});
     	
-    	me.server.rest.get(endUrl, function(data) {
+    	server.get(endUrl, function(data) {
     		me.currentItem.endNode = data;
     		me.currentItem.endNode.fields = me.extractFields([data]);
     		me.render();
@@ -321,13 +327,8 @@ morpheus.components.data.base = (function($, undefined) {
     };
     
     me.stripUrlBase = function(url) {
-    	if( typeof(url) !== undefined ) {
-        	if( url.indexOf("://") !== -1) {
-        		url = me.server.urls.stripBase(url);
-        	}
-    	}
-    	
-    	return url;
+        var server = morpheus.Servers.getCurrentServer();
+        return server.stripUrlBase(url);
     };
     
     //
@@ -337,7 +338,7 @@ morpheus.components.data.base = (function($, undefined) {
     $("a.mor_data_url_button").live("click", function(ev) {
     	ev.preventDefault();
     	
-    	me.public.setDataUrl($(ev.target).attr('href'));
+    	me.api.setDataUrl($(ev.target).attr('href'));
     });
     
     $("a.mor_data_refresh_button").live("click", function(ev){
@@ -349,19 +350,19 @@ morpheus.components.data.base = (function($, undefined) {
     $("input.mor_data_get_node_button").live("click", function(ev) {
     	ev.preventDefault();
     	
-    	me.public.setDataUrl("node/" + $("#mor_data_get_id_input").val() );
+    	me.api.setDataUrl("node/" + $("#mor_data_get_id_input").val() );
     });
     
     $("input.mor_data_get_relationship_button").live("click", function(ev) {
     	ev.preventDefault();
     	
-    	me.public.setDataUrl("relationship/" + $("#mor_data_get_id_input").val() );
+    	me.api.setDataUrl("relationship/" + $("#mor_data_get_id_input").val() );
     });
     
     $("a.mor_data_reference_node_button").live("click", function(ev) {
     	ev.preventDefault();
     	
-    	me.public.setDataUrl("node/0" );
+    	me.api.setDataUrl("node/0" );
     });
     
     $("a.mor_data_paginate_next").live("click", function(ev){
@@ -385,7 +386,7 @@ morpheus.components.data.base = (function($, undefined) {
     	}
     });
     
-    return me.public;
+    return me.api;
     
 })(jQuery);
 
@@ -393,9 +394,9 @@ morpheus.components.data.base = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.data",morpheus.components.data.base);
-morpheus.ui.mainmenu.add("Data","morpheus.data", null, "server",1);
+morpheus.ui.Pages.add("morpheus.data",morpheus.components.data.base);
+morpheus.ui.MainMenu.add({ label : "Data", pageKey:"morpheus.data", index:1, perspectives:['server']});
 
 morpheus.event.bind("morpheus.init", morpheus.components.data.base.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.data.base.pageChanged);
-morpheus.event.bind("morpheus.changed",  morpheus.components.data.base.serverChanged);
+morpheus.event.bind("morpheus.servers.current.changed",  morpheus.components.data.base.serverChanged);

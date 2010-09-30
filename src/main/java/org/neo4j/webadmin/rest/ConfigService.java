@@ -16,15 +16,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.WebServerFactory;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.rest.domain.PropertyValueException;
 import org.neo4j.webadmin.console.ConsoleSessions;
+import org.neo4j.webadmin.domain.ConfigServiceRepresentation;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
@@ -45,7 +48,7 @@ public class ConfigService
 {
 
     public static final String ROOT_PATH = "/server/config";
-    public static final String SETTINGS_PATH = "";
+    public static final String ALL_SETTINGS_PATH = "/all";
 
     protected ServerProperties properties;
 
@@ -58,6 +61,18 @@ public class ConfigService
         properties = ServerProperties.getInstance();
     }
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new ConfigServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
+
     //
     // PUBLIC
     //
@@ -67,6 +82,7 @@ public class ConfigService
      */
     @GET
     @Produces( MediaType.APPLICATION_JSON )
+    @Path( ALL_SETTINGS_PATH )
     public synchronized Response listAll()
     {
 
@@ -80,6 +96,7 @@ public class ConfigService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON )
+    @Path( ALL_SETTINGS_PATH )
     public Response jsonSetMany( String data )
     {
         return setMany( data );
@@ -88,6 +105,7 @@ public class ConfigService
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Path( ALL_SETTINGS_PATH )
     public Response formSetMany( @FormParam( "value" ) String data )
     {
         return setMany( data );
@@ -192,7 +210,7 @@ public class ConfigService
             {
                 // Client has changed settings that only require REST-server
                 // restart.
-                if ( LifeCycleService.serverStatus == LifecycleRepresentation.Status.RUNNING )
+                if ( LifecycleService.serverStatus == LifecycleRepresentation.Status.RUNNING )
                 {
 
                     int restPort = WebServerFactory.getDefaultWebServer().getPort();

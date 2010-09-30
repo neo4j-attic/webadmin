@@ -6,15 +6,19 @@ import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.ExportRepresentation;
+import org.neo4j.webadmin.domain.ExportServiceRepresentation;
 import org.neo4j.webadmin.task.ExportTask;
 
 /**
@@ -32,6 +36,18 @@ public class ExportService
 
     private static ExportTask exportTask = new ExportTask();
     private boolean isExporting = false;
+
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    public Response getServiceDefinition( @Context UriInfo uriInfo )
+    {
+
+        String entity = JsonRenderers.DEFAULT.render( new ExportServiceRepresentation(
+                uriInfo.getBaseUri() ) );
+
+        return addHeaders(
+                Response.ok( entity, JsonRenderers.DEFAULT.getMediaType() ) ).build();
+    }
 
     /**
      * Trigger a full export of the underlying database. Will perform the export

@@ -24,7 +24,7 @@ morpheus.components.monitor.PrimitiveCountWidget = function(server,
 	// PUBLIC
 	//
 
-	me.public = {
+	me.api = {
 			
 		/**
 		 * Render this widget.
@@ -38,7 +38,7 @@ morpheus.components.monitor.PrimitiveCountWidget = function(server,
 			}
 			
 			if ( ! me.runnning ) {
-				me.public.startPolling();
+				me.api.startPolling();
 			}
 			
 			return me.ui;
@@ -87,8 +87,8 @@ morpheus.components.monitor.PrimitiveCountWidget = function(server,
 	// 
 
 	me.tracker = morpheus.components.monitor.JmxValueTracker(me.server,
-			"localkernel:Primitive count", me.extractor, me.valueChanged,
+			"neo4j","Primitive count", me.extractor, me.valueChanged,
 			interval || 10000);
 
-	return me.public;
+	return me.api;
 };

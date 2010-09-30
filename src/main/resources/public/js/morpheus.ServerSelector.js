@@ -1,30 +1,28 @@
-morpheus.provide("morpheusmanager");
+morpheus.provide("morpheus.servermanager");
 
 /**
- * Handles the server picking UI, adding and removing servers. 
+ * Handles the server picking UI, adding and removing servers.
+ * 
+ * If only one server is available, this will automatically set that server as the current one.
  */
-morpheusmanager = (function($, undefined) {
+morpheus.ServerSelector = (function($, undefined) {
 	
 	var me = {};
-	
-	me.public = {
-			
-	};
 	
 	// 
 	// PRIVATE
 	//
 	
 	me.reload = function() {
+
+		var servers = morpheus.Servers.getServers();
+		var currentServer = morpheus.Servers.getCurrentServer();
 		
-		var servers = morpheus.neo4jHandler.servers();
-		var currentServer = morpheus.neo4jHandler.currentServer();
-		
-		if( currentServer == undefined ) {
-			if ( servers.length > 0 ) {
-				// Select first available server by default
-				morpheus.neo4jHandler.currentServer(servers[0].getName());
-			}
+		if( currentServer == null ) {
+		    for( var key in servers ) {
+		        $.bbq.pushState( {"s":key} );
+		        break;
+		    }
 		}
 		
 		var list = $("#mor_servers ul.mor_servers_list");
@@ -46,14 +44,14 @@ morpheusmanager = (function($, undefined) {
 	//
 	
 	// Keep track of when servers are available
-    if( morpheus.neo4j && morpheus.neo4j.loaded ) {
+    if( morpheus.Servers.isLoaded() ) {
     	me.reload();
     } else {
-        morpheus.event.bind( "morpheus.servers.loaded", function(ev) { me.reload(); });
+        neo4j.events.bind( "morpheus.servers.loaded", function(ev) { me.reload(); });
     }
 
-    morpheus.event.bind("morpheus.changed",  function() { me.reload(); });
-    morpheus.event.bind("morpheus.servers.changed",  function() { me.reload(); });
+    neo4j.events.bind("morpheus.servers.current.changed",  function() { me.reload(); });
+    neo4j.events.bind("morpheus.servers.changed",  function() { me.reload(); });
     
     $("a.mor_servers_add_button").live("click",function(ev){
     	ev.preventDefault();
@@ -84,6 +82,6 @@ morpheusmanager = (function($, undefined) {
     	}
     });
 	
-	return me.public;
+	return {};
 	
 })(jQuery);

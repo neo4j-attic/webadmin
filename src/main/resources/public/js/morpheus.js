@@ -20,10 +20,7 @@ var morpheus = ( function( $, undefined )
     // PRIVATE
     //
 
-    me.COMPONENT_PATH = "components/";
-    me.COMPONENT_INIT_FILE = "/js/init.js";
-
-    me.PROPERTIES_URL = "/admin/properties/";
+    me.PROPERTIES_URL = "/manage/properties/";
 
     me.initiated = false;
 
@@ -39,7 +36,8 @@ var morpheus = ( function( $, undefined )
             me.initiated = true;
             
             // Load UI
-            morpheus.ui.init();
+            morpheus.ui.MainMenu.init();
+            morpheus.ui.Pages.init();
 
             // Trigger init event
             morpheus.event.trigger( "morpheus.init" );
@@ -52,7 +50,7 @@ var morpheus = ( function( $, undefined )
         {
             if ( typeof ( me.propertyCache[key] ) === "undefined" )
             {
-                me.get( me.PROPERTIES_URL + key, ( function( key, cb )
+                neo4j.Web.get( me.PROPERTIES_URL + key, ( function( key, cb )
                 {
                     return function( data )
                     {
@@ -73,7 +71,7 @@ var morpheus = ( function( $, undefined )
         		value = JSON.stringify(value);
         	}
         	
-            me.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
+            neo4j.Web.post( me.PROPERTIES_URL + key, value, ( function( cb, key, value )
             {
                 return function()
                 {
@@ -85,86 +83,6 @@ var morpheus = ( function( $, undefined )
                 };
             } )( cb, key, value ) );
         }
-    };
-
-    // AJAX WRAPPERS
-    
-    me.get = function(url, data, success, failure, settings) {
-        return me.ajax("GET", url, data, success, failure, settings);
-    };
-    
-    me.post = function(url, data, success, failure, settings) {
-        return me.ajax("POST", url, data, success, failure, settings);
-    };
-    
-    me.put = function(url, data, success, failure, settings) {
-        return me.ajax("PUT", url, data, success, failure, settings);
-    };
-    
-    me.del = function(url, data, success, failure, settings) {
-        return me.ajax("DELETE", url, data, success, failure, settings);
-    };
-    
-    me.ajax = function(method, url, data, success, failure, settings) {
-    	
-    	if(typeof(data) === "function") {
-            failure = success;
-            success = data;
-            data = null;
-        }
-    	
-    	var settings = settings || {};
-        
-        setTimeout((function(method, url, data, success, failure, settings){
-        	
-        	if( data === null || data === "null" ) {
-        		data = "";
-        	} else {
-        		data = JSON.stringify(data);
-        	}
-        	
-            return function() {
-        		if( me.api.isCrossDomain(url) && window.XDomainRequest) {
-        			// IE8 Cross domain
-        			// TODO
-        			if( typeof(failure) === "function") {
-		        		failure(null);
-		        	}
-        		} else {	 
-	                $.ajax(
-	                {
-	                    url : url,
-	                    type : method,
-	                    data : data,
-	                    processData: false,
-	                    success : success,
-	                    contentType: "application/json",
-	                    error : function(req) {
-	                		try {
-		                        if( req.status === 200 ) {
-		                           // This happens when the server returns an empty
-								   // response.
-		                           return success(null);
-		                        }
-	                		} catch(e) {
-	                			// We end up here if there is no status to read
-	                		}
-	                		
-	                		if( typeof(failure) === "function") {
-	                    		failure(req);
-	                    	} else {
-	                    		morpheus.showError("Connection error, please ensure your internet connection is working.")
-	                    	}
-	                    },
-	                    dataType : "json",
-	                    beforeSend : function(xhr) {
-	                    	// TODO: Add OAuth authentication here.
-	                    	return xhr;
-	                    }
-	                });
-        		}
-            };
-        })(method, url, data, success, failure, settings), 0);
     };
     
     //
@@ -196,24 +114,6 @@ var morpheus = ( function( $, undefined )
 		 *            only the key if a value was passed and successfully set.
 		 */
         prop : me.property,
-        
-        get : me.get,
-        put : me.put,
-        post : me.post,
-        del : me.del,
-        ajax : me.ajax,
-        
-        /**
-         * Naive implementation to check if a url is cross-domain.
-         */
-        isCrossDomain : function(url) {
-    		var httpIndex = url.indexOf("://");
-    		if( httpIndex === -1 || httpIndex > 7) {
-    			return false;
-    		} else {
-    			return url.substring(httpIndex + 3).split("/",1)[0] !== window.location.host;
-    		}
-    	},
     	
     	/**
     	 * Display an error message until timout time passes.
@@ -248,13 +148,6 @@ var morpheus = ( function( $, undefined )
     		if( typeof(me.displayedErrors[error]) !== "undefined" ) {
     			me.displayedErrors[error].elem.remove()
     			delete(me.displayedErrors[error]);
-    		}
-    	},
-    	
-    	log : function(msg) {
-    		// KISS debug implementation
-    		if( typeof(console) !== "undefined" && typeof(console.log) === "function" ) {
-    			console.log(msg);
     		}
     	}
     };
@@ -293,11 +186,10 @@ morpheus.provide = function( path )
 };
 
 //
-// BOOT
+//FOLDOUT HELP
 //
 
-$( function()
-{
-	$.jTemplatesDebugMode(false);
-    morpheus.init();
-} );
+$("a.mor_module_foldout_trigger").live("click",function(ev) {
+    ev.preventDefault();
+    $(".mor_module_foldout_content",$(ev.target).closest(".mor_module_foldout")).toggleClass("visible");
+});

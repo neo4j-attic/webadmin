@@ -54,7 +54,7 @@ morpheus.components.Lifecycle = function( server, template )
         if ( me.server )
         {
             me.enable();
-            me.serverAction( "status", me.statusElement.html(), "GET" );
+            me.serverAction( "getStatus", me.statusElement.html(), "GET" );
         }
         else
         {
@@ -80,7 +80,7 @@ morpheus.components.Lifecycle = function( server, template )
         
     };
     
-    me.serverAction = function( resource, message, type )
+    me.serverAction = function( action, message, type )
     {
         var type = type || "POST";
         if ( !me.watingForResponse )
@@ -91,8 +91,7 @@ morpheus.components.Lifecycle = function( server, template )
             $("ul.mor_lifecycle_actions a").addClass("disabled");
             
             // Allow UI update
-            var method = (type === "POST") ? me.server.admin.post : me.server.admin.get;
-            method( resource,
+            me.server.manage.lifecycle[action]( 
                     function( data ) {
                         me.watingForResponse = false;
                         me.setStatus( data.current_status );

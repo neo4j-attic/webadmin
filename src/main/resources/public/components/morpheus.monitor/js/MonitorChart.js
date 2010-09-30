@@ -96,7 +96,7 @@ morpheus.components.monitor.MonitorChart = function(server, settings) {
 		thirty_minutes : { 
 			id : me.containerId + "_zoom_5",
 			xSpan : 1000 * 60 * 30,
-		    timeformat: "%H:%M:%S"
+		    timeformat: "%H:%M"
 		}
 	};
 	
@@ -116,7 +116,7 @@ morpheus.components.monitor.MonitorChart = function(server, settings) {
 	me.currentZoom = "day";
 	me.currentData = [];
 	
-	me.public = {
+	me.api = {
 		
 		render : function() {
 			return me.container;
@@ -129,7 +129,7 @@ morpheus.components.monitor.MonitorChart = function(server, settings) {
 				
 			}
 			
-			me.draw(me.server.getMonitorData());
+			me.draw(server.heartbeat.getCachedData());
 		},
 		
 		stopDrawing : function() {
@@ -233,15 +233,15 @@ morpheus.components.monitor.MonitorChart = function(server, settings) {
 				$("." +me.controlsClass).removeClass("current");
 				$("#" + me.zoom[zoomKey].id).addClass("current");
 				
-				me.draw( me.server.getMonitorData() );
+				me.draw( server.heartbeat.getCachedData() );
 			};
 		})(key));
 	}
 	
 	// Listen for data updates
-	morpheus.event.bind("morpheus.monitor.update", function(ev) {
-		if( me.drawing && ev.data.server === me.server ) {
-			me.draw( ev.data.allData );
+	server.heartbeat.addListener(function(data) {
+		if( me.drawing ) {
+			me.draw( data.allData );
 		}
 	});
 	
@@ -270,5 +270,5 @@ morpheus.components.monitor.MonitorChart = function(server, settings) {
 	$("#mor_chart_tooltip").live("mouseout", me.removeTooltip);
 
 	
-	return me.public;
+	return me.api;
 };

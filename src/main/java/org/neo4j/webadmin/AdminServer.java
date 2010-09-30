@@ -50,17 +50,19 @@ public enum AdminServer
             jerseyAdapter.addInitParameter(
                     "com.sun.jersey.config.property.packages",
                     "org.neo4j.webadmin.rest" );
-            jerseyAdapter.setContextPath( "/admin" );
+            jerseyAdapter.setContextPath( "/manage" );
             jerseyAdapter.setServletInstance( new ServletContainer() );
 
+            // jerseyAdapter.
+
             // Add adapters
-            server.addGrizzlyAdapter( jerseyAdapter, new String[] { "/admin" } );
+            server.addGrizzlyAdapter( jerseyAdapter, new String[] { "/manage" } );
 
             /*
              * This is an awful hack. If any adapters are added to grizzly, 
-             * it stops serving static files (makes sense, right?).
+             * it stops serving static files.
              * 
-             * Another thing that makes sense is that all GrizzlyAdapters are 
+             * All GrizzlyAdapters are 
              * static file serving adapters if you flip a flag. So to make 
              * grizzly serve static files, we create an empty grizzly adapter, 
              * tell it to serve static files and add it here. 
@@ -77,7 +79,7 @@ public enum AdminServer
             staticAdapter.setHandleStaticResources( true );
             server.addGrizzlyAdapter( staticAdapter, new String[] { "" } );
 
-            //server.addAsyncFilter( new ContentDispositionFilter() );
+            server.addAsyncFilter( new ContentDispositionFilter() );
 
             // Start server
             server.start();

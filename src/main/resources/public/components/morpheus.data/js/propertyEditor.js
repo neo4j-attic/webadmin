@@ -15,23 +15,13 @@ morpheus.components.data.propertyEditor = (function($, undefined) {
 	me.dataCore = morpheus.components.data.base;
 	
 	//
-	// PUBLIC
-	//
-	
-	me.public = {};
-	
-	//
 	// INTERNALS
 	//
-	
-	me.server = function() {
-		return me.dataCore.getServer();
-	};
 	
 	me.propertyUrl = function(key) {
 		var it = me.dataCore.getItem();
 		return it.property.replace("{key}",key);
-	}
+	};
 	
 	me.addProperty = function(ev) {
 		ev.preventDefault();
@@ -48,7 +38,7 @@ morpheus.components.data.propertyEditor = (function($, undefined) {
 		if( confirm("Are you sure?")) {
 			var key = me.getKey(ev.target);
 			if( key !== null ) {
-				morpheus.del(me.propertyUrl(key));
+				neo4j.Web.del(me.propertyUrl(key));
 			}
 			$(ev.target).closest("tr").remove();
 		}
@@ -58,7 +48,7 @@ morpheus.components.data.propertyEditor = (function($, undefined) {
 		var key = me.getKey(ev.target);
 		var value = $(ev.target).val();
 		if( key !== null ) {
-			morpheus.put(me.propertyUrl(key), value);
+		    neo4j.Web.put(me.propertyUrl(key), value);
 		}
 	};
 	
@@ -71,10 +61,10 @@ morpheus.components.data.propertyEditor = (function($, undefined) {
 			// Key has changed
 			if( oldKey !== null && oldKey.length > 0 ) {
 				// Delete old property
-				morpheus.del(me.propertyUrl(oldKey));
+			    neo4j.Web.del(me.propertyUrl(oldKey));
 			}
 			
-			morpheus.put(me.propertyUrl(key), value);
+			neo4j.Web.put(me.propertyUrl(key), value);
 		}
 	};
 	
@@ -132,6 +122,6 @@ morpheus.components.data.propertyEditor = (function($, undefined) {
 	$("input.mor_data_value_input").live("change", me.propertyValueChanged);
 	$("input.mor_data_key_input").live("change", me.propertyKeyChanged);
 	
-	return me.public;
+	return {};
 	
 })(jQuery);

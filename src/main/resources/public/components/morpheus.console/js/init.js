@@ -8,7 +8,6 @@ morpheus.components.console = (function($, undefined) {
     me.ui = {};
     
     me.uiLoaded  = false;
-    me.server = null;
     
     me.visible = false;
     
@@ -17,11 +16,15 @@ morpheus.components.console = (function($, undefined) {
     me.history = [];
     me.currentHistoryIndex = -1;
     
+    function getConsole() {
+        return morpheus.Servers.getCurrentServer().manage.console;
+    }
+    
     //
     // PUBLIC
     //
     
-    me.public = {
+    me.api = {
             
             getPage :  function() {
                 return me.basePage;
@@ -46,16 +49,6 @@ morpheus.components.console = (function($, undefined) {
                 }
             },
             
-            serverChanged : function(ev) {
-                
-                me.server = ev.data.server;
-                
-                if( me.visible === true ) {
-                     
-                }
-                
-            },
-            
             /**
              * Send a console command up to the server to be evaluated.
              * 
@@ -72,15 +65,15 @@ morpheus.components.console = (function($, undefined) {
                 me.writeConsoleLine(statement);
                 
                 if( statement.length > 0) {
-                    me.public.pushHistory(me.consoleInput.val());
+                    me.api.pushHistory(me.consoleInput.val());
                 }
                 
                 me.hideInput();
                 
-                me.server.admin.post("console/", {command:statement}, (function(statement, cb) {
+                getConsole().exec(statement, (function(statement, cb) {
                     return function(data) {
                         cb(statement, data);
-                    	me.showInput();
+                        me.showInput();
                     };
                 })(statement, cb));
                 
@@ -174,12 +167,12 @@ morpheus.components.console = (function($, undefined) {
      */
     $("#mor_console_input").live("keyup", function(ev) {
         if( ev.keyCode === 13 ) { // ENTER
-            me.public.evaluate(me.consoleInput.val());
+            me.api.evaluate(me.consoleInput.val());
             me.consoleInput.val("");
         } else if (ev.keyCode === 38) { // UP
-            me.consoleInput.val(me.public.prevHistory());
+            me.consoleInput.val(me.api.prevHistory());
         } else if (ev.keyCode === 40) { // DOWN
-            me.consoleInput.val(me.public.nextHistory());
+            me.consoleInput.val(me.api.nextHistory());
         }
     });
     
@@ -189,7 +182,7 @@ morpheus.components.console = (function($, undefined) {
     	}
     });
     
-    return me.public;
+    return me.api;
     
 })(jQuery);
 
@@ -197,9 +190,7 @@ morpheus.components.console = (function($, undefined) {
 // REGISTER STUFF
 //
 
-morpheus.ui.addPage("morpheus.console",morpheus.components.console);
-morpheus.ui.mainmenu.add("Console","morpheus.console", null, "server",2);
+morpheus.ui.Pages.add("morpheus.console",morpheus.components.console);
+morpheus.ui.MainMenu.add({ label : "Console", pageKey:"morpheus.console", index:2, requiredServices:['console'], perspectives:['server']});
 
-morpheus.event.bind("morpheus.init", morpheus.components.console.init);
 morpheus.event.bind("morpheus.ui.page.changed", morpheus.components.console.pageChanged);
-morpheus.event.bind("morpheus.changed",  morpheus.components.console.serverChanged);
