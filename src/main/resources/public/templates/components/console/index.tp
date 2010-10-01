@@ -24,7 +24,7 @@
 		                </li>
 		                <li>
 		                    <h3>Get node by id</h3>
-		                    <p class="mor_info_list_info">&gt; $myNode := g:id(0)</p>
+		                    <p class="mor_info_list_info">&gt; $myNode := g:id-v(0)</p>
 		                </li>
 		                <li>
 		                    <h3>Create node</h3>

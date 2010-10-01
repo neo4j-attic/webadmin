@@ -297,7 +297,7 @@ wa.components.data.DataBrowser = (function($, undefined) {
     	
         var url = $.bbq.getState( "dataurl" );
         
-        if( url !== me.dataUrl && me.notFound !== true) {
+        if( url !== me.dataUrl) {
         	me.dataUrl = url;
         	me.reload();
     	}
