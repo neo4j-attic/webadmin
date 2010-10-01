@@ -42,7 +42,7 @@ wa.Servers = (function(undefined) {
     // Fetch available neo4j servers
     wa.prop.get("neo4j-servers", function(key, savedServers){
         
-        if( triedLocal === false && (savedServers === null ||savedServers === undefined)) {
+        if( triedLocal === false && (savedServers === null || savedServers === undefined)) {
 
             // There are no servers defined.
             // Check if there is a local server running
@@ -59,13 +59,12 @@ wa.Servers = (function(undefined) {
                     triggerLoadedEvent();
                     
                     // Save this 'til next time..
-                    wa.prop.set("neo4j-servers",servers);
+                    persistCurrentServers();
                 },
                 function() {
                     // No local server running :(
-                    wa.prop.set("neo4j-servers",{});
-                    
                     servers = {};
+                    persistCurrentServers();
                 }
             );
         } else {
@@ -89,6 +88,19 @@ wa.Servers = (function(undefined) {
             triggerLoadedEvent();
         }
     });
+    
+    function persistCurrentServers() {
+        var jsonServers = {};
+        for (var name in servers ) {
+            jsonServers[name] = {
+                url : servers[name].url,
+                manageUrl : servers[name].manageUrl
+            }
+        }
+    
+        wa.prop.set("neo4j-servers", jsonServers);
+    
+    };
     
     //
     // PUBLIC API
@@ -146,7 +158,7 @@ wa.Servers = (function(undefined) {
             servers[key] = new neo4j.GraphDatabase(dataUrl, manageUrl);
             wa.trigger("servers.changed", { servers : servers } );
             
-            wa.prop.set("neo4j-servers",servers);
+            persistCurrentServers();
         }
     };
 

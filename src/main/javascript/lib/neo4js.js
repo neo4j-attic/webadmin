@@ -65,9 +65,10 @@ return{get:function(c,d,e,b){return neo4j.Web.ajax("GET",c,d,e,b)
 },put:function(c,d,e,b){return neo4j.Web.ajax("PUT",c,d,e,b)
 },del:function(c,d,e,b){return neo4j.Web.ajax("DELETE",c,d,e,b)
 },ajax:function(f,c,d,e,b){return a.ajax(f,c,d,e,b)
-},isCrossDomain:function(c){var b=c.indexOf("://");
+},isCrossDomain:function(c){if(c){var b=c.indexOf("://");
 if(b===-1||b>7){return false
 }else{return c.substring(b+3).split("/",1)[0]!==window.location.host
+}}else{return false
 }},setWebProvider:function(b){a=b
 },replace:function(b,c){for(var d in c){b=b.replace("{"+d+"}",c[d])
 }return b
@@ -373,3 +374,5 @@ neo4j.GraphDatabase.prototype.stripUrlBase=function(a){if(typeof(a)==="undefined
 }else{if(a.indexOf(this.manageUrl)===0){return a.substring(this.manageUrl.length)
 }else{return a.substring(a.indexOf("/",8))
 }}};
+neo4j.GraphDatabase.prototype.toJSONString=function(){return{url:this.url,manageUrl:this.manageUrl}
+};

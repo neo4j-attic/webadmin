@@ -56,10 +56,7 @@ wa.PropertyStorage.prototype.get = function(key, cb)
  */
 wa.PropertyStorage.prototype.set = function(key, value, cb)
 {
-    if (typeof (value) !== "string")
-    {
-        value = JSON.stringify(value);
-    }
+    
 
     var cache = this.cache;
     neo4j.Web.post(this.storageUrl + key, value, (function(cb, key, value) {
