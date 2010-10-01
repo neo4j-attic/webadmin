@@ -177,7 +177,7 @@
 								<include>wa/ui/ErrorBox-min.js</include>
 								
 								<include>wa/widgets/widgets-min.js</include>
-								<include>wa/widgets/LifecycleWidgeta-min.js</include>
+								<include>wa/widgets/LifecycleWidget-min.js</include>
 								
 								<include>wa/components/components-min.js</include>
 
