@@ -68,6 +68,11 @@ public class BackupPerformer
                         "Performing backups on non-local databases is currently not supported." );
             }
         }
+        catch ( IllegalStateException e )
+        {
+            throw new NoBackupFoundationException(
+                    "No foundation in: " + backupPath.getAbsolutePath() );
+        }
         catch ( IOException e )
         {
             throw new BackupFailedException(

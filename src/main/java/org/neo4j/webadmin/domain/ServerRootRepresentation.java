@@ -69,7 +69,7 @@ public class ServerRootRepresentation extends RootRepresentation
         }
         catch ( DatabaseBlockedException e )
         {
-            // No services currently available.
+            services.put( "lifecycle", baseUri + LifecycleService.ROOT_PATH );
         }
 
         def.put( "services", services );

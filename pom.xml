@@ -14,6 +14,16 @@
 	</parent>
 
 	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>${project.build.directory}/generated-sources</directory>
+			</resource>
+		</resources>
+
 		<plugins>
 			<!-- Development execution -->
 			<plugin>
@@ -118,7 +128,7 @@
 
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>compress</goal>
 						</goals>
@@ -126,83 +136,97 @@
 				</executions>
 
 				<configuration>
-					<sourceDirectory>src/main/resources</sourceDirectory>
+					<sourceDirectory>src/main/javascript</sourceDirectory>
 					<aggregations>
 						<aggregation>
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<insertNewLine>true</insertNewLine>
 
-							<output>${project.build.directory}/classes/public/webadmin.js</output>
+							<output>${project.build.directory}/generated-sources/public/webadmin.js</output>
 
-							<inputDir>${project.build.directory}/classes/public</inputDir>
+							<inputDir>${project.build.directory}/classes</inputDir>
 
 
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<includes>
-								<include>js/vend/jquery.1.4.2-min.js</include>
-								<include>js/vend/json2-min.js</include>
-								<include>js/vend/jquery-jtemplates-min.js</include>
-								<include>js/vend/jquery.bbq-min.js</include>
-								<include>js/vend/jquery.flot-min.js</include>
-								<include>js/vend/jquery.simplemodal-min.js</include>
+								<include>lib/jquery.1.4.2-min.js</include>
+								<include>lib/json2-min.js</include>
+								<include>lib/jquery-jtemplates-min.js</include>
+								<include>lib/jquery.bbq-min.js</include>
+								<include>lib/jquery.flot-min.js</include>
+								<include>lib/jquery.simplemodal-min.js</include>
 
-								<include>js/vend/neo4js.js</include>
+								<include>lib/neo4js-min.js</include>
 
-								<include>js/morpheus-min.js</include>
-								<include>js/morpheus.ui.Pages-min.js</include>
-								<include>js/morpheus.ui.MainMenu-min.js</include>
-								<include>js/morpheus.ui.Dialog-min.js</include>
-								<include>js/morpheus.ui.Loading-min.js</include>
-								<include>js/morpheus.event-min.js</include>
-								<include>js/morpheus.neo4j-min.js</include>
-								<include>js/morpheus.Servers-min.js</include>
-								<include>js/morpheus.ServerSelector-min.js</include>
-								<include>js/morpheus.forms-min.js</include>
-
-
-								<include>components/morpheus.lifecycle/js/init-min.js</include>
-
-								<include>components/morpheus.data/js/propertiesToListManager-min.js</include>
-								<include>components/morpheus.data/js/init-min.js</include>
-								<include>components/morpheus.data/js/propertyEditor-min.js</include>
-								<include>components/morpheus.data/js/nodeManager-min.js</include>
-								<include>components/morpheus.data/js/relationshipManager-min.js</include>
-
-								<include>components/morpheus.monitor/js/init-min.js</include>
-								<include>components/morpheus.monitor/js/jmx-min.js</include>
-								<include>components/morpheus.monitor/js/PrimitiveCountWidget-min.js</include>
-								<include>components/morpheus.monitor/js/JmxValueTracker-min.js</include>
-								<include>components/morpheus.monitor/js/DiskUsageWidget-min.js</include>
-								<include>components/morpheus.monitor/js/CacheWidget-min.js</include>
-								<include>components/morpheus.monitor/js/CacheWidget-min.js</include>
-								<include>components/morpheus.monitor/js/MonitorChart-min.js</include>
-
-								<include>components/morpheus.console/js/init-min.js</include>
-								<include>components/morpheus.config/js/init-min.js</include>
-
-								<include>components/morpheus.backup/js/StatusTracker-min.js</include>
-								<include>components/morpheus.backup/js/Schedule-min.js</include>
-								<include>components/morpheus.backup/js/parseJobData-min.js</include>
-								<include>components/morpheus.backup/js/init-min.js</include>
-
-								<include>components/morpheus.io/js/init-min.js</include>
-								<include>components/morpheus.io/js/export-min.js</include>
-								<include>components/morpheus.io/js/import-min.js</include>
+								<include>wa/wa-min.js</include>
+								<include>wa/events-min.js</include>
+								<include>wa/PropertyStorage-min.js</include>
+								<include>wa/prop-min.js</include>
+								<include>wa/Servers-min.js</include>
+								<include>wa/ServerSelector-min.js</include>
+								<include>wa/FormValidator-min.js</include>
 								
-								<include>js/morpheus.boot-min.js</include>
+								<include>wa/ui/ui-min.js</include>
+								<include>wa/ui/Dialog-min.js</include>
+								<include>wa/ui/Loading-min.js</include>
+								<include>wa/ui/Pages-min.js</include>
+								<include>wa/ui/Helpers-min.js</include>
+								<include>wa/ui/MainMenu-min.js</include>
+								<include>wa/ui/ErrorBox-min.js</include>
+								
+								<include>wa/widgets/widgets-min.js</include>
+								<include>wa/widgets/LifecycleWidgeta-min.js</include>
+								
+								<include>wa/components/components-min.js</include>
+
+								<include>wa/components/data/data-min.js</include>
+								<include>wa/components/data/PropertiesToListManager-min.js</include>
+								<include>wa/components/data/DataBrowser-min.js</include>
+								<include>wa/components/data/PropertyEditor-min.js</include>
+								<include>wa/components/data/NodeManager-min.js</include>
+								<include>wa/components/data/RelationshipManager-min.js</include>
+
+								<include>wa/components/dashboard/dashboard-min.js</include>
+								<include>wa/components/dashboard/Dashboard-min.js</include>
+								<include>wa/components/dashboard/PrimitiveCountWidget-min.js</include>
+								<include>wa/components/dashboard/JmxValueTracker-min.js</include>
+								<include>wa/components/dashboard/DiskUsageWidget-min.js</include>
+								<include>wa/components/dashboard/CacheWidget-min.js</include>
+								<include>wa/components/dashboard/CacheWidget-min.js</include>
+								<include>wa/components/dashboard/MonitorChart-min.js</include>
+								
+								<include>wa/components/jmx/jmx-min.js</include>
+								<include>wa/components/jmx/Jmx-min.js</include>
+
+								<include>wa/components/backup/backup-min.js</include>
+								<include>wa/components/backup/parseJobData-min.js</include>
+								<include>wa/components/backup/Backup-min.js</include>
+								
+								<include>wa/components/console/console-min.js</include>
+								<include>wa/components/console/Console-min.js</include>
+								
+								<include>wa/components/config/config-min.js</include>
+								<include>wa/components/config/Config-min.js</include>
+	
+								<include>wa/components/io/io-min.js</include>
+								<include>wa/components/io/GraphIO-min.js</include>
+								<include>wa/components/io/ExportSupport-min.js</include>
+								<include>wa/components/io/ImportSupport-min.js</include>
+
+								<include>boot-min.js</include>
 							</includes>
 						</aggregation>
 					</aggregations>
 
 				</configuration>
 			</plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <!-- fix issue with appassembler -->
-        <version>2.4</version>
-      </plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<!-- fix issue with appassembler -->
+				<version>2.4</version>
+			</plugin>
 		</plugins>
 	</build>
 
