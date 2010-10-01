@@ -160,7 +160,7 @@
 
 								<include>lib/neo4js-min.js</include>
 
-								<include>wa/wa-min.js</include>
+								<include>wa/__init__-min.js</include>
 								<include>wa/events-min.js</include>
 								<include>wa/PropertyStorage-min.js</include>
 								<include>wa/prop-min.js</include>
@@ -168,7 +168,7 @@
 								<include>wa/ServerSelector-min.js</include>
 								<include>wa/FormValidator-min.js</include>
 								
-								<include>wa/ui/ui-min.js</include>
+								<include>wa/ui/__init__-min.js</include>
 								<include>wa/ui/Dialog-min.js</include>
 								<include>wa/ui/Loading-min.js</include>
 								<include>wa/ui/Pages-min.js</include>
@@ -176,12 +176,12 @@
 								<include>wa/ui/MainMenu-min.js</include>
 								<include>wa/ui/ErrorBox-min.js</include>
 								
-								<include>wa/widgets/widgets-min.js</include>
+								<include>wa/widgets/__init__-min.js</include>
 								<include>wa/widgets/LifecycleWidget-min.js</include>
 								
-								<include>wa/components/components-min.js</include>
+								<include>wa/components/__init__-min.js</include>
 
-								<include>wa/components/dashboard/dashboard-min.js</include>
+								<include>wa/components/dashboard/__init__-min.js</include>
 								<include>wa/components/dashboard/Dashboard-min.js</include>
 								<include>wa/components/dashboard/PrimitiveCountWidget-min.js</include>
 								<include>wa/components/dashboard/JmxValueTracker-min.js</include>
@@ -190,25 +190,25 @@
 								<include>wa/components/dashboard/CacheWidget-min.js</include>
 								<include>wa/components/dashboard/MonitorChart-min.js</include>
 								
-								<include>wa/components/jmx/jmx-min.js</include>
+								<include>wa/components/jmx/__init__-min.js</include>
 								<include>wa/components/jmx/Jmx-min.js</include>
 
-								<include>wa/components/backup/backup-min.js</include>
+								<include>wa/components/backup/__init__-min.js</include>
 								<include>wa/components/backup/parseJobData-min.js</include>
 								<include>wa/components/backup/Backup-min.js</include>
 								
-								<include>wa/components/console/console-min.js</include>
+								<include>wa/components/console/__init__-min.js</include>
 								<include>wa/components/console/Console-min.js</include>
 								
-								<include>wa/components/config/config-min.js</include>
+								<include>wa/components/config/__init__-min.js</include>
 								<include>wa/components/config/Config-min.js</include>
 	
-								<include>wa/components/io/io-min.js</include>
+								<include>wa/components/io/__init__-min.js</include>
 								<include>wa/components/io/GraphIO-min.js</include>
 								<include>wa/components/io/ExportSupport-min.js</include>
 								<include>wa/components/io/ImportSupport-min.js</include>
 
-								<include>wa/components/data/data-min.js</include>
+								<include>wa/components/data/__init__-min.js</include>
 								<include>wa/components/data/PropertiesToListManager-min.js</include>
 								<include>wa/components/data/DataBrowser-min.js</include>
 								<include>wa/components/data/PropertyEditor-min.js</include>
