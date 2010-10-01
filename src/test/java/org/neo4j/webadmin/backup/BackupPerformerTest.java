@@ -14,11 +14,11 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.rest.WebServerFactory;
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.TestUtil;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 public class BackupPerformerTest
 {
@@ -36,7 +36,7 @@ public class BackupPerformerTest
 
     @Test
     public void doBackupFoundationTest() throws BackupFailedException,
-            NoBackupFoundationException
+            NoBackupFoundationException, DatabaseBlockedException
     {
 
         String backupPath = "target/backup";
@@ -51,13 +51,13 @@ public class BackupPerformerTest
 
     @Test
     public void doBackupTest() throws BackupFailedException,
-            NoBackupFoundationException
+            NoBackupFoundationException, DatabaseBlockedException
     {
 
         String backupPath = "target/backup";
         TestUtil.deleteFileOrDirectory( new File( backupPath ) );
 
-        GraphDatabaseUtils.getLocalDatabase();
+        DatabaseLocator.getGraphDatabase();
         BackupPerformer.doBackupFoundation( new File( backupPath ) );
 
         populateDb();
@@ -70,7 +70,8 @@ public class BackupPerformerTest
 
     @Test
     public void shouldFailOnBackupWithoutFoundationTest()
-            throws BackupFailedException, NoBackupFoundationException
+            throws BackupFailedException, NoBackupFoundationException,
+            DatabaseBlockedException
     {
 
         String backupPath = "target/backup";
@@ -97,9 +98,9 @@ public class BackupPerformerTest
 
     }
 
-    private void populateDb()
+    private void populateDb() throws DatabaseBlockedException
     {
-        GraphDatabaseService db = GraphDatabaseUtils.getLocalDatabase();
+        GraphDatabaseService db = DatabaseLocator.getGraphDatabase();
 
         Transaction tx = db.beginTx();
         try

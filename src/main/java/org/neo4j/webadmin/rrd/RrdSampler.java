@@ -18,7 +18,8 @@ import javax.management.openmbean.CompositeDataSupport;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
+import org.neo4j.rest.domain.DatabaseBlockedException;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.rrd4j.core.Sample;
 
 /**
@@ -175,7 +176,7 @@ public class RrdSampler
     {
         try
         {
-            GraphDatabaseService genericDb = GraphDatabaseUtils.getLocalDatabase();
+            GraphDatabaseService genericDb = DatabaseLocator.getGraphDatabase();
 
             if ( genericDb instanceof EmbeddedGraphDatabase )
             {
@@ -213,6 +214,10 @@ public class RrdSampler
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        catch ( DatabaseBlockedException e )
+        {
+            // Empty
         }
     }
 

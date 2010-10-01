@@ -4,10 +4,10 @@ import java.io.IOException;
 
 import org.neo4j.helpers.Args;
 import org.neo4j.rest.WebServerFactory;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.backup.BackupManager;
 import org.neo4j.webadmin.rrd.RrdManager;
 import org.neo4j.webadmin.rrd.RrdSampler;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 import org.quartz.SchedulerException;
 
 /**
@@ -123,7 +123,7 @@ public class Main
         // Kill the REST-server
         System.out.println( "Shutting down the REST server.." );
         WebServerFactory.getDefaultWebServer().stopServer();
-        GraphDatabaseUtils.shutdownLocalDatabase();
+        DatabaseLocator.shutdownAndBlockGraphDatabase();
 
         // Kill the admin-server
         System.out.println( "Shutting down the admin server.." );

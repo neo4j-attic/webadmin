@@ -22,7 +22,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.ImportServiceRepresentation;
-import org.neo4j.webadmin.task.ImportTask;
+import org.neo4j.webadmin.task.GraphMLImporter;
 
 import com.sun.jersey.multipart.BodyPartEntity;
 import com.sun.jersey.multipart.FormDataMultiPart;
@@ -76,8 +76,7 @@ public class ImportService
 
             if ( req.containsKey( URL_KEY ) )
             {
-                ImportTask task = new ImportTask( req.get( URL_KEY ).toString() );
-                task.run();
+                GraphMLImporter.doImport( req.get( URL_KEY ).toString() );
             }
             else
             {
@@ -108,8 +107,7 @@ public class ImportService
             BodyPartEntity bpe = (BodyPartEntity) formData.getField( "file" ).getEntity();
             InputStream file = bpe.getInputStream();
 
-            ImportTask task = new ImportTask( file );
-            task.run();
+            GraphMLImporter.doImport( file );
             file.close();
 
             URI redirectTo = new URI( redirect );

@@ -14,11 +14,11 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.onlinebackup.Backup;
 import org.neo4j.onlinebackup.Neo4jBackup;
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.properties.ServerProperties;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 public class BackupPerformer
 {
@@ -32,7 +32,8 @@ public class BackupPerformer
     private static final Set<File> lockedPaths = Collections.synchronizedSet( new HashSet<File>() );
 
     public static void doBackup( File backupPath )
-            throws NoBackupFoundationException, BackupFailedException
+            throws NoBackupFoundationException, BackupFailedException,
+            DatabaseBlockedException
     {
         ensurePathIsLocked( backupPath );
 
@@ -50,7 +51,7 @@ public class BackupPerformer
             }
 
             // Perform backup
-            GraphDatabaseService genericDb = GraphDatabaseUtils.getLocalDatabase();
+            GraphDatabaseService genericDb = DatabaseLocator.getGraphDatabase();
 
             if ( genericDb instanceof EmbeddedGraphDatabase )
             {
@@ -90,11 +91,11 @@ public class BackupPerformer
 
             setupBackupFolders( backupPath );
 
-            boolean wasRunning = GraphDatabaseUtils.isRunning();
+            boolean wasRunning = DatabaseLocator.databaseIsRunning();
 
             if ( wasRunning )
             {
-                GraphDatabaseUtils.shutdownAndBlock();
+                DatabaseLocator.shutdownAndBlockGraphDatabase();
             }
 
             cpTree( mainDbPath, backupPath );
@@ -103,8 +104,8 @@ public class BackupPerformer
 
             if ( wasRunning )
             {
-                GraphDatabaseUtils.unblock();
-                GraphDatabaseUtils.getLocalDatabase();
+                DatabaseLocator.unblockGraphDatabase();
+                DatabaseLocator.getGraphDatabase();
             }
         }
         catch ( IOException e )
@@ -112,6 +113,10 @@ public class BackupPerformer
             throw new BackupFailedException(
                     "IOException while creating backup foundation, see nested.",
                     e );
+        }
+        catch ( DatabaseBlockedException e )
+        {
+            e.printStackTrace();
         }
         finally
         {

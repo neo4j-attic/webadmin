@@ -1,7 +1,6 @@
 package org.neo4j.webadmin.rest;
 
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
-import static org.neo4j.webadmin.utils.GraphDatabaseUtils.shutdownLocalDatabase;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.WebServerFactory;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.console.ConsoleSessions;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
@@ -76,11 +76,13 @@ public class LifecycleService
     {
         LifecycleRepresentation status;
 
-        if ( serverStatus != LifecycleRepresentation.Status.RUNNING )
+        if ( !DatabaseLocator.databaseIsRunning() )
         {
+            DatabaseLocator.unblockGraphDatabase();
             int restPort = WebServerFactory.getDefaultWebServer().getPort();
             WebServerFactory.getDefaultWebServer().startServer( restPort );
             ConsoleSessions.destroyAllSessions();
+
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.RUNNING,
                     LifecycleRepresentation.PerformedAction.STARTED );
@@ -107,7 +109,7 @@ public class LifecycleService
     {
         LifecycleRepresentation status;
 
-        if ( serverStatus != LifecycleRepresentation.Status.STOPPED )
+        if ( DatabaseLocator.databaseIsRunning() )
         {
             try
             {
@@ -117,7 +119,7 @@ public class LifecycleService
             {
                 // REST server was not running
             }
-            shutdownLocalDatabase();
+            DatabaseLocator.shutdownAndBlockGraphDatabase();
             status = new LifecycleRepresentation(
                     LifecycleRepresentation.Status.STOPPED,
                     LifecycleRepresentation.PerformedAction.STOPPED );
@@ -150,7 +152,7 @@ public class LifecycleService
         {
             // REST server was not running
         }
-        shutdownLocalDatabase();
+        DatabaseLocator.shutdownGraphDatabase();
 
         int restPort = WebServerFactory.getDefaultWebServer().getPort();
 

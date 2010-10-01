@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.webadmin.domain.ExportRepresentation;
 import org.neo4j.webadmin.domain.ExportServiceRepresentation;
-import org.neo4j.webadmin.task.ExportTask;
+import org.neo4j.webadmin.task.GraphMLExporter;
 
 /**
  * Provides export functionality via REST.
@@ -34,7 +34,7 @@ public class ExportService
     public static final String ROOT_PATH = "/server/export";
     public static final String TRIGGER_PATH = "";
 
-    private static ExportTask exportTask = new ExportTask();
+    private static GraphMLExporter exportTask = new GraphMLExporter();
     private boolean isExporting = false;
 
     @GET
@@ -82,8 +82,8 @@ public class ExportService
 
         // TODO: Use injected baseURI here after merge with neo4j-rest is
         // complete
-        String exportLink = "/" + ExportTask.EXPORT_FOLDER_PATH + "/"
-                            + ExportTask.EXPORT_FILE_PATH;
+        String exportLink = "/" + GraphMLExporter.EXPORT_FOLDER_PATH + "/"
+                            + GraphMLExporter.EXPORT_FILE_PATH;
 
         String entity;
         try
@@ -117,7 +117,7 @@ public class ExportService
             try
             {
                 isExporting = true;
-                exportTask.run();
+                exportTask.doExport();
                 isExporting = false;
             }
             catch ( Exception e )

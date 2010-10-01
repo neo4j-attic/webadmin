@@ -3,6 +3,7 @@ package org.neo4j.webadmin.backup;
 import java.io.File;
 import java.util.Date;
 
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.webadmin.domain.BackupFailedException;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.quartz.Job;
@@ -51,12 +52,17 @@ public class QuartzBackupJob implements Job
                                     + ( new File( jobDesc.getPath() ).getAbsolutePath() )
                                     + "'." );
                 }
-                catch ( NoBackupFoundationException e2 )
+                catch ( NoBackupFoundationException e1 )
                 {
-                    e2.printStackTrace();
+                    e1.printStackTrace();
                     log.logFailure( new Date(), jobDesc,
                             "Fatal: Tried to create backup foundation, but failed: "
-                                    + e2.getMessage() );
+                                    + e1.getMessage() );
+                }
+                catch ( DatabaseBlockedException e1 )
+                {
+                    log.logFailure( new Date(), jobDesc,
+                            "Backup failed: Database is manually blocked (is server shutting down?)." );
                 }
             }
             else
@@ -71,8 +77,14 @@ public class QuartzBackupJob implements Job
             log.logFailure( new Date(), jobDesc,
                     "Backup failed: " + e.getMessage() );
         }
+        catch ( DatabaseBlockedException e )
+        {
+            log.logFailure( new Date(), jobDesc,
+                    "Backup failed: Database is manually blocked (is server shutting down?)." );
+        }
         catch ( Exception e )
         {
+            // Pokémon catch
             e.printStackTrace();
         }
     }

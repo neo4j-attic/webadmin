@@ -7,6 +7,7 @@ import java.io.OutputStream;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.webadmin.AdminServer;
 import org.neo4j.webadmin.console.GremlinFactory;
 
@@ -20,7 +21,7 @@ import com.tinkerpop.blueprints.pgm.parser.GraphMLWriter;
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
  */
-public class ExportTask implements Runnable
+public class GraphMLExporter
 {
 
     public static final String EXPORT_FOLDER_PATH = "export";
@@ -34,8 +35,15 @@ public class ExportTask implements Runnable
 
     /**
      * Do a full export in GraphML format of the underlying database.
+     * 
+     * @throws DatabaseBlockedException
      */
-    public void run()
+    public void doExport() throws DatabaseBlockedException
+    {
+        doExport( EXPORT_FILE );
+    }
+
+    public static void doExport( File target ) throws DatabaseBlockedException
     {
 
         // Since we already have a dependency on Gremlin, we use the GraphML
@@ -47,15 +55,15 @@ public class ExportTask implements Runnable
         try
         {
 
-            EXPORT_FOLDER.mkdirs();
+            new File( target.getParent() ).mkdir();
 
-            if ( EXPORT_FILE.exists() )
+            if ( target.exists() )
             {
                 // Delete old export
-                EXPORT_FILE.delete();
+                target.delete();
             }
 
-            OutputStream stream = new FileOutputStream( EXPORT_FILE );
+            OutputStream stream = new FileOutputStream( target );
 
             GraphMLWriter.outputGraph( graph, stream );
         }

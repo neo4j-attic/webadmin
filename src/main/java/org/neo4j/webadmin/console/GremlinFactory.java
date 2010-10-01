@@ -4,9 +4,9 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.domain.MockIndexService;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 import com.tinkerpop.blueprints.pgm.TransactionalGraph;
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
@@ -27,8 +27,9 @@ public class GremlinFactory
     protected volatile static boolean initiated = false;
 
     public static TransactionalGraph getGremlinWrappedGraph()
+            throws DatabaseBlockedException
     {
-        GraphDatabaseService dbInstance = GraphDatabaseUtils.getLocalDatabase();
+        GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase();
         TransactionalGraph graph;
         try
         {

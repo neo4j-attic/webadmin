@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.rest.WebServerFactory;
+import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
 import org.neo4j.rest.domain.PropertyValueException;
@@ -34,7 +35,6 @@ import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
 import org.neo4j.webadmin.properties.ServerProperties;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
-import org.neo4j.webadmin.utils.GraphDatabaseUtils;
 
 /**
  * A web service that exposes various configuration settings for a running neo4j
@@ -216,7 +216,7 @@ public class ConfigService
                     int restPort = WebServerFactory.getDefaultWebServer().getPort();
 
                     WebServerFactory.getDefaultWebServer().stopServer();
-                    GraphDatabaseUtils.shutdownLocalDatabase();
+                    DatabaseLocator.shutdownGraphDatabase();
                     WebServerFactory.getDefaultWebServer().startServer(
                             restPort );
                     ConsoleSessions.destroyAllSessions();

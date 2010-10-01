@@ -1,9 +1,9 @@
 package org.neo4j.webadmin.rest;
 
+import static org.neo4j.rest.domain.DatabaseLocator.getGraphDatabase;
 import static org.neo4j.webadmin.rest.WebUtils.addHeaders;
 import static org.neo4j.webadmin.rest.WebUtils.buildExceptionResponse;
 import static org.neo4j.webadmin.rest.WebUtils.dodgeStartingUnicodeMarker;
-import static org.neo4j.webadmin.utils.GraphDatabaseUtils.getLocalDatabase;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
@@ -29,6 +29,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.rest.domain.JsonHelper;
 import org.neo4j.rest.domain.JsonRenderers;
@@ -206,15 +207,16 @@ public class JmxService
      * the one that runs behind the REST server.
      * 
      * @return
+     * @throws DatabaseBlockedException
      */
     @GET
     @Produces( MediaType.APPLICATION_JSON )
     @Path( KERNEL_NAME_PATH )
-    public Response currentKernelInstance()
+    public Response currentKernelInstance() throws DatabaseBlockedException
     {
         if ( DatabaseLocator.isLocalDatabase() )
         {
-            Kernel kernelBean = ( (EmbeddedGraphDatabase) getLocalDatabase() ).getManagementBean( Kernel.class );
+            Kernel kernelBean = ( (EmbeddedGraphDatabase) getGraphDatabase() ).getManagementBean( Kernel.class );
             return addHeaders(
                     Response.ok( "\"" + kernelBean.getMBeanQuery().toString()
                                  + "\"", JsonRenderers.DEFAULT.getMediaType() ) ).build();
