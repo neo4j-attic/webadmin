@@ -1,7 +1,6 @@
 package org.neo4j.webadmin.rrd;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,6 +19,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.management.Kernel;
 import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.MBeanServerFactory;
 import org.rrd4j.core.Sample;
 
 /**
@@ -28,6 +28,9 @@ import org.rrd4j.core.Sample;
  * 
  * To add other data points, or change how the sampling is done, look at
  * {@link #updateSample(Sample)}.
+ * 
+ * TODO: This currently handles both sampling and JMX-connection related stuff.
+ * Should be broken into two classes.
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
@@ -59,8 +62,6 @@ public class RrdSampler
     private static final String JMX_ATTR_PROPERTY_COUNT = "NumberOfPropertyIdsInUse";
     private static final String JMX_ATTR_HEAP_MEMORY = "HeapMemoryUsage";
 
-    // DATA SOURCE HANDLES
-
     /**
      * The current sampling object. This is created when calling #start().
      */
@@ -86,8 +87,6 @@ public class RrdSampler
     };
 
     // MANAGEMENT BEANS
-
-    private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
     private ObjectName memoryName;
 
@@ -231,6 +230,7 @@ public class RrdSampler
 
         try
         {
+            MBeanServer server = MBeanServerFactory.getServer();
             reloadMBeanNames();
 
             sample.setTime( new Date().getTime() );
