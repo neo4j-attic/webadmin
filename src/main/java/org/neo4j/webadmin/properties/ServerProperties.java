@@ -174,6 +174,15 @@ public class ServerProperties implements Representation
                     "create.string_block_size", "String block size", "133",
                     PropertyType.DB_CREATION_PROPERTY ) );
         }
+        else
+        {
+
+            // JMX URI
+            properties.add( new ServerPropertyRepresentation(
+                    "general.jmx.uri", "JMX URI", "",
+                    PropertyType.GENERAL_PROPERTY ) );
+
+        }
 
         //
         // GENERAL SETTINGS
@@ -200,7 +209,7 @@ public class ServerProperties implements Representation
      * @return
      * @throws IOException
      */
-    public static ServerProperties getInstance() throws IOException
+    public static ServerProperties getInstance()
     {
         if ( INSTANCE == null )
         {
@@ -213,28 +222,35 @@ public class ServerProperties implements Representation
     // CONSTRUCT
     //
 
-    protected ServerProperties() throws IOException
+    protected ServerProperties()
     {
-        if ( dbConfig == null )
+        try
         {
-            dbConfig = new Properties();
-
-            if ( DatabaseLocator.isLocalDatabase() )
+            if ( dbConfig == null )
             {
+                dbConfig = new Properties();
+
+                if ( DatabaseLocator.isLocalDatabase() )
+                {
+                    FileInputStream in = new FileInputStream(
+                            ConfigFileFactory.getDbConfigFile() );
+                    dbConfig.load( in );
+                    in.close();
+                }
+            }
+
+            if ( generalConfig == null )
+            {
+                generalConfig = new Properties();
                 FileInputStream in = new FileInputStream(
-                        ConfigFileFactory.getDbConfigFile() );
-                dbConfig.load( in );
+                        ConfigFileFactory.getGeneralConfigFile() );
+                generalConfig.load( in );
                 in.close();
             }
         }
-
-        if ( generalConfig == null )
+        catch ( IOException e )
         {
-            generalConfig = new Properties();
-            FileInputStream in = new FileInputStream(
-                    ConfigFileFactory.getGeneralConfigFile() );
-            generalConfig.load( in );
-            in.close();
+            throw new RuntimeException( "Unable to load property files.", e );
         }
 
         // Go through properties and set them to their current values

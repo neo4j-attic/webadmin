@@ -1,12 +1,20 @@
 package org.neo4j.webadmin;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
 
 import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.remote.RemoteGraphDatabase;
 import org.neo4j.rest.domain.DatabaseLocator;
+import org.neo4j.webadmin.properties.ServerProperties;
 
 /**
  * Used to get an {@link MBeanServer} instance for the currently connected
@@ -31,9 +39,9 @@ public class MBeanServerFactory
      * switching over to a remote database. This is used to allow hammering the
      * {@link #getServer()} method.
      */
-    private static MBeanServer cachedServer;
+    private static MBeanServerConnection cachedServer;
 
-    public static MBeanServer getServer()
+    public static MBeanServerConnection getServer()
     {
 
         GraphDatabaseService db = DatabaseLocator.getGraphDatabase();
@@ -42,13 +50,40 @@ public class MBeanServerFactory
 
             cachedDb = db;
 
+            if ( cachedServer != null )
+            {
+                // cachedServer.
+            }
+
             if ( db instanceof EmbeddedGraphDatabase )
             {
                 cachedServer = ManagementFactory.getPlatformMBeanServer();
             }
-            else
+            else if ( db instanceof RemoteGraphDatabase )
             {
-                cachedServer = null;
+                try
+                {
+                    JMXServiceURL address = new JMXServiceURL(
+                            ServerProperties.getInstance().get(
+                                    "general.jmx.uri" ).getValue() );
+
+                    JMXConnector connector = JMXConnectorFactory.connect(
+                            address, null );
+
+                    cachedServer = connector.getMBeanServerConnection();
+
+                }
+                catch ( MalformedURLException e )
+                {
+                    // TODO Show proper error to user.
+                    throw new RuntimeException( e );
+                }
+                catch ( IOException e )
+                {
+                    throw new RuntimeException(
+                            "Unable get JMX access to remote server, monitoring will be disabled.",
+                            e );
+                }
             }
 
         }

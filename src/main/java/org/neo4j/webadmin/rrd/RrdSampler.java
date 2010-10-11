@@ -8,7 +8,7 @@ import java.util.TimerTask;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -180,6 +180,7 @@ public class RrdSampler
             if ( genericDb instanceof EmbeddedGraphDatabase )
             {
                 EmbeddedGraphDatabase db = (EmbeddedGraphDatabase) genericDb;
+
                 // Grab relevant jmx management beans
                 ObjectName neoQuery = db.getManagementBean( Kernel.class ).getMBeanQuery();
                 String instance = neoQuery.getKeyProperty( "instance" );
@@ -230,7 +231,7 @@ public class RrdSampler
 
         try
         {
-            MBeanServer server = MBeanServerFactory.getServer();
+            MBeanServerConnection server = MBeanServerFactory.getServer();
             reloadMBeanNames();
 
             sample.setTime( new Date().getTime() );
