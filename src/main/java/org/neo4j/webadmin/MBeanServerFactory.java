@@ -13,6 +13,7 @@ import javax.management.remote.JMXServiceURL;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.remote.RemoteGraphDatabase;
+import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
 import org.neo4j.webadmin.properties.ServerProperties;
 
@@ -44,48 +45,57 @@ public class MBeanServerFactory
     public static MBeanServerConnection getServer()
     {
 
-        GraphDatabaseService db = DatabaseLocator.getGraphDatabase();
-        if ( db != cachedDb )
+        GraphDatabaseService db;
+        try
         {
-
-            cachedDb = db;
-
-            if ( cachedServer != null )
+            db = DatabaseLocator.getGraphDatabase();
+            if ( db != cachedDb )
             {
-                // cachedServer.
-            }
 
-            if ( db instanceof EmbeddedGraphDatabase )
-            {
-                cachedServer = ManagementFactory.getPlatformMBeanServer();
-            }
-            else if ( db instanceof RemoteGraphDatabase )
-            {
-                try
+                cachedDb = db;
+
+                if ( cachedServer != null )
                 {
-                    JMXServiceURL address = new JMXServiceURL(
-                            ServerProperties.getInstance().get(
-                                    "general.jmx.uri" ).getValue() );
-
-                    JMXConnector connector = JMXConnectorFactory.connect(
-                            address, null );
-
-                    cachedServer = connector.getMBeanServerConnection();
-
+                    // cachedServer.
                 }
-                catch ( MalformedURLException e )
+
+                if ( db instanceof EmbeddedGraphDatabase )
                 {
-                    // TODO Show proper error to user.
-                    throw new RuntimeException( e );
+                    cachedServer = ManagementFactory.getPlatformMBeanServer();
                 }
-                catch ( IOException e )
+                else if ( db instanceof RemoteGraphDatabase )
                 {
-                    throw new RuntimeException(
-                            "Unable get JMX access to remote server, monitoring will be disabled.",
-                            e );
+                    try
+                    {
+                        JMXServiceURL address = new JMXServiceURL(
+                                ServerProperties.getInstance().get(
+                                        "general.jmx.uri" ).getValue() );
+
+                        JMXConnector connector = JMXConnectorFactory.connect(
+                                address, null );
+
+                        cachedServer = connector.getMBeanServerConnection();
+
+                    }
+                    catch ( MalformedURLException e )
+                    {
+                        // TODO Show proper error to user.
+                        throw new RuntimeException( e );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new RuntimeException(
+                                "Unable get JMX access to remote server, monitoring will be disabled.",
+                                e );
+                    }
                 }
+
             }
-
+        }
+        catch ( DatabaseBlockedException e1 )
+        {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
         }
         return cachedServer;
 
