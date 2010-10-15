@@ -215,9 +215,9 @@ public class RrdSampler
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        catch ( DatabaseBlockedException e )
+        catch ( org.neo4j.webadmin.domain.DatabaseBlockedException e )
         {
-            // Empty
+            e.printStackTrace();
         }
     }
 

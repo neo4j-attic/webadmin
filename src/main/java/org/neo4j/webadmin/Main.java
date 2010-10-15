@@ -42,6 +42,8 @@ public class Main
                     WebServerFactory.DEFAULT_PORT ).intValue();
             int adminPort = args.getNumber( "adminPort",
                     AdminServer.DEFAULT_PORT ).intValue();
+            String db_location = System.getProperty( "org.neo4j.graphdb.location");
+            System.out.println("graphdb-location: " + db_location);
 
             String webRoot = args.get( "webRoot",
                     AdminServer.DEFAULT_STATIC_PATH );

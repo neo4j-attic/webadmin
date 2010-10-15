@@ -30,6 +30,7 @@ public class GremlinFactory
             throws DatabaseBlockedException
     {
         GraphDatabaseService dbInstance = DatabaseLocator.getGraphDatabase();
+        System.out.println("GremlinFactory: " + dbInstance);
         TransactionalGraph graph;
         try
         {
