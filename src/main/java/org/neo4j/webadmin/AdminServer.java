@@ -3,6 +3,7 @@ package org.neo4j.webadmin;
 import java.io.File;
 
 import org.neo4j.rest.WebServer;
+import org.neo4j.rest.web.AllowAjaxFilter;
 import org.neo4j.webadmin.rest.ContentDispositionFilter;
 
 import com.sun.grizzly.http.embed.GrizzlyWebServer;
@@ -10,6 +11,7 @@ import com.sun.grizzly.http.servlet.ServletAdapter;
 import com.sun.grizzly.tcp.http11.GrizzlyAdapter;
 import com.sun.grizzly.tcp.http11.GrizzlyRequest;
 import com.sun.grizzly.tcp.http11.GrizzlyResponse;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 /**
@@ -53,7 +55,10 @@ public enum AdminServer
             jerseyAdapter.setContextPath( "/manage" );
             jerseyAdapter.setServletInstance( new ServletContainer() );
 
-            // jerseyAdapter.
+            // Configure response filters
+            jerseyAdapter.addInitParameter(
+                    ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS,
+                    AllowAjaxFilter.class.getName() );
 
             // Add adapters
             server.addGrizzlyAdapter( jerseyAdapter, new String[] { "/manage" } );

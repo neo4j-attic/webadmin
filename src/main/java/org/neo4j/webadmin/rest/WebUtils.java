@@ -50,9 +50,6 @@ public class WebUtils
             builder = builder.header( HttpHeaders.CONTENT_ENCODING, UTF8 );
         }
 
-        // Allow cross-site Ajax requests
-        builder = builder.header( ACCESS_CONTROL_ALLOW_ORIGIN, "*" );
-
         return builder;
     }
 
