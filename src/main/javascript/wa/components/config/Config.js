@@ -131,15 +131,17 @@ wa.components.config.Config = (function($, undefined) {
 	    	var config = [], advanced_config = [], jvm_config = [], general_config = [];
 	        
 	        for( var index in me.config ) {
-	            if(me.config[index].type === "DB_CREATION_PROPERTY") {
-	                advanced_config.push(me.config[index]);
-	            } else if(me.config[index].type === "JVM_ARGUMENT") {
-	                jvm_config.push(me.config[index]);
-	            } else if(me.config[index].type === "GENERAL_PROPERTY") {
-	                general_config.push(me.config[index]);
-	            } else {
-	                config.push(me.config[index]);
-	            }
+	            if( me.config[index].hidden !== true ) {
+    	            if(me.config[index].type === "DB_CREATION_PROPERTY") {
+    	                advanced_config.push(me.config[index]);
+    	            } else if(me.config[index].type === "JVM_ARGUMENT") {
+    	                jvm_config.push(me.config[index]);
+    	            } else if(me.config[index].type === "GENERAL_PROPERTY") {
+    	                general_config.push(me.config[index]);
+    	            } else {
+    	                config.push(me.config[index]);
+    	            }   
+                }
 	        }
 	    	
 	    	me.basePage.processTemplate({
