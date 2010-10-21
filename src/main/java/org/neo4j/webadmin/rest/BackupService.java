@@ -33,7 +33,7 @@ import org.neo4j.webadmin.domain.BackupStatusRepresentation;
 import org.neo4j.webadmin.domain.NoBackupFoundationException;
 import org.neo4j.webadmin.domain.NoBackupPathException;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
-import org.neo4j.webadmin.properties.ServerProperties;
+import org.neo4j.webadmin.properties.ServerConfiguration;
 
 /**
  * Lays the groundwork for online backups, allows triggering of backup jobs,
@@ -55,7 +55,7 @@ public class BackupService
     public static final String JOB_FOUNDATION_TRIGGER_PATH = JOB_PATH
                                                              + "/triggerfoundation";
 
-    protected ServerProperties properties;
+    protected ServerConfiguration properties;
 
     //
     // CONSTRUCT
@@ -63,7 +63,7 @@ public class BackupService
 
     public BackupService() throws IOException
     {
-        properties = ServerProperties.getInstance();
+        properties = ServerConfiguration.getInstance();
     }
 
     @GET
@@ -261,7 +261,7 @@ public class BackupService
 
         try
         {
-            String strPath = ServerProperties.getInstance().get(
+            String strPath = ServerConfiguration.getInstance().get(
                     "general.backup.path" ).getValue();
             if ( strPath.length() > 0 )
             {

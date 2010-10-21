@@ -7,8 +7,16 @@ import java.util.Map;
 import org.neo4j.rest.domain.Representation;
 
 /**
- * Defines a property value, including stuff like default value,
- * prepending/appending stuff, widget to show the value with etc.
+ * Defines meta-data about a configuration property value. This meta data is
+ * used by the client to determine what type of widget (textbox, dropdown, etc.)
+ * should be used to display the value.
+ * 
+ * It also allows for specifying append text and prepend text that should be put
+ * before and after the value when it is in the config file, but that the used
+ * should not see.
+ * 
+ * Append/prepend is used, for instance, to hide the "-Xmx" part of "-Xmx512M"
+ * from the user, and simply having the user write "512M".
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
@@ -87,11 +95,20 @@ public class ValueDefinition implements Representation
     // CONSTRUCTORS
     //
 
+    /**
+     * Creates a text-box widget with no append/prepend strings.
+     */
     public ValueDefinition()
     {
         this( "", "" );
     }
 
+    /**
+     * Creates a text-box widget
+     * 
+     * @param prepend
+     * @param append
+     */
     public ValueDefinition( String prepend, String append )
     {
         this( prepend, append, new HashMap<String, String>(), Widget.TEXT );
@@ -179,8 +196,8 @@ public class ValueDefinition implements Representation
     }
 
     /**
-     * Take a user-entered value, and convert it to whatever should be appended
-     * to the config files.
+     * Take a user-entered value, and convert it to the full value that should
+     * be written to the config file.
      * 
      * @param value
      * @return

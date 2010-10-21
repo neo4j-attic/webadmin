@@ -23,9 +23,6 @@ import org.neo4j.rest.domain.JsonRenderers;
 
 /**
  * A simple key/value store for handling preferences in the admin interface.
- * This is a fairly naive implementation that is based on the assumption that at
- * most ten or so users would ever be modifying admin properties at the same
- * time.
  * 
  * @author Jacob Hansson <jacob@voltvoodoo.com>
  * 
@@ -137,7 +134,7 @@ public class AdminPropertiesService
     // INTERNALS
     //
 
-    protected Response setValue( String key, String value )
+    private synchronized Response setValue( String key, String value )
     {
         properties.put( key, value );
 

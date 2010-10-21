@@ -15,7 +15,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.remote.RemoteGraphDatabase;
 import org.neo4j.rest.domain.DatabaseBlockedException;
 import org.neo4j.rest.domain.DatabaseLocator;
-import org.neo4j.webadmin.properties.ServerProperties;
+import org.neo4j.webadmin.properties.ServerConfiguration;
 
 /**
  * Used to get an {@link MBeanServer} instance for the currently connected
@@ -54,11 +54,6 @@ public class MBeanServerFactory
 
                 cachedDb = db;
 
-                if ( cachedServer != null )
-                {
-                    // cachedServer.
-                }
-
                 if ( db instanceof EmbeddedGraphDatabase )
                 {
                     cachedServer = ManagementFactory.getPlatformMBeanServer();
@@ -68,7 +63,7 @@ public class MBeanServerFactory
                     try
                     {
                         JMXServiceURL address = new JMXServiceURL(
-                                ServerProperties.getInstance().get(
+                                ServerConfiguration.getInstance().get(
                                         "general.jmx.uri" ).getValue() );
 
                         JMXConnector connector = JMXConnectorFactory.connect(

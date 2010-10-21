@@ -32,7 +32,7 @@ import org.neo4j.webadmin.domain.ConfigServiceRepresentation;
 import org.neo4j.webadmin.domain.LifecycleRepresentation;
 import org.neo4j.webadmin.domain.NoSuchPropertyException;
 import org.neo4j.webadmin.domain.ServerPropertyRepresentation;
-import org.neo4j.webadmin.properties.ServerProperties;
+import org.neo4j.webadmin.properties.ServerConfiguration;
 import org.neo4j.webadmin.task.DeferredTask;
 import org.neo4j.webadmin.task.JvmRestartTask;
 
@@ -50,7 +50,7 @@ public class ConfigService
     public static final String ROOT_PATH = "/server/config";
     public static final String ALL_SETTINGS_PATH = "/all";
 
-    protected ServerProperties properties;
+    protected ServerConfiguration properties;
 
     //
     // CONSTRUCT
@@ -58,7 +58,7 @@ public class ConfigService
 
     public ConfigService() throws IOException
     {
-        properties = ServerProperties.getInstance();
+        properties = ServerConfiguration.getInstance();
     }
 
     @GET
