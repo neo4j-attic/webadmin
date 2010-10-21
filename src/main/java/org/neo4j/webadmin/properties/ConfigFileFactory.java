@@ -19,7 +19,7 @@ public class ConfigFileFactory
     public static final String CONFIG_FOLDER = "./conf/";
 
     public static final String GENERAL_CONFIG_PATH = CONFIG_FOLDER
-                                                     + "startup.properties";
+                                                     + "server.properties";
     public static final String SERVICE_CONFIG_PATH = CONFIG_FOLDER
                                                      + "wrapper.conf";
 

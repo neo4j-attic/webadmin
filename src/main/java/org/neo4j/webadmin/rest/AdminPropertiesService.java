@@ -43,15 +43,7 @@ public class AdminPropertiesService
      */
     public static File getPropertiesFile() throws IOException
     {
-        String userHome = System.getProperty( "user.home" );
-        if ( userHome == null )
-        {
-            throw new IllegalStateException( "user.home==null" );
-        }
-
-        // Make sure settings directory exists
-        File home = new File( userHome );
-        File settingsDirectory = new File( home, ".neo4jwebadmin" );
+        File settingsDirectory = new File( "./conf/" );
         if ( !settingsDirectory.exists() )
         {
             if ( !settingsDirectory.mkdir() )
@@ -61,7 +53,7 @@ public class AdminPropertiesService
         }
 
         // Make sure settings file exists
-        File settingsFile = new File( settingsDirectory, "settings" );
+        File settingsFile = new File( settingsDirectory, "client.conf" );
 
         if ( !settingsFile.exists() && !settingsFile.createNewFile() )
         {
