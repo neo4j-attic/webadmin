@@ -16,9 +16,9 @@
 				</tr>
 			{#/for}
 			<tr>
-				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_name" /></td>
-				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_dataUrl" /></td>
-				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_manageUrl" /></td>
+				<td><input type="text" class="short" id="mor_servers_add_name" /></td>
+				<td><input type="text" class="short" id="mor_servers_add_dataUrl" /></td>
+				<td><input type="text" class="short" id="mor_servers_add_manageUrl" /></td>
 				<td><div class="mor_servers_add"><a href="#" id="mor_servers_add_button">+</a></div></td>
 			</tr>
 		</tbody>

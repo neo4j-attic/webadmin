@@ -1,8 +1,6 @@
 wa.ui.Dialog = (function($){
     var me = {};
     
-    me.container = null;
-    
     me.showImpl = function() {
         $("#mor_dialog_content").modal({
             overlayId: 'mor_dialog_overlay',
@@ -11,17 +9,21 @@ wa.ui.Dialog = (function($){
             minHeight: 80,
             opacity: 65, 
             position: ['300',],
-            overlayClose: true,
-            onOpen: me.adjustHeight
+            overlayClose: true
         });
+    	me.adjustHeight();
     };
     
-    me.adjustHeight = function (d) {
-        me.container = d.container[0];
-        var h = $("#mor_dialog_data", me.container).height()
-            +   $("#mor_dialog_title", me.container).height()
-            + 20; // padding
-        d.container.css( { height: h } );
+    me.adjustHeight = function () {
+    	setTimeout(function() { 
+	        var container = $("#mor_dialog_container");
+	        var h = $("#mor_dialog_data", container).height()
+	            +   $("#mor_dialog_title", container).height()
+	            + 20; // padding
+	        
+	        console.log($("#mor_dialog_data", container).height());
+	        container.css( { height: h } );
+    	}, 20);
     };
     
     return {

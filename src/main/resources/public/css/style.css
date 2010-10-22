@@ -24,6 +24,10 @@ h6 { font-size:0.7em; }
 .small { font-size:.8em; font-weight:light; color: #444; } 
 .coolbox {  padding: 6px 10px; background:#f7f7f7; border:1px solid #d5d5d5;  }
 
+
+.short { width: 160px; font-size:14px; }
+
+
 .error { background: #F5C4CA; }
 
 .button { padding: 3px 5px; margin: 3px 3px; border:1px solid #ddd; cursor:pointer; text-decoration:none; -moz-border-radius: 5px; -webkit-border-radius: 5px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold;  }
@@ -192,9 +196,6 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 #mor_servers_current { display:block; color:#666; text-decoration:none; font-size:15px; padding:5px 0 0 14px; background:url(/img/dropdown.jpg) no-repeat top; width:168px; height:29px; }
 #mor_servers_current:hover { background:url(/img/dropdown-hover.jpg) no-repeat top; }
-
-.mor_servers_add_input { width: 160px; font-size:14px; }
-
 .mor_servers_remove a, .mor_servers_add a {display:block; color:#777; font-weight:bold; padding:6px 12px 0; text-decoration:none; text-shadow:0 1px 0 #f4f4f4; font-size:16px;}
 .mor_servers_add a:hover {color:#4b77dc;}
 .mor_servers_remove a:hover {color:#e14848;}
