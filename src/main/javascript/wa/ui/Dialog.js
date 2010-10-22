@@ -8,7 +8,7 @@ wa.ui.Dialog = (function($){
             closeHTML: null,
             minHeight: 80,
             opacity: 65, 
-            position: ['300',],
+            position: ['100',],
             overlayClose: true
         });
     	me.adjustHeight();
@@ -21,8 +21,7 @@ wa.ui.Dialog = (function($){
 	            +   $("#mor_dialog_title", container).height()
 	            + 20; // padding
 	        
-	        console.log($("#mor_dialog_data", container).height());
-	        container.css( { height: h } );
+	        container.css( { height: h, top: "100px" } );
     	}, 20);
     };
     
