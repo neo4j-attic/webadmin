@@ -6,7 +6,7 @@
 
 @import url(jquery.jqplot.css);
 
-body, #morpheus { width:100%; height:100%; color: #333; background:#ebebeb; padding:0;margin:0; font-family:arial, sans-serif; }
+body, #morpheus { width:100%; height:100%; color: #333; background:#f7f7f7; padding:0;margin:0; font-family:arial, sans-serif; }
 
 p { margin: 0.7em 0; font-size:0.9em; }
 
@@ -212,15 +212,14 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 #mor_servers ul li.mor_servers_add a { display:block; background:#8f9b9e;border-color:#668087; }
 #mor_servers ul li.mor_servers_add a:hover { display:block; }
 
-#mor_pages { padding: 5px 10px 10px 30px; }
+#mor_pages { padding: 5px 10px 10px 30px; background: url(/img/bg.jpg) top repeat-x; height:200px; overflow:visible; }
 
 #mor_footer { width:100%; height:31px; background:url(../img/footer_bg.png) repeat-x;  }
 
 #mor_mainmenu { margin:0; list-style:none; padding: 24px 0 0 0; }
-#mor_mainmenu li { height:22px; float:left; margin:0 4px; padding: 4px 8px 2px;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-topleft: 3px; -webkit-border-top-left-radius: 3px; }
-#mor_mainmenu a { color:#ebebeb; text-decoration:none; }
-#mor_mainmenu li.current { background:#ebebeb; }
-#mor_mainmenu li.current a { color:#474f52; font-weight:bold; }
+#mor_mainmenu li a { display:block; background:#7a9ea9 url(/img/tab_shade.png) bottom repeat-x; height:22px; float:left; margin:0 4px; padding: 4px 8px 0;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-topleft: 3px; -webkit-border-top-left-radius: 3px; color:#353535; text-decoration:none; }
+#mor_mainmenu li a:hover { background:#e5e5e5 url(/img/tab_shade.png) bottom repeat-x; }
+#mor_mainmenu li.current a { background:#e5e5e5; }
 
 /* 
    PAGE STUFF
