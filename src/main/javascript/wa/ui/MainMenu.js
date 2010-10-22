@@ -1,4 +1,4 @@
-wa.ui.MainMenu = ( function( $, undefined )
+wa.ui.MainMenu = ( function( $ )
 {
 
     var me = {};

@@ -3,7 +3,7 @@
  * admin key/value store. If no servers are specified, this module will attempt
  * to connect to the current domain at default ports.
  */
-wa.Servers = (function(undefined) {
+wa.Servers = (function() {
     
     //
     // PRIVATE
@@ -159,6 +159,15 @@ wa.Servers = (function(undefined) {
             wa.trigger("servers.changed", { servers : servers } );
             
             persistCurrentServers();
+        },
+        
+        removeServer : function(key) {
+        	if( servers[key] ) {
+        		delete(servers[key]);
+        		wa.trigger("servers.changed", { servers : servers } );
+                
+                persistCurrentServers();
+        	}
         }
     };
 

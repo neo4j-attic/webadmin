@@ -15,50 +15,7 @@ wa.ui.Loading = (function($){
             opacity: 65, 
             position: ['400',],
             overlayClose: false
-            //onOpen: me.open,
-            //onClose: me.close
         });
-    };
-    
-    me.open = function (d) {
-        me.container = d.container[0];
-        d.overlay.fadeIn(50, function () {
-            
-            $("#mor_dialog_content", me.container).show();
-            var title = $("#mor_loading_title", me.container);
-            title.show();
-            
-            d.container.slideDown(50, function () {
-                setTimeout(function () {
-                    var h = $("#mor_loading_message", me.container).height()
-                        + title.height()
-                        + 20; // padding
-                    
-                    d.container.animate(
-                        {height: h},
-                        100,
-                        function () {
-                            $("#mor_loading_message", me.container).show();
-                            
-                            if( typeof(me.cb) === "function" ) {
-                                me.cb(true);
-                            }
-                            
-                        }
-                    );
-                }, 100);
-            });
-        })
-    };
-    
-    me.close = function (d) {
-        d.container.animate(
-            {top:"-" + (d.container.height() + 20)},
-            200,
-            function () {
-                $.modal.close();
-            }
-        );
     };
     
     return {

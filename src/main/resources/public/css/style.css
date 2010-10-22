@@ -28,7 +28,9 @@ h6 { font-size:0.7em; }
 
 .button { padding: 3px 5px; margin: 3px 3px; border:1px solid #ddd; cursor:pointer; text-decoration:none; -moz-border-radius: 5px; -webkit-border-radius: 5px; color: #444; font-size: 10px; background: #E0F0F5; line-height: 16px; font-weight: bold;  }
 .bad-button { background: #F59395; }
-.add-button { background: #BAF08D; } 
+.add-button { background: #BAF08D; }
+
+.hidden { display:none; }
 
 .button:hover {background:#c0e0e5;}
 .bad-button:hover {background: #F57375;}
@@ -146,13 +148,13 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 .mor_error_list li .mor_error_count { padding: 0 4px; font-size:90%; color: #555; }
 
 /* Dialog */
-#mor_dialog_content, #mor_dialog_data {display:none;}
+#mor_dialog_content { display:none; }
 #mor_dialog_overlay {background-color:#000; cursor:wait;}
 
 #mor_dialog_container {background-color:#eee; color:#000; font: 16px/24px "Lucida Grande",Arial,sans-serif; padding-bottom:4px; width:600px; -moz-border-radius:6px; -webkit-border-radius:6px; border-radius:6px 6px 6px 6px; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
 
 #mor_dialog_container #mor_dialog_title {color:#000; background-color:#ddd; border-bottom:1px solid #ccc; font-weight:bold; padding:6px 8px; text-shadow:0 1px 0 #f4f4f4;border-radius:6px 6px 0 0; -moz-border-radius-topleft:6px;-moz-border-radius-topright:6px; -webkit-border-top-left-radius:6px; -webkit-border-top-right-radius:6px; }
-#mor_dialog_container .close {display:none; position:absolute; right:0; top:0;}
+#mor_dialog_container .close {  position:absolute; right:0; top:0;}
 #mor_dialog_container .close a {display:block; color:#777; font-weight:bold; padding:6px 12px 0; text-decoration:none; text-shadow:0 1px 0 #f4f4f4;}
 #mor_dialog_container .close a:hover {color:#000;}
 #mor_dialog_container #mor_dialog_data {font-size:12px; padding:6px 12px;}
@@ -186,12 +188,24 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 #mor_header { width:100%; height:50px; background:url(../img/header_bg.png) repeat-x;  }
 #mor_header_icon { float:left; margin: 4px 30px 0 10px; }
 
-#mor_servers { position:absolute; width: 20px; padding:0; margin:0; top: 100px; left:0px; }
-#mor_servers ul { padding:0; margin:0; list-style:none; }
-#mor_servers ul li { z-index:100; margin: 4px 0; height: 30px; }
-#mor_servers ul li a { display:block; overflow:hidden; margin:0; padding: 4px 3px; border: 2px solid #0a4d60; border-left:none; background: #0b566b; text-decoration:none; font-weight:bold; color:#efefef;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-bottomright: 3px; -webkit-border-bottom-right-radius: 3px;  }
-#mor_servers ul li a:hover { display: inline-block; }
-#mor_servers ul li a.current {  background:#107f9e;border-color:#0f7794; }
+#mor_servers { position:absolute; top: 10px; right:10px; }
+
+#mor_servers_current { display:block; color:#666; text-decoration:none; font-size:15px; padding:5px 0 0 14px; background:url(/img/dropdown.jpg) no-repeat top; width:168px; height:29px; }
+#mor_servers_current:hover { background:url(/img/dropdown-hover.jpg) no-repeat top; }
+
+.mor_servers_add_input { width: 160px; font-size:14px; }
+
+.mor_servers_remove a, .mor_servers_add a {display:block; color:#777; font-weight:bold; padding:6px 12px 0; text-decoration:none; text-shadow:0 1px 0 #f4f4f4; font-size:16px;}
+.mor_servers_add a:hover {color:#4b77dc;}
+.mor_servers_remove a:hover {color:#e14848;}
+
+#mor_servers ul { position:relative; width:168px;  top: -12px; left:7px; padding:4px 0 0; margin:0; list-style:none;  background: url(/img/dropdown-item.png) top no-repeat; }
+#mor_servers ul li { z-index:100; margin: 0; height: 26px; }
+#mor_servers ul li a { display:block; width:168px; height:26px; background: url(/img/dropdown-item.png) no-repeat;overflow:hidden; color:#666; text-decoration:none; font-size:15px; margin:0; padding:2px 7px; border-left:none;  -moz-border-radius-topright: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-bottomright: 3px; -webkit-border-bottom-right-radius: 3px;  }
+#mor_servers ul li a:hover { color: #333;  background: url(/img/dropdown-item-hover.png) no-repeat;}
+#mor_servers ul li a.current {   }
+
+#mor_servers ul li a.mor_servers_list_manage { font-size: 13px; height:29px; padding:4px 7px;  background: url(/img/dropdown-last.png) no-repeat; }
 
 #mor_servers ul li.mor_servers_add { margin: 15px 0; }
 #mor_servers ul li.mor_servers_add a { display:block; background:#8f9b9e;border-color:#668087; }

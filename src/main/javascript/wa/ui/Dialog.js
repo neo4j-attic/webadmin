@@ -12,48 +12,16 @@ wa.ui.Dialog = (function($){
             opacity: 65, 
             position: ['300',],
             overlayClose: true,
-            onOpen: me.open,
-            onClose: me.close
+            onOpen: me.adjustHeight
         });
     };
     
-    me.open = function (d) {
+    me.adjustHeight = function (d) {
         me.container = d.container[0];
-        d.overlay.fadeIn(50, function () {
-            $("#mor_dialog_content", me.container).show();
-            var title = $("#mor_dialog_title", me.container);
-            title.show();
-            d.container.slideDown('slow', function () {
-                setTimeout(function () {
-                    var h = $("#mor_dialog_data", me.container).height()
-                        + title.height()
-                        + 20; // padding
-                    d.container.animate(
-                        {height: h}, 
-                        100,
-                        function () {
-                            $("div.close", me.container).show();
-                            $("#mor_dialog_data", me.container).show();
-                            
-                            if( typeof(me.cb) === "function" ) {
-                                me.cb(true);
-                            }
-                            
-                        }
-                    );
-                }, 100);
-            });
-        })
-    };
-    
-    me.close = function (d) {
-        d.container.animate(
-            {top:"-" + (d.container.height() + 20)},
-            200,
-            function () {
-                $.modal.close();
-            }
-        );
+        var h = $("#mor_dialog_data", me.container).height()
+            +   $("#mor_dialog_title", me.container).height()
+            + 20; // padding
+        d.container.css( { height: h } );
     };
     
     return {
@@ -71,6 +39,11 @@ wa.ui.Dialog = (function($){
             $("#mor_dialog_data").setTemplateURL(templateUrl);
             $("#mor_dialog_data").processTemplate(templateContext || {});
             me.showImpl();
+        },
+        
+        updateTemplateContext : function(templateContext) {
+        	$("#mor_dialog_data").processTemplate(templateContext || {});
+        	me.adjustHeight();
         },
         
         close : function() {

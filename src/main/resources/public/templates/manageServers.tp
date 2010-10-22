@@ -1,0 +1,26 @@
+<div style="padding-bottom:50px;">
+	<table>
+		<tbody>
+			<tr>
+				<th>Name</th>
+				<th>Data</th>
+				<th>Manage</th>
+				<th></th>
+			</tr>
+			{#foreach $T as server}
+				<tr>
+					<td class="mor_servers_name">{$T.server$key}</td>
+					<td>{$T.server.url}</td>
+					<td>{$T.server.manageUrl}</td>
+					<td><div class="mor_servers_remove"><a href="#" class="mor_servers_remove_button">x</a></div></td>
+				</tr>
+			{#/for}
+			<tr>
+				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_name" /></td>
+				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_dataUrl" /></td>
+				<td><input type="text" class="mor_servers_add_input" id="mor_servers_add_manageUrl" /></td>
+				<td><div class="mor_servers_add"><a href="#" id="mor_servers_add_button">+</a></div></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
