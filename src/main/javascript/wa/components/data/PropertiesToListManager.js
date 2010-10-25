@@ -38,7 +38,9 @@ wa.components.data.PropertiesToListManager = (function($) {
 		me.setFieldString(fieldString);
 		
 		// Persist the new setting
-		wa.components.config.Config.set("general.data.listfields", fieldString);
+		wa.Servers.getCurrentServer().manage.config.setProperty(
+				'general.data.listfields', 
+				fieldString );
 	});
 	
 	return {
@@ -47,7 +49,8 @@ wa.components.data.PropertiesToListManager = (function($) {
         },
         
         serverChanged : function(ev) {
-            wa.components.config.Config.get("general.data.listfields", function(data) {
+        	wa.Servers.getCurrentServer().manage.config.getProperty(
+        		"general.data.listfields", function(data) {
                 me.setFieldString(data.value);
             }); 
         }
@@ -56,4 +59,4 @@ wa.components.data.PropertiesToListManager = (function($) {
 })(jQuery);
 
 
-wa.bind("servers.changed", wa.components.data.PropertiesToListManager.serverChanged);
+wa.bind("servers.current.changed", wa.components.data.PropertiesToListManager.serverChanged);
