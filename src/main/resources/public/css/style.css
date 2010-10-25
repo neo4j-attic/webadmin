@@ -272,7 +272,7 @@ td.mor_data_relationship_direction { padding: 0 4px !important; text-align:cente
 
 .mor_data_remove_property { border:0; width:16px; height:16px; padding:0; color:transparent; overflow:hidden; display:block; background:url(/img/icons/16x16/actions/delete-inactive.png) no-repeat; }
 .mor_data_remove_property:hover { background:url(/img/icons/16x16/actions/delete.png) no-repeat; border:0; }
-.mor_data_delete_node_button, .mor_data_delete_relationship_button { float:right; margin-top:-4px; }
+.mor_data_add_node_button, .mor_data_delete_node_button, .mor_data_delete_relationship_button { float:right; margin-top:-4px; }
 .mor_data_add_relationship  { float:right; margin-top:-2px; }
 
 /* Gremlin */

@@ -4,7 +4,6 @@
 	<div class="mor_module">
 		<p class="mor_info">Browse the data in your neo4j server.</p>
 		<ul class="mor_horizontal_menu">
-			<li><a href="#" class="mor_data_add_node_button button add-button">New node</a></li>
 			<li><a href="#" class="mor_data_refresh_button button">Refresh</a></li>
 			<li><a href="#" class="mor_data_reference_node_button button">Reference node</a></li>
 		</ul>
@@ -34,7 +33,7 @@
 	</div>
 	<div class="mor_module">
 		<h2>Get by id</h2>
-		<p class="mor_info"><input type="text" id="mor_data_get_id_input" /></p>
+		<p class="mor_info"><input type="text" class="short" id="mor_data_get_id_input" /></p>
 		<p class="mor_info"><input type="button" class="mor_data_get_node_button" value="Get node" /><input type="button" class="mor_data_get_relationship_button" value="Get relationship" /></p>
 	</div>
 	{#if $T.notFound }
@@ -65,7 +64,7 @@
 {#else}
 	{#if $T.item.isNode }
 		<div class="mor_module mor_span-4">
-			<h2>Node <a href="#" class="button bad-button mor_data_delete_node_button">Remove</a></h2>
+			<h2>Node <a href="#" class="mor_data_add_node_button button add-button">New node</a> <a href="#" class="button bad-button mor_data_delete_node_button">Remove</a></h2>
 			{#include propertyTable root=$T.item}
 		</div>
 		{#include nodeTable root=$T.item.relationships}
