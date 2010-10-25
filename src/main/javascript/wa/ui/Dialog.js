@@ -19,10 +19,10 @@ wa.ui.Dialog = (function($){
 	        var container = $("#mor_dialog_container");
 	        var h = $("#mor_dialog_data", container).height()
 	            +   $("#mor_dialog_title", container).height()
-	            + 20; // padding
+	            + 30; // padding
 	        
 	        container.css( { height: h, top: "100px" } );
-    	}, 20);
+    	}, 10);
     };
     
     return {
