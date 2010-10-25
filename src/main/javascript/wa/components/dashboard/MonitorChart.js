@@ -102,12 +102,12 @@ wa.components.dashboard.MonitorChart = function(server, settings) {
 	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.year.id +"'>Year</a></li>";
 	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.month.id +"'>Month</a></li>";
 	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.week.id +"'>Week</a></li>";
-	controls += "<li><a class='"+me.controlsClass+" current' href='#' id='"+me.zoom.day.id +"'>Day</a></li>"
-	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.six_hours.id +"'>6 hours</a></li>"
+	controls += "<li><a class='"+me.controlsClass+" current' href='#' id='"+me.zoom.day.id +"'>Day</a></li>";
+	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.six_hours.id +"'>6 hours</a></li>";
 	controls += "<li><a class='"+me.controlsClass+"' href='#' id='"+me.zoom.thirty_minutes.id +"'>30 minutes</a></li>";
-	controls += "</ul><div class='break'></div>"
+	controls += "</ul><div class='break'></div>";
 	
-	me.container = $("<div class='mor_module mor_span-9'><h2>" + me.settings.label + "</h2>" + controls + "<div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>")
+	me.container = $("<div class='mor_module mor_span-9'><h2>" + me.settings.label + "</h2>" + controls + "<div class='mor_chart_container'><div style='height:"+me.settings.height+"px;' id='" + me.containerId + "'></div></div></div>");
 	
 	me.drawing = false;
 	me.currentZoom = "day";

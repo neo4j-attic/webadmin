@@ -2,7 +2,7 @@
 /**
  * Handles exporting the database.
  */
-wa.components.io.ExportSupport = (function($, undefined) {
+wa.components.io.ExportSupport = (function($) {
 	
 	var me = {};
 	

@@ -6,7 +6,7 @@
  *       to morpheus.neo4j, and be loaded by default when a server is loaded. This component
  *       should simply provide a UI to that.
  */
-wa.components.config.Config = (function($, undefined) {
+wa.components.config.Config = (function($) {
     
     var me = {};
     

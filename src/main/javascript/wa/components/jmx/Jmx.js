@@ -1,11 +1,8 @@
 
 /**
  * JMX exploration page module for the monitor component.
- * 
- * TODO: This needs to start using the jmx interface provided by neo4j instances
- * instead of implementing it's own.
  */
-wa.components.jmx.Jmx = (function($, undefined) {
+wa.components.jmx.Jmx = (function($) {
     
     var me = {};
     

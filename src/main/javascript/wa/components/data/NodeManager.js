@@ -2,7 +2,7 @@
 /**
  * Handles creating and removing nodes.
  */
-wa.components.data.NodeManager = (function($, undefined) { 
+wa.components.data.NodeManager = (function($) { 
 	
 	var me = {};
 	

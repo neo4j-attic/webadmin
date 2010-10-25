@@ -2,7 +2,7 @@
 /**
  * Handles adding, editing and removing properties on nodes and relationships.
  */
-wa.components.data.PropertyEditor = (function($, undefined) { 
+wa.components.data.PropertyEditor = (function($) { 
 
 	var me = {};
 	

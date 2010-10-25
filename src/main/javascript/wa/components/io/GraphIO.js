@@ -2,7 +2,7 @@
 /**
  * Handles imports and exports.
  */
-wa.components.io.GraphIO = (function($, undefined) {
+wa.components.io.GraphIO = (function($) {
 	
 	var me = {};
 	
@@ -43,7 +43,7 @@ wa.components.io.GraphIO = (function($, undefined) {
 	    server.manage.importing.getUploadUrl(function(url){
 	        me.uploadUrl = url;
 	        me.render();
-	    })
+	    });
 	});
 	
 	return {

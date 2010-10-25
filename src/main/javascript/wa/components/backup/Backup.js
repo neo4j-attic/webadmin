@@ -4,7 +4,7 @@
  * 
  * Init module.
  */
-wa.components.backup.Backup = (function($, undefined) {
+wa.components.backup.Backup = (function($) {
     
     var me = {};
     
@@ -123,7 +123,7 @@ wa.components.backup.Backup = (function($, undefined) {
     	
     	if( ! me.ui.jobList ) {
     		me.ui.jobList = $("ul.mor_backup_job_list");
-    		me.ui.jobList.setTemplateURL("templates/components/backup/schedule.tp")
+    		me.ui.jobList.setTemplateURL("templates/components/backup/schedule.tp");
     	}
     	
     	var data = wa.components.backup.parseJobData(data);

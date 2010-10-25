@@ -95,7 +95,7 @@ wa.Servers = (function() {
             jsonServers[name] = {
                 url : servers[name].url,
                 manageUrl : servers[name].manageUrl
-            }
+            };
         }
     
         wa.prop.set("neo4j-servers", jsonServers);

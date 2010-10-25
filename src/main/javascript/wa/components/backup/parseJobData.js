@@ -44,7 +44,7 @@ wa.components.backup.parseJobData = function(data) {
                 } else
                 {
                     // Less than a minute
-                    readableDiff = "Less than a minute ago"
+                    readableDiff = "Less than a minute ago";
                 }
 
                 job.readableLatestSuccess = readableDiff;

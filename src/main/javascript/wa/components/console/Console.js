@@ -1,5 +1,5 @@
 
-wa.components.console.Console = (function($, undefined) {
+wa.components.console.Console = (function($) {
     
     var me = {};
     

@@ -2,7 +2,7 @@
 /**
  * Import a graphml file by specifying a URL.
  */
-wa.components.io.ImportSupport = (function($, undefined) {
+wa.components.io.ImportSupport = (function($) {
 	
 	var me = {};
 	

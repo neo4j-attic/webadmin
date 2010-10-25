@@ -55,7 +55,7 @@ wa.ui.ErrorBox = function() {
         hideError : function(error) {
             if (typeof (currentErrors[error]) !== "undefined")
             {
-                currentErrors[error].elem.remove()
+                currentErrors[error].elem.remove();
                 delete (currentErrors[error]);
             }
         }

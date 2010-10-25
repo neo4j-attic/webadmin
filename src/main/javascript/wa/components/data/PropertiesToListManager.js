@@ -3,7 +3,7 @@
  * Handles the control for what properties to list in the related nodes table in the
  * data browser.
  */
-wa.components.data.PropertiesToListManager = (function($, undefined) { 
+wa.components.data.PropertiesToListManager = (function($) { 
 	
 	var me = {};
 	
@@ -24,7 +24,7 @@ wa.components.data.PropertiesToListManager = (function($, undefined) {
 		}
 		
 		wa.trigger("data.listnames.changed", key);
-	}
+	};
 	
 	// 
 	// CONSTRUCT

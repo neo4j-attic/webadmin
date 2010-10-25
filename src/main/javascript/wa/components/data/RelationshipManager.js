@@ -2,7 +2,7 @@
 /**
  * Handles creating and removing relationships, changing relationship type and setting start and end nodes.
  */
-wa.components.data.RelationshipManager = (function($, undefined) {
+wa.components.data.RelationshipManager = (function($) {
 	
 	var me = {};
 	

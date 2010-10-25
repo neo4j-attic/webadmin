@@ -2,7 +2,7 @@
 /**
  * Base module for the monitor component.
  */
-wa.components.dashboard.Dashboard = (function($, undefined) {
+wa.components.dashboard.Dashboard = (function($) {
     
     var me = {};
     
@@ -140,7 +140,7 @@ wa.components.dashboard.Dashboard = (function($, undefined) {
     		label : 'Heap memory usage',
     		data : {
     			memory_usage_percent : {
-				    label : 'Heap memory usage',
+				    label : 'Heap memory usage'
 				}
     		},
     		yaxis : {

@@ -2,7 +2,7 @@
 /**
  * Data browser.
  */
-wa.components.data.DataBrowser = (function($, undefined) {
+wa.components.data.DataBrowser = (function($) {
     
     var me = {};
     
@@ -114,7 +114,7 @@ wa.components.data.DataBrowser = (function($, undefined) {
         	                	if( me.currentItem.isNode ) {
         	                		me.currentItem.relationships = {
         	                			fields : me.propertiesToListManager.getListFields(),
-        	                			data : [],
+        	                			data : []
         	                		};
         	                	}
         	                	
@@ -257,7 +257,7 @@ wa.components.data.DataBrowser = (function($, undefined) {
     me.addPaginationMetaData = function(item) {
     	
     	// Pagination pre-calculations
-    	var relatedNodeCount = item.isNode ? item.relationships.data.length : 0
+    	var relatedNodeCount = item.isNode ? item.relationships.data.length : 0;
     	
     	var relatedNodeStartIndex = me.currentRelatedNodePage * me.relatedNodesPerPage;
     	var relatedNodeStopIndex = relatedNodeStartIndex + me.relatedNodesPerPage - 1;
